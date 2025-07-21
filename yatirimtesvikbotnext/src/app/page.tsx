@@ -248,13 +248,14 @@ export default function Home() {
             onClick={(e: any) => {
               e.preventDefault();
               if (
-                selectedIl && selectedIlce && naceValue
+                selectedIl && selectedIlce && naceValue && checked
               ) {
                 setShowResult(true);
               } else {
                 setShowResult(false);
               }
             }}
+            disabled={!checked}
           >
             SORGULA
           </Button>
@@ -681,65 +682,71 @@ export default function Home() {
           <Typography variant="body2" sx={{ color: '#888', mb: 2, fontSize: '0.95rem' }}>
             Son Güncelleme Tarihi: 21 Temmuz 2025
           </Typography>
-          <Typography id="terms-modal-desc" sx={{ mt: 2, whiteSpace: 'pre-line', fontSize: '1.01rem' }}>
-1. Taraflar ve Tanımlar
-
-Bu Kullanım Koşulları (“Koşullar”), LORE Danışmanlık (“Hizmet Sağlayıcı” veya “Biz”) ile Hizmet Sağlayıcı’nın https://www.yatirimtesvikbelgesi.com/ adresinde bulunan web sitesini ("Platform") ve özellikle "Teşvik Robotu" uygulamasını kullanan kişi veya kurumlar (“Kullanıcı” veya “Siz”) arasında akdedilmiştir.
-
-Platform: https://www.yatirimtesvikbelgesi.com/ web sitesi ve bünyesindeki "Teşvik Robotu" uygulaması.
-
-Hizmetler: Platform üzerinden sunulan tüm hizmetler, araçlar ve özellikler, özellikle Teşvik Robotu ve yatırım teşvik hesaplama uygulaması dahil.
-
-Kullanıcı: Platforma erişen, kullanan veya Platform üzerinden herhangi bir işlem gerçekleştiren gerçek veya tüzel kişi.
-
-2. Koşulların Kabulü
-
-Platform'u kullanarak, Hizmetler’den faydalanarak veya herhangi bir şekilde erişim sağlayarak, bu Koşulları okuduğunuzu, anladığınızı ve bunlara bağlı kalmayı kabul ettiğinizi beyan ve taahhüt edersiniz. Bu Koşulları kabul etmiyorsanız, Platform'u kullanmamalısınız.
-
-3. Hizmetlerin Kapsamı ve Amacı
-
-Hizmet Sağlayıcı, Platform üzerinden özellikle Teşvik Robotu aracılığıyla yatırım teşvik hesaplama ve ilgili konularda danışmanlık hizmetlerine yönelik bilgilendirme ve araçlar sunmaktadır. Platform'da sunulan bilgiler ve hesaplamalar genel bilgilendirme amacı taşımaktadır ve hukuki, finansal veya yatırım danışmanlığı yerine geçmez. Kullanıcılar, Platform'da yer alan bilgilere dayanarak alacakları kararların tüm sorumluluğunu üstlenirler.
-
-4. Kullanıcı Yükümlülükleri
-
-4.1. Kullanıcı, Platform'u yalnızca yasalara ve bu Koşullara uygun olarak kullanmayı kabul eder.
-4.2. Kullanıcı, Platform üzerinden girilen bilgilerin (NACE Kodu, yatırım yeri, ilçe, OSB durumu vb.) doğru, eksiksiz ve güncel olmasından tek başına sorumludur. Yanlış veya eksik bilgi girişinden kaynaklanan sorunlardan Hizmet Sağlayıcı sorumlu değildir.
-4.3. Kullanıcı, Platform'u kullanarak herhangi bir yasa dışı, zararlı, tehditkar, küfürlü, taciz edici, hakaret edici, küçük düşürücü, müstehcen, nefret dolu veya ırksal, etnik veya başka bir şekilde sakıncalı içerik oluşturmayacak, yüklemeyecek veya yaymayacaktır.
-4.4. Kullanıcı, Platform'un işleyişine müdahale etmeyecek, Platform'a virüs, truva atı gibi zararlı yazılımlar bulaştırmaya çalışmayacak veya Platform'un güvenliğini ihlal etmeyecektir.
-4.5. Platformda sunulan her türlü yazılım, tasarım, metin, görsel, grafik, video, ses dosyası ve diğer tüm içerikler Hizmet Sağlayıcı'ya veya lisans verenlerine aittir ve telif hakları ile korunmaktadır. Kullanıcı, bu içerikleri kopyalamayacak, dağıtmayacak, çoğaltmayacak veya türev eserler oluşturmayacaktır.
-
-5. Fikri Mülkiyet Hakları
-
-Platform'un tüm fikri mülkiyet hakları (telif hakları, ticari markalar, veri tabanı hakları ve diğer tüm haklar dahil) Hizmet Sağlayıcı'ya aittir veya Hizmet Sağlayıcı'nın yasal kullanım hakkına sahip olduğu lisanslı materyallerden oluşmaktadır. Bu Koşullar size Platform'da bulunan herhangi bir fikri mülkiyet üzerinde herhangi bir hak veya lisans vermemektedir.
-
-6. Sorumluluk Reddi ve Sorumluluğun Sınırlandırılması
-
-6.1. Platform'da sunulan tüm hizmetler ve bilgiler "olduğu gibi" ve "mevcut olduğu şekilde" sunulmaktadır. Hizmet Sağlayıcı, Platform'un kesintisiz, hatasız, güvenli veya belirli bir amaca uygun olacağına dair herhangi bir garanti vermez.
-6.2. Teşvik Robotu aracılığıyla sağlanan hesaplamalar ve sonuçlar, genel bilgilendirme ve ön fizibilite amaçlıdır. Bu hesaplamalar, ilgili mevzuatın yorumlanmasına, girilen verilere ve algoritmalara dayanır. Gerçek teşvik tutarları ve koşulları, ilgili resmi kurumların (T.C. Sanayi ve Teknoloji Bakanlığı, KOSGEB vb.) güncel mevzuatına, başvuru sahiplerinin özel durumlarına ve değerlendirmelerine göre farklılık gösterebilir.
-6.3. Hizmet Sağlayıcı, Platform'un kullanımından veya kullanılamamasından kaynaklanan (doğrudan veya dolaylı) herhangi bir kar kaybı, veri kaybı, itibar kaybı veya diğer maddi/manevi zararlardan sorumlu tutulamaz.
-6.4. Hizmet Sağlayıcı, Platform'da yer alan bağlantılar aracılığıyla erişilen üçüncü taraf web sitelerinin içeriklerinden veya politikalarından sorumlu değildir.
-
-7. Değişiklikler
-
-Hizmet Sağlayıcı, bu Koşulları dilediği zaman tek taraflı olarak değiştirme hakkını saklı tutar. Değişiklikler, Platform'da yayınlandığı tarihte yürürlüğe girer. Koşullardaki değişikliklerden sonra Platform'u kullanmaya devam etmeniz, değiştirilmiş Koşulları kabul ettiğiniz anlamına gelir.
-
-8. Gizlilik Politikası
-
-Kullanıcıların kişisel verilerinin toplanması, kullanılması ve korunmasına ilişkin detaylar, Hizmet Sağlayıcı'nın ayrı bir belge olan Gizlilik Politikası'nda belirtilmiştir. Platform'u kullanarak, Gizlilik Politikası'nı da okuduğunuzu ve kabul ettiğinizi beyan edersiniz.
-
-9. Uygulanacak Hukuk ve Yetkili Mahkeme
-
-Bu Koşullardan kaynaklanan veya bunlarla ilgili her türlü uyuşmazlık Türk Hukukuna tabi olacak ve İstanbul (Çağlayan) Mahkemeleri ve İcra Daireleri yetkili olacaktır.
-
-10. İletişim
-
-Bu Kullanım Koşulları ile ilgili herhangi bir sorunuz veya endişeniz varsa, lütfen aşağıdaki iletişim bilgilerini kullanarak bizimle iletişime geçin:
-
-Adres: Beştepe Mah, Meriç Sokak, Milaslı 2000 İş Merkezi, NO:5 B, Daire: 7-8 PK 06560 Yenimahalle – Ankara
-Telefon: +90 312 215 4 222 (PBX) | +90 312 215 4 220
-Email: lore@lore.com.tr
-Faks: +90 312 215 42 29
-          </Typography>
+          <div id="terms-modal-desc" style={{ fontSize: '1.01rem', color: mode === 'dark' ? '#e0e0e0' : '#222' }}>
+            <ol style={{ paddingLeft: 18 }}>
+              <li>
+                <b>Taraflar ve Tanımlar</b>
+                <ul style={{ marginTop: 6, marginBottom: 6 }}>
+                  <li>Bu Kullanım Koşulları (“Koşullar”), LORE Danışmanlık (“Hizmet Sağlayıcı” veya “Biz”) ile Hizmet Sağlayıcı’nın <a href="https://www.yatirimtesvikbelgesi.com/" target="_blank" rel="noopener noreferrer">https://www.yatirimtesvikbelgesi.com/</a> adresinde bulunan web sitesini ("Platform") ve özellikle "Teşvik Robotu" uygulamasını kullanan kişi veya kurumlar (“Kullanıcı” veya “Siz”) arasında akdedilmiştir.</li>
+                  <li><b>Platform:</b> https://www.yatirimtesvikbelgesi.com/ web sitesi ve bünyesindeki "Teşvik Robotu" uygulaması.</li>
+                  <li><b>Hizmetler:</b> Platform üzerinden sunulan tüm hizmetler, araçlar ve özellikler, özellikle Teşvik Robotu ve yatırım teşvik hesaplama uygulaması dahil.</li>
+                  <li><b>Kullanıcı:</b> Platforma erişen, kullanan veya Platform üzerinden herhangi bir işlem gerçekleştiren gerçek veya tüzel kişi.</li>
+                </ul>
+              </li>
+              <li>
+                <b>Koşulların Kabulü</b>
+                <p>Platform'u kullanarak, Hizmetler’den faydalanarak veya herhangi bir şekilde erişim sağlayarak, bu Koşulları okuduğunuzu, anladığınızı ve bunlara bağlı kalmayı kabul ettiğinizi beyan ve taahhüt edersiniz. Bu Koşulları kabul etmiyorsanız, Platform'u kullanmamalısınız.</p>
+              </li>
+              <li>
+                <b>Hizmetlerin Kapsamı ve Amacı</b>
+                <p>Hizmet Sağlayıcı, Platform üzerinden özellikle Teşvik Robotu aracılığıyla yatırım teşvik hesaplama ve ilgili konularda danışmanlık hizmetlerine yönelik bilgilendirme ve araçlar sunmaktadır. Platform'da sunulan bilgiler ve hesaplamalar genel bilgilendirme amacı taşımaktadır ve hukuki, finansal veya yatırım danışmanlığı yerine geçmez. Kullanıcılar, Platform'da yer alan bilgilere dayanarak alacakları kararların tüm sorumluluğunu üstlenirler.</p>
+              </li>
+              <li>
+                <b>Kullanıcı Yükümlülükleri</b>
+                <ul style={{ marginTop: 6, marginBottom: 6 }}>
+                  <li>Kullanıcı, Platform'u yalnızca yasalara ve bu Koşullara uygun olarak kullanmayı kabul eder.</li>
+                  <li>Kullanıcı, Platform üzerinden girilen bilgilerin (NACE Kodu, yatırım yeri, ilçe, OSB durumu vb.) doğru, eksiksiz ve güncel olmasından tek başına sorumludur. Yanlış veya eksik bilgi girişinden kaynaklanan sorunlardan Hizmet Sağlayıcı sorumlu değildir.</li>
+                  <li>Kullanıcı, Platform'u kullanarak herhangi bir yasa dışı, zararlı, tehditkar, küfürlü, taciz edici, hakaret edici, küçük düşürücü, müstehcen, nefret dolu veya ırksal, etnik veya başka bir şekilde sakıncalı içerik oluşturmayacak, yüklemeyecek veya yaymayacaktır.</li>
+                  <li>Kullanıcı, Platform'un işleyişine müdahale etmeyecek, Platform'a virüs, truva atı gibi zararlı yazılımlar bulaştırmaya çalışmayacak veya Platform'un güvenliğini ihlal etmeyecektir.</li>
+                  <li>Platformda sunulan her türlü yazılım, tasarım, metin, görsel, grafik, video, ses dosyası ve diğer tüm içerikler Hizmet Sağlayıcı'ya veya lisans verenlerine aittir ve telif hakları ile korunmaktadır. Kullanıcı, bu içerikleri kopyalamayacak, dağıtmayacak, çoğaltmayacak veya türev eserler oluşturmayacaktır.</li>
+                </ul>
+              </li>
+              <li>
+                <b>Fikri Mülkiyet Hakları</b>
+                <p>Platform'un tüm fikri mülkiyet hakları (telif hakları, ticari markalar, veri tabanı hakları ve diğer tüm haklar dahil) Hizmet Sağlayıcı'ya aittir veya Hizmet Sağlayıcı'nın yasal kullanım hakkına sahip olduğu lisanslı materyallerden oluşmaktadır. Bu Koşullar size Platform'da bulunan herhangi bir fikri mülkiyet üzerinde herhangi bir hak veya lisans vermemektedir.</p>
+              </li>
+              <li>
+                <b>Sorumluluk Reddi ve Sorumluluğun Sınırlandırılması</b>
+                <ul style={{ marginTop: 6, marginBottom: 6 }}>
+                  <li>Platform'da sunulan tüm hizmetler ve bilgiler "olduğu gibi" ve "mevcut olduğu şekilde" sunulmaktadır. Hizmet Sağlayıcı, Platform'un kesintisiz, hatasız, güvenli veya belirli bir amaca uygun olacağına dair herhangi bir garanti vermez.</li>
+                  <li>Teşvik Robotu aracılığıyla sağlanan hesaplamalar ve sonuçlar, genel bilgilendirme ve ön fizibilite amaçlıdır. Bu hesaplamalar, ilgili mevzuatın yorumlanmasına, girilen verilere ve algoritmalara dayanır. Gerçek teşvik tutarları ve koşulları, ilgili resmi kurumların (T.C. Sanayi ve Teknoloji Bakanlığı, KOSGEB vb.) güncel mevzuatına, başvuru sahiplerinin özel durumlarına ve değerlendirmelerine göre farklılık gösterebilir.</li>
+                  <li>Hizmet Sağlayıcı, Platform'un kullanımından veya kullanılamamasından kaynaklanan (doğrudan veya dolaylı) herhangi bir kar kaybı, veri kaybı, itibar kaybı veya diğer maddi/manevi zararlardan sorumlu tutulamaz.</li>
+                  <li>Hizmet Sağlayıcı, Platform'da yer alan bağlantılar aracılığıyla erişilen üçüncü taraf web sitelerinin içeriklerinden veya politikalarından sorumlu değildir.</li>
+                </ul>
+              </li>
+              <li>
+                <b>Değişiklikler</b>
+                <p>Hizmet Sağlayıcı, bu Koşulları dilediği zaman tek taraflı olarak değiştirme hakkını saklı tutar. Değişiklikler, Platform'da yayınlandığı tarihte yürürlüğe girer. Koşullardaki değişikliklerden sonra Platform'u kullanmaya devam etmeniz, değiştirilmiş Koşulları kabul ettiğiniz anlamına gelir.</p>
+              </li>
+              <li>
+                <b>Gizlilik Politikası</b>
+                <p>Kullanıcıların kişisel verilerinin toplanması, kullanılması ve korunmasına ilişkin detaylar, Hizmet Sağlayıcı'nın ayrı bir belge olan Gizlilik Politikası'nda belirtilmiştir. Platform'u kullanarak, Gizlilik Politikası'nı da okuduğunuzu ve kabul ettiğinizi beyan edersiniz.</p>
+              </li>
+              <li>
+                <b>Uygulanacak Hukuk ve Yetkili Mahkeme</b>
+                <p>Bu Koşullardan kaynaklanan veya bunlarla ilgili her türlü uyuşmazlık Türk Hukukuna tabi olacak ve İstanbul (Çağlayan) Mahkemeleri ve İcra Daireleri yetkili olacaktır.</p>
+              </li>
+              <li>
+                <b>İletişim</b>
+                <ul style={{ marginTop: 6, marginBottom: 6 }}>
+                  <li>Adres: Beştepe Mah, Meriç Sokak, Milaslı 2000 İş Merkezi, NO:5 B, Daire: 7-8 PK 06560 Yenimahalle – Ankara</li>
+                  <li>Telefon: +90 312 215 4 222 (PBX) | +90 312 215 4 220</li>
+                  <li>Email: <a href="mailto:lore@lore.com.tr">lore@lore.com.tr</a></li>
+                  <li>Faks: +90 312 215 42 29</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
           <Button onClick={() => setTermsOpen(false)} sx={{ mt: 2 }} variant="contained" color="error">
             Kapat
           </Button>
