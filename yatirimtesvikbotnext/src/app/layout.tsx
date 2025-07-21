@@ -42,6 +42,9 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${poppins.variable} antialiased`}
+        onCopy={e => e.preventDefault()}
+        onCut={e => e.preventDefault()}
+        onPaste={e => e.preventDefault()}
       >
         <ThemeProvider>
         {children}
