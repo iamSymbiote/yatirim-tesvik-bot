@@ -565,7 +565,9 @@ export default function Home() {
                       fontWeight: 600,
                       transition: 'border-color 0.3s ease',
                       textAlign: 'center',
-                      width: '15%'
+                      width: '15%',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
                     }}>{destek.deger}</td>
                   </tr>
                 ))}
