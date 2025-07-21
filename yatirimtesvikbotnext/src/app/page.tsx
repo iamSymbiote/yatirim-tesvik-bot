@@ -568,7 +568,11 @@ export default function Home() {
                       width: '15%',
                       textTransform: 'uppercase',
                       letterSpacing: '1px',
-                    }}>{destek.deger}</td>
+                    }}>{
+                      destek.ad === 'Sigorta Primi İşveren Hissesi Desteği' && /^\d+$/.test(destek.deger)
+                        ? `${destek.deger} YIL`
+                        : destek.deger
+                    }</td>
                   </tr>
                 ))}
               </tbody>
