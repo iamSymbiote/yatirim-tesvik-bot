@@ -5,7 +5,7 @@ const path = require('path');
 // Yüksek Teknoloji dosyasını işle
 function processYuksekTekno() {
   try {
-    const workbook = XLSX.readFile('yuksekTekno.xlsx');
+    const workbook = XLSX.readFile(path.join(__dirname, '../src/data_sources/yuksekTekno.xlsx'));
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     
@@ -21,8 +21,8 @@ function processYuksekTekno() {
     
     console.log('Yüksek Teknoloji NACE kodları:', naceKodlari.length);
     
-    // JSON dosyasına kaydet
-    const outputPath = path.join(__dirname, '../src/yuksekTekno.json');
+    // JSON dosyasına kaydet - data klasörüne
+    const outputPath = path.join(__dirname, '../src/data/yuksekTekno.json');
     fs.writeFileSync(outputPath, JSON.stringify(naceKodlari, null, 2));
     console.log('Yüksek teknoloji verileri kaydedildi:', outputPath);
     
@@ -36,7 +36,7 @@ function processYuksekTekno() {
 // Orta-Yüksek Teknoloji dosyasını işle
 function processOrtaYuksekTekno() {
   try {
-    const workbook = XLSX.readFile('ortaYuksekTekno.xlsx');
+    const workbook = XLSX.readFile(path.join(__dirname, '../src/data_sources/ortaYuksekTekno.xlsx'));
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     
@@ -52,8 +52,8 @@ function processOrtaYuksekTekno() {
     
     console.log('Orta-Yüksek Teknoloji NACE kodları:', naceKodlari.length);
     
-    // JSON dosyasına kaydet
-    const outputPath = path.join(__dirname, '../src/ortaYuksekTekno.json');
+    // JSON dosyasına kaydet - data klasörüne
+    const outputPath = path.join(__dirname, '../src/data/ortaYuksekTekno.json');
     fs.writeFileSync(outputPath, JSON.stringify(naceKodlari, null, 2));
     console.log('Orta-yüksek teknoloji verileri kaydedildi:', outputPath);
     

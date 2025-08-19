@@ -2,8 +2,8 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 
-// Excel dosyasını oku
-const workbook = XLSX.readFile(path.join(__dirname, '../hedefYatirimlar.xlsx'));
+// Excel dosyasını oku - data_sources klasöründen
+const workbook = XLSX.readFile(path.join(__dirname, '../src/data_sources/hedefYatirimlar.xlsx'));
 
 // İlk sheet'i al
 const sheetName = workbook.SheetNames[0];
@@ -24,8 +24,8 @@ const hedefYatirimlar = jsonData.slice(1).map(row => {
   };
 }).filter(item => item.kod && item.kod !== ''); // Boş satırları filtrele
 
-// JSON dosyasını yaz
-const outputPath = path.join(__dirname, '../src/hedefYatirimlar.json');
+// JSON dosyasını yaz - data klasörüne
+const outputPath = path.join(__dirname, '../src/data/hedefYatirimlar.json');
 fs.writeFileSync(outputPath, JSON.stringify(hedefYatirimlar, null, 2));
 
 console.log(`Hedef yatırımlar JSON dosyası oluşturuldu: ${outputPath}`);

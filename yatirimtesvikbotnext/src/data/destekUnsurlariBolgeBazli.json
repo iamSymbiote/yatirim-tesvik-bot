@@ -3,12 +3,12 @@
     {
       "ad": "KDV İstisnası",
       "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Gümrük Vergisi Muafiyeti",
       "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Vergi İndirimi",
@@ -23,19 +23,19 @@
     {
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
-      "deger": "Yok"
+      "deger": "YOK"
     }
   ],
   "2. Bölge": [
     {
       "ad": "KDV İstisnası",
       "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Gümrük Vergisi Muafiyeti",
       "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Vergi İndirimi",
@@ -50,19 +50,19 @@
     {
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
-      "deger": "1"
+      "deger": "1 YIL"
     }
   ],
   "3. Bölge": [
     {
       "ad": "KDV İstisnası",
       "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Gümrük Vergisi Muafiyeti",
       "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Vergi İndirimi",
@@ -77,19 +77,19 @@
     {
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
-      "deger": "2"
+      "deger": "2 YIL"
     }
   ],
   "4. Bölge": [
     {
       "ad": "KDV İstisnası",
       "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Gümrük Vergisi Muafiyeti",
       "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Vergi İndirimi",
@@ -104,19 +104,19 @@
     {
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
-      "deger": "4"
+      "deger": "4 YIL"
     }
   ],
   "5. Bölge": [
     {
       "ad": "KDV İstisnası",
       "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Gümrük Vergisi Muafiyeti",
       "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Vergi İndirimi",
@@ -131,19 +131,19 @@
     {
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
-      "deger": "8"
+      "deger": "8 YIL"
     }
   ],
   "6. Bölge": [
     {
       "ad": "KDV İstisnası",
       "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Gümrük Vergisi Muafiyeti",
       "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
-      "deger": "var"
+      "deger": "VAR"
     },
     {
       "ad": "Vergi İndirimi",
@@ -158,7 +158,7 @@
     {
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
-      "deger": "12"
+      "deger": "12 YIL"
     }
   ]
 }

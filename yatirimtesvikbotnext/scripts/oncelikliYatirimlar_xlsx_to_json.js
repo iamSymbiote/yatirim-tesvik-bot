@@ -2,8 +2,8 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 
-// Excel dosyasını oku
-const workbook = XLSX.readFile('oncelikliYatirimlar.xlsx');
+// Excel dosyasını oku - data_sources klasöründen
+const workbook = XLSX.readFile(path.join(__dirname, '../src/data_sources/oncelikliYatirimlar.xlsx'));
 const sheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[sheetName];
 
