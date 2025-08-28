@@ -33,8 +33,20 @@ export default function Home() {
   const illerArray = Object.keys(iller);
   
   const ilceler = selectedIl ? iller[selectedIl as keyof typeof iller] || [] : [];
-  // Tüm şehirlerde ilçe listesi + separator + Diğer Tüm İlçeler
-  const ilceOptions = selectedIl ? (ilceler.length > 0 ? [...ilceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
+  // Tüm şehirlerde ilçe listesi + separator + Diğer Tüm İlçeler (duplicate kontrolü ile)
+  const ilceOptions = selectedIl ? (() => {
+    if (ilceler.length > 0) {
+      // İlçeler + separator + Diğer Tüm İlçeler
+      const options = [...ilceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'];
+      // Duplicate kontrolü - Set kullanarak unique değerler
+      const uniqueOptions = Array.from(new Set(options));
+      console.log('İlçe Options Debug:', { ilceler, options, uniqueOptions });
+      return uniqueOptions;
+    } else {
+      // Sadece Diğer Tüm İlçeler
+      return ['Diğer Tüm İlçeler'];
+    }
+  })() : [];
   
   // NACE arama filtreleme - düzeltildi
   const filteredNace: any[] = naceInput.length >= 2
@@ -147,24 +159,26 @@ export default function Home() {
         {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
       </IconButton>
 
-      {/* Kopyalama Uyarısı */}
-      <div style={{
-        position: 'fixed',
-        bottom: 20,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: mode === 'dark' ? 'rgba(255,0,0,0.1)' : 'rgba(255,0,0,0.05)',
-        color: '#e53935',
-        padding: '8px 16px',
-        borderRadius: '20px',
-        fontSize: '0.8rem',
-        fontWeight: 500,
-        border: '1px solid rgba(229,57,53,0.3)',
-        zIndex: 1001,
-        userSelect: 'none'
-      }}>
-        ⚠️ Bu içerik kopyalanamaz ve LORE Danışmanlık'a aittir
-      </div>
+      {/* Kopyalama Uyarısı - Sadece sorgula yapıldığında görünür */}
+      {showResult && (
+        <div style={{
+          position: 'fixed',
+          bottom: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: mode === 'dark' ? 'rgba(255,0,0,0.1)' : 'rgba(255,0,0,0.05)',
+          color: '#e53935',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          fontSize: '0.8rem',
+          fontWeight: 500,
+          border: '1px solid rgba(229,57,53,0.3)',
+          zIndex: 1001,
+          userSelect: 'none'
+        }}>
+          ⚠️ Bu içerik kopyalanamaz ve LORE Danışmanlık'a aittir
+        </div>
+      )}
       
       <div className="tesvik-card">
         <Image src="/assets/lore-logo.png" alt="Lore Danışmanlık Logo" className="tesvik-logo" width={220} height={120} />
@@ -211,7 +225,7 @@ export default function Home() {
                           <span style={{ fontWeight: 600, color: '#1976d2' }}>{option.kod}</span>
                           <span style={{ fontSize: '0.9rem', color: '#666' }}>{option.tanim}</span>
                         </div>
-                      </li>
+          </li>
                     );
                   }}
                 />
@@ -715,8 +729,8 @@ export default function Home() {
               }}>
                 <a 
                   href="https://www.yatirimtesvikbelgesi.com/tesvik-belgesi-basvuru-formu" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
                   style={{
                     color: '#1976d2',
                     textDecoration: 'underline',
@@ -925,7 +939,7 @@ export default function Home() {
             )}
           </div>
         )}
-      </div>
+        </div>
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
