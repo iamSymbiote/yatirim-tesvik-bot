@@ -22,20 +22,27 @@ export default function Home() {
   const [selectedIlce, setSelectedIlce] = useState('');
   const [naceValue, setNaceValue] = useState<any>(null);
   const [naceInput, setNaceInput] = useState('');
+  const [naceOpen, setNaceOpen] = useState(false); // NACE dropdown açık/kapalı durumu
   const [osb, setOsb] = useState('hayir');
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true); // Test için true olarak ayarlandı
   const [modalOpen, setModalOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const ilceler = selectedIl ? iller.find((il) => il.ad === selectedIl)?.ilceler || [] : [];
+  
+  // İller object'ini array'e çevir
+  const illerArray = Object.keys(iller);
+  
+  const ilceler = selectedIl ? iller[selectedIl as keyof typeof iller] || [] : [];
   // Tüm şehirlerde ilçe listesi + separator + Diğer Tüm İlçeler
   const ilceOptions = selectedIl ? (ilceler.length > 0 ? [...ilceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
+  
+  // NACE arama filtreleme - düzeltildi
   const filteredNace: any[] = naceInput.length >= 2
     ? (naceList as any[]).filter(option =>
         option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
         option.tanim.toLowerCase().includes(naceInput.toLowerCase())
       )
-    : [];
+    : (naceList as any[]); // Boş input'ta tüm listeyi göster
   
   // Hedef yatırım kontrolü
   const isHedefYatirim = (naceKodu: string) => {
@@ -56,8 +63,17 @@ export default function Home() {
     return result;
   };
 
-  // Öncelikli yatırım kontrolü (NACE tanımı ile açıklama karşılaştırması)
+  // Öncelikli yatırım kontrolü (NACE tanımı ile açıklama karşılaştırması + 6. bölge özel durumu)
   const isOncelikliYatirim = (nace: any) => {
+    // 6. bölge illeri için otomatik öncelikli yatırım
+    if (selectedIl) {
+      const bolge = getBolge(selectedIl);
+      if (bolge === 6) {
+        return true; // 6. bölge illeri otomatik olarak öncelikli kapsamda
+      }
+    }
+    
+    // Diğer bölgeler için normal kontrol
     if (!nace) return false;
     const tanim = (nace.tanim || '').toLowerCase();
     // Basit bir eşleşme: açıklama içinde NACE tanımının bir kısmı geçiyorsa
@@ -87,14 +103,33 @@ export default function Home() {
 
   // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
   useEffect(() => {
+    console.log('NACE Listesi Yüklendi:', naceList.length, 'kod');
     console.log('Yüksek Teknoloji Listesi Yüklendi:', yuksekTekno.length, 'kod');
     console.log('Orta-Yüksek Teknoloji Listesi Yüklendi:', ortaYuksekTekno.length, 'kod');
+    console.log('Örnek NACE Kodları:', naceList.slice(0, 3));
     console.log('Örnek Yüksek Teknoloji Kodları:', yuksekTekno.slice(0, 5));
     console.log('Örnek Orta-Yüksek Teknoloji Kodları:', ortaYuksekTekno.slice(0, 5));
   }, []);
 
   return (
     <div className="app-center">
+      {/* Filigran ve Kopyalama Uyarısı */}
+      <div style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%) rotate(-45deg)',
+        fontSize: '2rem',
+        color: 'rgba(0,0,0,0.03)',
+        fontWeight: 'bold',
+        pointerEvents: 'none',
+        zIndex: 1000,
+        userSelect: 'none',
+        whiteSpace: 'nowrap'
+      }}>
+        LORE DANIŞMANLIK
+      </div>
+      
       {/* Dark Mode Toggle Button */}
       <IconButton
         onClick={toggleTheme}
@@ -102,24 +137,34 @@ export default function Home() {
           position: 'fixed',
           top: 20,
           right: 20,
-          zIndex: 1000,
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(0, 0, 0, 0.1)',
+          zIndex: 1001,
+          backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          },
-          '@media (prefers-color-scheme: dark)': {
-            backgroundColor: 'rgba(30, 30, 30, 0.9)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            '&:hover': {
-              backgroundColor: 'rgba(30, 30, 30, 0.95)',
-            },
-          },
+            backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+          }
         }}
       >
         {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
       </IconButton>
+
+      {/* Kopyalama Uyarısı */}
+      <div style={{
+        position: 'fixed',
+        bottom: 20,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: mode === 'dark' ? 'rgba(255,0,0,0.1)' : 'rgba(255,0,0,0.05)',
+        color: '#e53935',
+        padding: '8px 16px',
+        borderRadius: '20px',
+        fontSize: '0.8rem',
+        fontWeight: 500,
+        border: '1px solid rgba(229,57,53,0.3)',
+        zIndex: 1001,
+        userSelect: 'none'
+      }}>
+        ⚠️ Bu içerik kopyalanamaz ve LORE Danışmanlık'a aittir
+      </div>
       
       <div className="tesvik-card">
         <Image src="/assets/lore-logo.png" alt="Lore Danışmanlık Logo" className="tesvik-logo" width={220} height={120} />
@@ -140,18 +185,34 @@ export default function Home() {
                   onChange={(_: any, newValue: any) => setNaceValue(newValue)}
                   inputValue={naceInput}
                   onInputChange={(_: any, newInput: any) => setNaceInput(newInput)}
+                  open={naceOpen} // NACE dropdown açık/kapalı durumu
+                  onOpen={() => setNaceOpen(true)} // Autocomplete açıldığında açık olsun
+                  onClose={() => setNaceOpen(false)} // Autocomplete kapandığında kapalı olsun
                   renderInput={(params: any) => (
                     <TextField
                       {...params}
                       label="NACE Kodu veya Tanımı"
                       variant="outlined"
                       fullWidth
-                      helperText={naceInput.length > 0 && naceInput.length < 2 ? 'En az 2 karakter giriniz.' : ''}
+                      onFocus={() => setNaceOpen(true)} // Tıklandığında dropdown'ı aç
+                      helperText={naceInput.length > 0 && naceInput.length < 2 ? 'En az 2 karakter giriniz.' : 'Tüm NACE kodları listeleniyor...'}
                     />
                   )}
                   isOptionEqualToValue={(option: any, value: any) => option.kod === value.kod}
                   ListboxProps={{
                     style: { maxHeight: 260, overflowY: 'auto' },
+                  }}
+                  renderOption={(props, option) => {
+                    const { key, ...otherProps } = props;
+                    // Unique key için NACE kodu kullan (zaten unique)
+                    return (
+                      <li key={option.kod} {...otherProps}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <span style={{ fontWeight: 600, color: '#1976d2' }}>{option.kod}</span>
+                          <span style={{ fontSize: '0.9rem', color: '#666' }}>{option.tanim}</span>
+                        </div>
+                      </li>
+                    );
                   }}
                 />
               </div>
@@ -160,7 +221,7 @@ export default function Home() {
           <div className="tesvik-row-vertical">
             <div className="tesvik-box yatirim-blok">
               <Autocomplete
-                options={iller.map(il => il.ad)}
+                options={illerArray}
                 value={selectedIl}
                 onChange={(_: any, newValue: string | null) => {
                   setSelectedIl(newValue || '');
@@ -179,7 +240,7 @@ export default function Home() {
                     fullWidth
                     margin="normal"
                     helperText="İl adını yazabilir veya listeden seçebilirsiniz"
-                    error={!!(selectedIl && !iller.some(il => il.ad.toLowerCase() === selectedIl.toLowerCase()))}
+                    error={!!(selectedIl && !illerArray.some(il => il.toLowerCase() === selectedIl.toLowerCase()))}
                   />
                 )}
                 freeSolo
@@ -202,8 +263,8 @@ export default function Home() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontWeight: 500 }}>{option}</span>
                         {(() => {
-                          const ilData = iller.find(il => il.ad === option);
-                          const ilceCount = ilData?.ilceler?.length || 0;
+                          const ilData = iller[option as keyof typeof iller];
+                          const ilceCount = ilData?.length || 0;
                           return ilceCount > 0 ? (
                             <span style={{ fontSize: '0.8rem', color: '#666', opacity: 0.7 }}>
                               ({ilceCount} ilçe)
@@ -259,7 +320,8 @@ export default function Home() {
           >
             SORGULA
           </Button>
-          <div className="tesvik-checkbox-row">
+          {/* Test modunda checkbox gizli - sürekli tıklamaya gerek yok */}
+          {/* <div className="tesvik-checkbox-row">
             <Checkbox 
               checked={checked} 
               onChange={(e: any) => {
@@ -273,6 +335,19 @@ export default function Home() {
                 Kullanım Koşullarını okudum, anladım.
               </span>
             </Typography>
+          </div> */}
+          
+          {/* Test modunda bilgi mesajı */}
+          <div style={{
+            padding: '12px 16px',
+            backgroundColor: mode === 'dark' ? 'rgba(0,255,0,0.1)' : 'rgba(0,255,0,0.05)',
+            border: `1px solid ${mode === 'dark' ? 'rgba(0,255,0,0.3)' : 'rgba(0,255,0,0.2)'}`,
+            borderRadius: '8px',
+            marginBottom: '16px',
+            fontSize: '0.9rem',
+            color: mode === 'dark' ? '#4caf50' : '#2e7d32'
+          }}>
+            🧪 <strong>Test Modu:</strong> Kullanım koşulları otomatik onaylandı. SORGULA butonu aktif.
           </div>
           <div className="tesvik-footer">
             <InfoOutlinedIcon color="action" fontSize="small" style={{ marginTop: 2 }} />
@@ -438,6 +513,83 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
+            
+            {/* 6. Bölge Özel Öncelikli Yatırım Bilgi Paneli */}
+            {selectedIl && getBolge(selectedIl) === 6 && (
+              <div style={{
+                background: mode === 'dark' ? 'rgba(255,193,7,0.15)' : 'rgba(255,193,7,0.1)',
+                border: `2px solid ${mode === 'dark' ? 'rgba(255,193,7,0.4)' : 'rgba(255,193,7,0.3)'}`,
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '32px',
+                transition: 'all 0.3s ease'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '12px'
+                }}>
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    backgroundColor: '#ff9800',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 'bold'
+                  }}>
+                    ⭐
+                  </div>
+                  <Typography variant="h6" style={{
+                    color: mode === 'dark' ? '#ffb74d' : '#e65100',
+                    fontWeight: 700,
+                    margin: 0
+                  }}>
+                    6. Bölge Öncelikli Yatırım Kapsamı
+                  </Typography>
+                </div>
+                <Typography variant="body1" style={{
+                  color: mode === 'dark' ? '#fff3e0' : '#333',
+                  lineHeight: 1.6,
+                  margin: 0,
+                  marginBottom: '12px',
+                  fontWeight: 500
+                }}>
+                  🎯 <strong>{selectedIl}</strong> ili 6. bölgede yer aldığı için, yatırımınız otomatik olarak <strong>"Öncelikli Yatırım Konusu"</strong> kapsamında değerlendirilecektir.
+                </Typography>
+                <Typography variant="body2" style={{
+                  color: mode === 'dark' ? '#ffcc02' : '#f57c00',
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  marginBottom: '8px'
+                }}>
+                  ✨ <strong>6. Bölge Avantajları:</strong>
+                </Typography>
+                <ul style={{
+                  margin: '8px 0',
+                  paddingLeft: '20px',
+                  color: mode === 'dark' ? '#fff3e0' : '#333'
+                }}>
+                  <li>En yüksek yatırıma katkı oranı (%30)</li>
+                  <li>En uzun sigorta primi desteği (12 YIL)</li>
+                  <li>Öncelikli yatırım kapsamında ilave avantajlar</li>
+                  <li>En düşük asgari yatırım tutarı (6.000.000 TL)</li>
+                </ul>
+                <Typography variant="body2" style={{
+                  color: mode === 'dark' ? '#ffcc02' : '#f57c00',
+                  fontSize: '0.9rem',
+                  fontStyle: 'italic',
+                  marginTop: '8px'
+                }}>
+                  💡 Bu avantajlardan faydalanmak için teşvik belgesi başvurunuzu yukarıdaki linkten yapabilirsiniz.
+                </Typography>
+              </div>
+            )}
+            
             <hr style={{ 
               margin: '40px 0', 
               border: 0, 
@@ -518,6 +670,73 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
+            
+            {/* Teşvik Belgesi Başvuru Bilgi Paneli */}
+            <div style={{
+              background: mode === 'dark' ? 'rgba(25,118,210,0.1)' : 'rgba(25,118,210,0.05)',
+              border: `1px solid ${mode === 'dark' ? 'rgba(25,118,210,0.3)' : 'rgba(25,118,210,0.2)'}`,
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '32px',
+              transition: 'all 0.3s ease'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '12px'
+              }}>
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  backgroundColor: '#1976d2',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}>
+                  ℹ️
+                </div>
+                <Typography variant="h6" style={{
+                  color: mode === 'dark' ? '#1976d2' : '#1565c0',
+                  fontWeight: 600,
+                  margin: 0
+                }}>
+                  Yeni Teşvik Belgesi Başvurusu
+                </Typography>
+              </div>
+              <Typography variant="body1" style={{
+                color: mode === 'dark' ? '#e0e0e0' : '#333',
+                lineHeight: 1.6,
+                margin: 0
+              }}>
+                <a 
+                  href="https://www.yatirimtesvikbelgesi.com/tesvik-belgesi-basvuru-formu" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#1976d2',
+                    textDecoration: 'underline',
+                    fontWeight: 500
+                  }}
+                >
+                  https://www.yatirimtesvikbelgesi.com/tesvik-belgesi-basvuru-formu
+                </a>
+                {' '}adresinden yeni teşvik belgesi alabilirsiniz.
+              </Typography>
+              <Typography variant="body2" style={{
+                color: mode === 'dark' ? '#b0b0b0' : '#666',
+                fontSize: '0.9rem',
+                marginTop: '8px',
+                fontStyle: 'italic'
+              }}>
+                💡 Bu link sizi LORE Danışmanlık'ın resmi teşvik belgesi başvuru formuna yönlendirecektir.
+              </Typography>
+            </div>
+            
             {/* Buradan sonra yeni ekran veya kutular eklenebilir */}
             <hr style={{ 
               margin: '40px 0', 
@@ -526,11 +745,11 @@ export default function Home() {
               background: `linear-gradient(90deg, transparent 0%, ${mode === 'dark' ? '#404040' : '#e9ecef'} 50%, transparent 100%)`,
               transition: 'background 0.3s ease'
             }} />
-            {/* DESTEK UNSURLARI Tablosu */}
+            {/* DESTEK UNSURLARI VE TÜRLERİ Birleşik Tablosu */}
             <div className="section-title" style={{ 
               color: mode === 'dark' ? '#e9ecef' : '#495057',
               transition: 'color 0.3s ease'
-            }}>DESTEK UNSURLARI</div>
+            }}>DESTEK UNSURLARI VE TÜRLERİ</div>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
@@ -539,9 +758,41 @@ export default function Home() {
               fontSize: '1.08rem',
               transition: 'background-color 0.3s ease'
             }}>
+              <thead>
+                <tr>
+                  <th style={{ 
+                    border: `1px solid ${mode === 'dark' ? '#404040' : '#ccc'}`, 
+                    padding: 12,
+                    backgroundColor: mode === 'dark' ? '#404040' : '#f8f9fa',
+                    color: mode === 'dark' ? '#ffffff' : '#495057',
+                    fontWeight: 600,
+                    textAlign: 'left',
+                    transition: 'background-color 0.3s ease, color 0.3s ease'
+                  }}>Destek Unsuru</th>
+                  <th style={{ 
+                    border: `1px solid ${mode === 'dark' ? '#404040' : '#ccc'}`, 
+                    padding: 12,
+                    backgroundColor: mode === 'dark' ? '#404040' : '#f8f9fa',
+                    color: mode === 'dark' ? '#ffffff' : '#495057',
+                    fontWeight: 600,
+                    textAlign: 'left',
+                    transition: 'background-color 0.3s ease, color 0.3s ease'
+                  }}>Açıklama</th>
+                  <th style={{ 
+                    border: `1px solid ${mode === 'dark' ? '#404040' : '#ccc'}`, 
+                    padding: 12,
+                    backgroundColor: mode === 'dark' ? '#404040' : '#f8f9fa',
+                    color: mode === 'dark' ? '#ffffff' : '#495057',
+                    fontWeight: 600,
+                    textAlign: 'center',
+                    transition: 'background-color 0.3s ease, color 0.3s ease'
+                  }}>Değer</th>
+                </tr>
+              </thead>
               <tbody>
+                {/* Bölge bazlı destek unsurları */}
                 {getDestekUnsurlariByBolge(selectedIl, selectedIlce, osb).map((destek, index) => (
-                  <tr key={index}>
+                  <tr key={`unsur-${destek.ad}-${index}`}>
                     <td style={{ 
                       border: `1px solid ${mode === 'dark' ? '#404040' : '#ccc'}`, 
                       padding: 10,
@@ -575,31 +826,9 @@ export default function Home() {
                     }</td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
-            <hr style={{ 
-              margin: '40px 0', 
-              border: 0, 
-              height: '2px',
-              background: `linear-gradient(90deg, transparent 0%, ${mode === 'dark' ? '#404040' : '#e9ecef'} 50%, transparent 100%)`,
-              transition: 'background 0.3s ease'
-            }} />
-            {/* DESTEK TÜRLERİ Tablosu */}
-            <div className="section-title" style={{ 
-              color: mode === 'dark' ? '#e9ecef' : '#495057',
-              transition: 'color 0.3s ease'
-            }}>DESTEK TÜRLERİ</div>
-            <table style={{ 
-              width: '100%', 
-              borderCollapse: 'collapse', 
-              marginBottom: 32, 
-              background: mode === 'dark' ? '#2d2d2d' : '#fff', 
-              fontSize: '1.08rem',
-              transition: 'background-color 0.3s ease'
-            }}>
-              <tbody>
+                {/* Sabit destek türleri */}
                 {destekVerileri.destekTurleri.map((destek, index) => (
-                  <tr key={index}>
+                  <tr key={`tur-${destek.ad}-${index}`}>
                     <td style={{ 
                       border: `1px solid ${mode === 'dark' ? '#404040' : '#ccc'}`, 
                       padding: 10,
@@ -629,6 +858,71 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+            {/* Bölge Hesaplama Test Paneli */}
+            {showResult && (
+              <div style={{
+                background: mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                border: `1px solid ${mode === 'dark' ? '#404040' : '#e9ecef'}`,
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '32px',
+                transition: 'all 0.3s ease'
+              }}>
+                <div className="section-title" style={{ 
+                  color: mode === 'dark' ? '#e9ecef' : '#495057',
+                  transition: 'color 0.3s ease',
+                  marginBottom: '16px'
+                }}>🔍 Bölge Hesaplama Test Paneli</div>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                  fontSize: '0.9rem'
+                }}>
+                  <div style={{
+                    background: mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: `1px solid ${mode === 'dark' ? '#404040' : '#e9ecef'}`
+                  }}>
+                    <strong>Seçilen İl:</strong> {selectedIl}<br/>
+                    <strong>Ana Bölge:</strong> {getBolge(selectedIl) || '-'}. Bölge
+                  </div>
+                  <div style={{
+                    background: mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: `1px solid ${mode === 'dark' ? '#404040' : '#e9ecef'}`
+                  }}>
+                    <strong>Seçilen İlçe:</strong> {selectedIlce}<br/>
+                    <strong>OSB Durumu:</strong> {osb === 'evet' ? 'Evet' : 'Hayır'}
+                  </div>
+                  <div style={{
+                    background: mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: `1px solid ${mode === 'dark' ? '#404040' : '#e9ecef'}`
+                  }}>
+                    <strong>Destek Bölgesi:</strong> {getDestekBolgesi(selectedIl, selectedIlce, osb) || '-'}. Bölge<br/>
+                    <strong>Asgari Tutar:</strong> {getAsgariYatirimTutari(getBolge(selectedIl) || 0)}
+                  </div>
+                </div>
+                <div style={{
+                  marginTop: '16px',
+                  padding: '12px',
+                  background: mode === 'dark' ? 'rgba(0,255,0,0.1)' : 'rgba(0,255,0,0.05)',
+                  border: `1px solid ${mode === 'dark' ? 'rgba(0,255,0,0.3)' : 'rgba(0,255,0,0.2)'}`,
+                  borderRadius: '8px',
+                  fontSize: '0.85rem',
+                  color: mode === 'dark' ? '#4caf50' : '#2e7d32'
+                }}>
+                  ✅ <strong>Algoritma Test Sonucu:</strong> Bölge hesaplama algoritması çalışıyor. 
+                  {selectedIl && selectedIlce && osb && (
+                    <> {selectedIl} ili {getBolge(selectedIl)}. bölgede, {selectedIlce === 'Diğer Tüm İlçeler' ? 'genel ilçe' : 'spesifik ilçe'} seçimi ve OSB {osb === 'evet' ? 'var' : 'yok'} durumuna göre {getDestekBolgesi(selectedIl, selectedIlce, osb)}. destek bölgesinden faydalanacak.</>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

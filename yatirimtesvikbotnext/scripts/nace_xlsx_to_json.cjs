@@ -12,25 +12,47 @@ const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
 // İlk satırı (başlıkları) atla ve veriyi düzenle
 const naceKodlari = jsonData.slice(1).map(row => {
-  // NACE kodu genellikle ilk sütunda olur
-  const naceKodu = row[0] ? row[0].toString().trim() : '';
-  const naceTanimi = row[1] ? row[1].toString().trim() : '';
+  // NACE kodu 5. sütunda (index 4), tanım 6. sütunda (index 5)
+  const naceKodu = row[4] ? row[4].toString().trim() : '';
+  const naceTanimi = row[5] ? row[5].toString().trim() : '';
   
   return {
     kod: naceKodu,
     tanim: naceTanimi
   };
-}).filter(item => item.kod && item.kod !== ''); // Boş satırları filtrele
+}).filter(item => item.kod && item.kod !== '' && item.tanim && item.tanim !== ''); // Boş satırları filtrele
+
+// Duplicate'leri kaldır - sadece unique kodları tut
+const uniqueNaceKodlari = [];
+const seenKodlar = new Set();
+
+naceKodlari.forEach(item => {
+  if (!seenKodlar.has(item.kod)) {
+    seenKodlar.add(item.kod);
+    uniqueNaceKodlari.push(item);
+  }
+});
 
 // JSON dosyasını yaz - data klasörüne
 const outputPath = path.join(__dirname, '../src/data/nace.json');
-fs.writeFileSync(outputPath, JSON.stringify(naceKodlari, null, 2));
+fs.writeFileSync(outputPath, JSON.stringify(uniqueNaceKodlari, null, 2));
 
 console.log(`NACE kodları JSON dosyası oluşturuldu: ${outputPath}`);
-console.log(`Toplam ${naceKodlari.length} NACE kodu eklendi.`);
+console.log(`Toplam ${uniqueNaceKodlari.length} unique NACE kodu eklendi.`);
+console.log(`Duplicate kayıtlar kaldırıldı: ${naceKodlari.length - uniqueNaceKodlari.length}`);
 
 // İlk birkaç örneği göster
 console.log('\nİlk 5 NACE kodu:');
-naceKodlari.slice(0, 5).forEach(item => {
+uniqueNaceKodlari.slice(0, 5).forEach(item => {
+  console.log(`- ${item.kod}: ${item.tanim}`);
+});
+
+// "sera" araması için test
+console.log('\n"sera" araması için örnekler:');
+const seraResults = uniqueNaceKodlari.filter(item => 
+  item.tanim.toLowerCase().includes('sera') || 
+  item.kod.toLowerCase().includes('sera')
+);
+seraResults.slice(0, 3).forEach(item => {
   console.log(`- ${item.kod}: ${item.tanim}`);
 });
