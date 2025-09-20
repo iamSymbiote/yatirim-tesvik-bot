@@ -16,7 +16,7 @@ import oncelikliYatirimKonulariYENi from '../data/oncelikliYatirimKonulariYENi.j
 import Image from 'next/image';
 import { getBolge, getDestekBolgesi, getAsgariYatirimTutari } from "../utils/yatirimbolgesihesap";
 import { useTheme } from './ThemeProvider';
-import jsPDF from 'jspdf';
+import { generateAndDownloadPDF } from '../components/PDFReport';
 
 export default function Home() {
   const { mode, toggleTheme } = useTheme();
@@ -30,7 +30,7 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  
+  const [naceLoading, setNaceLoading] = useState(true); // NACE kodları yükleniyor mu?
   // İller object'ini array'e çevir
   const illerArray = Object.keys(iller);
   
@@ -50,12 +50,13 @@ export default function Home() {
   })() : [];
   
   // NACE arama filtreleme - düzeltildi
-  const filteredNace: any[] = naceInput.length >= 2
-    ? (naceList as any[]).filter(option =>
-        option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
-        option.tanim.toLowerCase().includes(naceInput.toLowerCase())
-      )
-    : (naceList as any[]); // Boş input'ta tüm listeyi göster
+  const filteredNace: any[] =
+    naceInput.length >= 2
+      ? (naceList as any[]).filter(option =>
+          option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
+          option.tanim.toLowerCase().includes(naceInput.toLowerCase())
+        )
+      : (naceList as any[]).slice(0, 30); // Boş input'ta sadece ilk 30'u göster
   
   // Hedef yatırım kontrolü
   const isHedefYatirim = (naceKodu: string) => {
@@ -107,238 +108,36 @@ export default function Home() {
     return eskiListedeVar;
   };
 
-  // PDF oluşturma fonksiyonu - Web sitesi tasarımına uygun
-  const generatePDF = () => {
+  // Yeni React-PDF ile PDF oluşturma
+  const generatePDF = async () => {
     if (!showResult || !naceValue || !selectedIl || !selectedIlce) return;
 
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let yPosition = 20;
+    try {
+      const destekBolgesi = getDestekBolgesi(selectedIl, selectedIlce, osb);
+      const asgariTutar = getAsgariYatirimTutari(getBolge(selectedIl) || 0);
+      const destekUnsurlari = getDestekUnsurlariByBolge(selectedIl, selectedIlce, osb);
 
-    // Türkçe karakter desteği için font ayarları
-    doc.setFont('helvetica', 'normal');
-    
-    // Türkçe karakterleri düzgün göstermek için yardımcı fonksiyon
-    const turkceMetin = (metin: string) => {
-      return metin
-        .replace(/ı/g, 'i')
-        .replace(/İ/g, 'I')
-        .replace(/ş/g, 's')
-        .replace(/Ş/g, 'S')
-        .replace(/ğ/g, 'g')
-        .replace(/Ğ/g, 'G')
-        .replace(/ü/g, 'u')
-        .replace(/Ü/g, 'U')
-        .replace(/ö/g, 'o')
-        .replace(/Ö/g, 'O')
-        .replace(/ç/g, 'c')
-        .replace(/Ç/g, 'C');
-    };
+      const pdfProps = {
+        selectedIl,
+        selectedIlce,
+        naceValue,
+        osb,
+        isHedefYatirim: isHedefYatirim(naceValue),
+        isYuksekTeknoloji: isYuksekTeknoloji(naceValue.kod),
+        isOrtaYuksekTeknoloji: isOrtaYuksekTeknoloji(naceValue.kod),
+        isOncelikliYatirim: isOncelikliYatirim(naceValue),
+        destekBolgesi,
+        asgariTutar,
+        destekUnsurlari,
+      };
 
-    // Arka plan rengi - Web sitesi gibi koyu gri
-    doc.setFillColor(45, 45, 45);
-    doc.rect(0, 0, pageWidth, pageHeight, 'F');
-
-    // Header - Web sitesi gibi mavi gradient
-    doc.setFillColor(25, 118, 210);
-    doc.rect(0, 0, pageWidth, 80, 'F');
-    
-    // Logo alanı (mavi kutu içinde)
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(28);
-    doc.setFont('helvetica', 'bold');
-    doc.text(turkceMetin('YATIRIM TESVIK ROBOTU'), pageWidth / 2, 35, { align: 'center' });
-    
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'normal');
-    doc.text(turkceMetin('Yatirim Tesvik Sorgulama Raporu'), pageWidth / 2, 55, { align: 'center' });
-    
-    yPosition = 100;
-
-    // Tarih ve rapor bilgileri - Web sitesi gibi mavi kutu
-    doc.setFillColor(25, 118, 210);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 35, 'F');
-    
-    const now = new Date();
-    const tarih = now.toLocaleDateString('tr-TR');
-    const saat = now.toLocaleTimeString('tr-TR');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text(turkceMetin(`Rapor Tarihi: ${tarih} ${saat}`), 30, yPosition);
-    doc.text(turkceMetin(`Rapor No: YTR-${Date.now().toString().slice(-6)}`), 30, yPosition + 12);
-    yPosition += 45;
-
-    // Seçilen bilgiler - Web sitesi gibi beyaz kart
-    doc.setFillColor(255, 255, 255);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 100, 'F');
-    
-    // Başlık - Web sitesi gibi mavi
-    doc.setFillColor(25, 118, 210);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 25, 'F');
-    
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255, 255, 255);
-    doc.text(turkceMetin('SECILEN BILGILER'), 30, yPosition + 10);
-    yPosition += 35;
-
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(0, 0, 0);
-    
-    const bilgiler = [
-      { label: 'Il:', value: selectedIl },
-      { label: 'Ilce:', value: selectedIlce },
-      { label: 'NACE Kodu:', value: naceValue.kod },
-      { label: 'OSB/Endustri Bolgesi:', value: osb === 'evet' ? 'Evet' : 'Hayir' }
-    ];
-    
-    bilgiler.forEach((bilgi, index) => {
-      doc.setFont('helvetica', 'bold');
-      doc.text(turkceMetin(bilgi.label), 30, yPosition);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(25, 118, 210);
-      doc.text(turkceMetin(bilgi.value), 30 + 80, yPosition);
-      doc.setTextColor(0, 0, 0);
-      yPosition += 12;
-    });
-    
-    // NACE tanımı ayrı satırda
-    doc.setFont('helvetica', 'bold');
-    doc.text(turkceMetin('NACE Tanimi:'), 30, yPosition);
-    yPosition += 8;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(25, 118, 210);
-    const tanimSatirlari = doc.splitTextToSize(turkceMetin(naceValue.tanim), pageWidth - 80);
-    doc.text(tanimSatirlari, 30, yPosition);
-    doc.setTextColor(0, 0, 0);
-    yPosition += tanimSatirlari.length * 4 + 20;
-
-    // Yatırımın özellikleri - Web sitesi gibi yeşil kart
-    doc.setFillColor(255, 255, 255);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 80, 'F');
-    
-    // Başlık - Web sitesi gibi yeşil
-    doc.setFillColor(76, 175, 80);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 25, 'F');
-    
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255, 255, 255);
-    doc.text(turkceMetin('YATIRIMIN OZELLIKLERI'), 30, yPosition + 10);
-    yPosition += 35;
-
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    
-    const ozellikler = [
-      { label: 'Hedef Yatirim:', value: isHedefYatirim(naceValue) ? 'EVET' : 'HAYIR' },
-      { label: 'Yuksek Teknoloji Listesi:', value: isYuksekTeknoloji(naceValue) ? 'EVET' : 'HAYIR' },
-      { label: 'Orta-Yuksek Teknoloji Listesi:', value: isOrtaYuksekTeknoloji(naceValue) ? 'EVET' : 'HAYIR' },
-      { label: 'Oncelikli Yatirim Konusu:', value: isOncelikliYatirim(naceValue) ? 'EVET' : 'HAYIR' }
-    ];
-    
-    ozellikler.forEach((ozellik) => {
-      doc.setFont('helvetica', 'bold');
-      doc.text(turkceMetin(ozellik.label), 30, yPosition);
-      doc.setFont('helvetica', 'normal');
-      const renk = ozellik.value === 'EVET' ? [76, 175, 80] : [244, 67, 54];
-      doc.setTextColor(renk[0], renk[1], renk[2]);
-      doc.text(turkceMetin(ozellik.value), 30 + 100, yPosition);
-      doc.setTextColor(0, 0, 0);
-      yPosition += 10;
-    });
-    yPosition += 15;
-
-    // Destek bilgileri - Web sitesi gibi turuncu kart
-    doc.setFillColor(255, 255, 255);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 70, 'F');
-    
-    // Başlık - Web sitesi gibi turuncu
-    doc.setFillColor(255, 152, 0);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 25, 'F');
-    
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255, 255, 255);
-    doc.text(turkceMetin('DESTEK BILGILERI'), 30, yPosition + 10);
-    yPosition += 35;
-
-    const destekBolgesi = getDestekBolgesi(selectedIl, selectedIlce, osb);
-    const asgariTutar = getAsgariYatirimTutari(getBolge(selectedIl) || 0);
-    
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'bold');
-    doc.text(turkceMetin('Faydalanacagi Destek Bolgesi:'), 30, yPosition);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(255, 152, 0);
-    doc.text(turkceMetin(`${destekBolgesi || '-'}. Bolge`), 30 + 100, yPosition);
-    yPosition += 12;
-    
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'bold');
-    doc.text(turkceMetin('Asgari Yatirim Tutari:'), 30, yPosition);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(255, 152, 0);
-    doc.text(turkceMetin(asgariTutar), 30 + 100, yPosition);
-    yPosition += 25;
-
-    // Destek unsurları - Web sitesi gibi mor kart
-    doc.setFillColor(255, 255, 255);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 60, 'F');
-    
-    // Başlık - Web sitesi gibi mor
-    doc.setFillColor(156, 39, 176);
-    doc.rect(20, yPosition - 5, pageWidth - 40, 25, 'F');
-    
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255, 255, 255);
-    doc.text(turkceMetin('DESTEK UNSURLARI'), 30, yPosition + 10);
-    yPosition += 35;
-
-    const destekUnsurlari = getDestekUnsurlariByBolge(selectedIl, selectedIlce, osb);
-    
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    
-    destekUnsurlari.slice(0, 3).forEach((destek, index) => {
-      if (yPosition > pageHeight - 30) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      
-      doc.setFont('helvetica', 'bold');
-      doc.text(turkceMetin(destek.ad + ':'), 30, yPosition);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(156, 39, 176);
-      doc.text(turkceMetin(destek.deger), 30 + 80, yPosition);
-      doc.setTextColor(0, 0, 0);
-      yPosition += 8;
-    });
-    
-    if (destekUnsurlari.length > 3) {
-      doc.setFont('helvetica', 'italic');
-      doc.text(turkceMetin(`... ve ${destekUnsurlari.length - 3} destek unsuru daha`), 30, yPosition);
+      console.log('PDF oluşturuluyor...', pdfProps);
+      await generateAndDownloadPDF(pdfProps);
+      console.log('PDF başarıyla oluşturuldu!');
+    } catch (error) {
+      console.error('PDF oluşturma hatası:', error);
+      alert('PDF oluşturulurken bir hata oluştu: ' + (error as Error).message);
     }
-
-    // Alt bilgi - Footer - Web sitesi gibi koyu gri
-    yPosition = pageHeight - 40;
-    doc.setFillColor(45, 45, 45);
-    doc.rect(0, yPosition - 10, pageWidth, 40, 'F');
-    
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'italic');
-    doc.setTextColor(200, 200, 200);
-    doc.text(turkceMetin('Bu rapor Yatirim Tesvik Robotu tarafindan otomatik olarak olusturulmustur.'), pageWidth / 2, yPosition, { align: 'center' });
-    doc.text(turkceMetin('Detayli bilgi icin resmi kaynaklara basvurunuz.'), pageWidth / 2, yPosition + 8, { align: 'center' });
-
-    // PDF'i indir
-    doc.save(`yatirim-tesvik-raporu-${selectedIl}-${naceValue.kod}-${tarih.replace(/\./g, '-')}.pdf`);
   };
 
   // Bölge bazında destek unsurlarını getir
@@ -360,15 +159,19 @@ export default function Home() {
     }
   }, [showResult]);
 
-  // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
+  // NACE kodları yüklenince loading'i kapat
   useEffect(() => {
+    if (naceList && naceList.length > 0) {
+      setNaceLoading(false);
+    }
+    // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
     console.log('NACE Listesi Yüklendi:', naceList.length, 'kod');
     console.log('Yüksek Teknoloji Listesi Yüklendi:', yuksekTekno.length, 'kod');
     console.log('Orta-Yüksek Teknoloji Listesi Yüklendi:', ortaYuksekTekno.length, 'kod');
     console.log('Örnek NACE Kodları:', naceList.slice(0, 3));
     console.log('Örnek Yüksek Teknoloji Kodları:', yuksekTekno.slice(0, 5));
     console.log('Örnek Orta-Yüksek Teknoloji Kodları:', ortaYuksekTekno.slice(0, 5));
-  }, []);
+  }, [naceList]);
 
   return (
     <div className="app-center">
@@ -456,7 +259,11 @@ export default function Home() {
                       variant="outlined"
                       fullWidth
                       onFocus={() => setNaceOpen(true)} // Tıklandığında dropdown'ı aç
-                      helperText={naceInput.length > 0 && naceInput.length < 2 ? 'En az 2 karakter giriniz.' : 'Tüm NACE kodları listeleniyor...'}
+                      helperText={
+                        naceInput.length > 0 && naceInput.length < 2
+                          ? 'En az 2 karakter giriniz.'
+                          : (naceLoading ? 'Tüm NACE kodları listeleniyor...' : '')
+                      }
                     />
                   )}
                   isOptionEqualToValue={(option: any, value: any) => option.kod === value.kod}
@@ -624,35 +431,32 @@ export default function Home() {
               display: 'flex', 
               justifyContent: 'center', 
               marginBottom: '24px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              padding: '20px',
-              borderRadius: '15px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+              padding: '20px'
             }}>
               <Button
-                variant="contained"
+                variant="outlined"
                 size="large"
                 onClick={generatePDF}
-                startIcon={<span style={{ fontSize: '20px' }}>📊</span>}
+                
                 sx={{
-                  background: 'linear-gradient(45deg, #FF6B6B 30%, #4ECDC4 90%)',
-                  boxShadow: '0 6px 20px rgba(255, 107, 107, 0.4)',
-                  '&:hover': {
-                    background: 'linear-gradient(45deg, #FF5252 30%, #26A69A 90%)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(255, 107, 107, 0.6)',
-                  },
+                  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                  color: 'white',
                   px: 4,
                   py: 2,
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  borderRadius: '30px',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  borderRadius: '12px',
                   textTransform: 'none',
                   transition: 'all 0.3s ease',
-                  color: 'white'
+                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 20px rgba(33, 150, 243, 0.6)',
+                  }
                 }}
               >
-                📄 Profesyonel PDF Raporu İndir
+                📊 Raporu PDF olarak İndir
               </Button>
             </div>
             

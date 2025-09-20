@@ -28,14 +28,12 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [mode, setMode] = useState<ThemeMode>('light');
 
   useEffect(() => {
-    // Local storage'dan tema tercihini al
+    // Her zaman light ile başla, sadece kullanıcı değiştirirse kaydet
     const savedMode = localStorage.getItem('theme-mode') as ThemeMode;
     if (savedMode) {
       setMode(savedMode);
     } else {
-      // Sistem tercihini kontrol et
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setMode(prefersDark ? 'dark' : 'light');
+      setMode('light');
     }
   }, []);
 
