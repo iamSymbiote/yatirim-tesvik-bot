@@ -728,7 +728,7 @@ export default function Home() {
                   fontStyle: 'italic',
                   marginTop: '8px'
                 }}>
-                  💡 Bu avantajlardan faydalanmak için teşvik belgesi başvurunuzu yukarıdaki linkten yapabilirsiniz.
+                  💡 Bu avantajlardan faydalanmak için sayfada size özel belirtilen "yeni teşvik belgesi başvurusu" bölümünden ilgili link'e tıklayarak yapabilirsiniz.
                 </Typography>
               </div>
             )}
