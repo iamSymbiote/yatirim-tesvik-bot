@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
-import { Typography, Box, Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem, RadioGroup, FormControlLabel, Radio, Checkbox, Button, Modal, IconButton } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Typography, Box, Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem, RadioGroup, FormControlLabel, Radio, Button, Modal, IconButton } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import naceList from '../data/nace.json';
@@ -26,7 +25,7 @@ export default function Home() {
   const [naceInput, setNaceInput] = useState('');
   const [naceOpen, setNaceOpen] = useState(false); // NACE dropdown açık/kapalı durumu
   const [osb, setOsb] = useState('hayir');
-  const [checked, setChecked] = useState(true); // Test için true olarak ayarlandı
+  const [checked] = useState(true); // Test için true olarak ayarlandı
   const [modalOpen, setModalOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -312,7 +311,7 @@ export default function Home() {
                     style: { maxHeight: 260, overflowY: 'auto' },
                   }}
                   renderOption={(props, option) => {
-                    const { key, ...otherProps } = props;
+                    const { ...otherProps } = props;
                     // Unique key için uniqueId kullan
                     return (
                       <li key={option.uniqueId || `${option.kod}-${option.tanim.substring(0, 20)}`} {...otherProps}>
