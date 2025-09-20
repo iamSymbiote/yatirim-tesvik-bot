@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/jspdf": "^2.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.3",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
