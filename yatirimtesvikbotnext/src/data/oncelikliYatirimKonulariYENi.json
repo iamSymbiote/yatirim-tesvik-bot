@@ -12,6 +12,10 @@
     "tanim": "Temel eczacılık ürünleri imalatı"
   },
   {
+    "kod": "21.10.20",
+    "tanim": "Temel eczacılık ürünlerinin hammaddelerinin imalatı (antibiyotik, vitamin, salisilik asit gibi ilaçların imalatında farmakolojik özelliklerinden yararlanmak üzere tıbbi olarak etken maddeler ile kan ürünlerinin, salgı bezi ve ekstrelerin, hormonların vb. imalatı) (Kanın işlenmesi dahil)"
+  },
+  {
     "kod": "21.02.20",
     "tanim": "Eczacılığa ilişkin preparatların (müstahzarların) imalatı"
   },
@@ -48,12 +52,28 @@
     "tanim": "Elektronik bileşenlerin imalatı"
   },
   {
+    "kod": "26.11.20",
+    "tanim": "Diyotların, transistörlerin, diyakların, triyaklar, tristör, rezistans, ledler, kristal, röle, mikro anahtar, sabit veya ayarlanabilir direnç ve kondansatörler ile elektronik entegre devrelerin imalatı"
+  },
+  {
+    "kod": "26.11.20",
+    "tanim": "Katot ışınlı görüntü tüpleri, televizyon kamerası tüpleri ve magnetronlar, klistronlar, mikrodalga tüpleri ve diğer valf tüplerinin, LCD ve plazma TV panelleri ve göstergelerin imalatı"
+  },
+  {
+    "kod": "26.11.20",
+    "tanim": "Çıplak baskılı devre kartlarının imalatı"
+  },
+  {
     "kod": "26.11.19",
     "tanim": "Başka yerde sınıflandırılmamış diğer elektronik bileşenlerin imalatı"
   },
   {
     "kod": "26.12.20",
     "tanim": "Yüklü elektronik kart imalatı"
+  },
+  {
+    "kod": "26.12.20",
+    "tanim": "Yüklü elektronik kart imalatı (yüklü baskılı devre kartları, ses, görüntü, denetleyici, ağ ve modem kartları ile akıllı kartlar vb.)"
   },
   {
     "kod": "26.02.20",

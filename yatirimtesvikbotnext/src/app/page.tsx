@@ -49,14 +49,52 @@ export default function Home() {
     }
   })() : [];
   
-  // NACE arama filtreleme - düzeltildi
+  // NACE arama filtreleme - öncelikli yatırım kodları da dahil
+  const getCombinedNaceList = () => {
+    // Normal NACE listesi
+    const normalNace = naceList as any[];
+    
+    // Öncelikli yatırım kodlarını da ekle
+    const oncelikliKodlar = oncelikliYatirimKonulariYENi;
+    
+    // Tüm kodları birleştir ve unique hale getir
+    const combinedList: any[] = [];
+    const seenKodTanim = new Set<string>();
+    
+    // Normal NACE kodlarını ekle
+    normalNace.forEach(item => {
+      const key = `${item.kod}-${item.tanim}`;
+      if (!seenKodTanim.has(key)) {
+        seenKodTanim.add(key);
+        combinedList.push({
+          ...item,
+          uniqueId: `nace-${item.kod}-${combinedList.length}`
+        });
+      }
+    });
+    
+    // Öncelikli yatırım kodlarını ekle (eğer aynı kod-tanım kombinasyonu yoksa)
+    oncelikliKodlar.forEach(item => {
+      const key = `${item.kod}-${item.tanim}`;
+      if (!seenKodTanim.has(key)) {
+        seenKodTanim.add(key);
+        combinedList.push({
+          ...item,
+          uniqueId: `oncelikli-${item.kod}-${combinedList.length}`
+        });
+      }
+    });
+    
+    return combinedList;
+  };
+  
   const filteredNace: any[] =
     naceInput.length >= 2
-      ? (naceList as any[]).filter(option =>
+      ? getCombinedNaceList().filter(option =>
           option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
           option.tanim.toLowerCase().includes(naceInput.toLowerCase())
         )
-      : (naceList as any[]).slice(0, 30); // Boş input'ta sadece ilk 30'u göster
+      : getCombinedNaceList().slice(0, 30); // Boş input'ta sadece ilk 30'u göster
   
   // Hedef yatırım kontrolü
   const isHedefYatirim = (naceKodu: string) => {
@@ -77,25 +115,26 @@ export default function Home() {
     return result;
   };
 
-  // Öncelikli yatırım kontrolü (NACE kodu eşleştirmesi + 6. bölge özel durumu)
+  // Öncelikli yatırım kontrolü (NACE kodu öncelikli, sonra 6. bölge özel durumu)
   const isOncelikliYatirim = (nace: any) => {
-    // 6. bölge illeri için otomatik öncelikli yatırım
-    if (selectedIl) {
-      const bolge = getBolge(selectedIl);
-      if (bolge === 6) {
-        return true; // 6. bölge illeri otomatik olarak öncelikli kapsamda
-      }
-    }
-    
-    // Diğer bölgeler için NACE kodu kontrolü
     if (!nace) return false;
     const naceKodu = nace.kod;
     
-    // Yeni öncelikli yatırım konuları listesinde NACE kodu var mı?
+    // ÖNCELİK 1: Yeni öncelikli yatırım konuları listesinde NACE kodu var mı?
+    // Bu kontrol bölgeden bağımsız olarak yapılır
     const yeniListedeVar = oncelikliYatirimKonulariYENi.some(item => item.kod === naceKodu);
     if (yeniListedeVar) {
-      console.log(`Öncelikli Yatırım Kontrolü - NACE: ${naceKodu}, Yeni Listede: EVET`);
+      console.log(`Öncelikli Yatırım Kontrolü - NACE: ${naceKodu}, Yeni Listede: EVET (Bölgeden bağımsız)`);
       return true;
+    }
+    
+    // ÖNCELİK 2: 6. bölge illeri için otomatik öncelikli yatırım
+    if (selectedIl) {
+      const bolge = getBolge(selectedIl);
+      if (bolge === 6) {
+        console.log(`Öncelikli Yatırım Kontrolü - NACE: ${naceKodu}, 6. Bölge: EVET`);
+        return true; // 6. bölge illeri otomatik olarak öncelikli kapsamda
+      }
     }
     
     // Eski sistem: NACE tanımı ile açıklama karşılaştırması
@@ -266,15 +305,17 @@ export default function Home() {
                       }
                     />
                   )}
-                  isOptionEqualToValue={(option: any, value: any) => option.kod === value.kod}
+                  isOptionEqualToValue={(option: any, value: any) => 
+                    option.kod === value.kod && option.tanim === value.tanim
+                  }
                   ListboxProps={{
                     style: { maxHeight: 260, overflowY: 'auto' },
                   }}
                   renderOption={(props, option) => {
                     const { key, ...otherProps } = props;
-                    // Unique key için NACE kodu kullan (zaten unique)
+                    // Unique key için uniqueId kullan
                     return (
-                      <li key={option.kod} {...otherProps}>
+                      <li key={option.uniqueId || `${option.kod}-${option.tanim.substring(0, 20)}`} {...otherProps}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           <span style={{ fontWeight: 600, color: '#1976d2' }}>{option.kod}</span>
                           <span style={{ fontSize: '0.9rem', color: '#666' }}>{option.tanim}</span>
