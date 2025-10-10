@@ -15,7 +15,7 @@ import oncelikliYatirimKonulariYENi from '../data/oncelikliYatirimKonulariYENi.j
 import Image from 'next/image';
 import { getBolge, getDestekBolgesi, getAsgariYatirimTutari } from "../utils/yatirimbolgesihesap";
 import { useTheme } from './ThemeProvider';
-import { generateAndDownloadPDF } from '../components/PDFReport';
+import { generateAndDownloadPDF } from '../components/PDFReportNew';
 
 export default function Home() {
   const { mode, toggleTheme } = useTheme();
@@ -156,17 +156,18 @@ export default function Home() {
       const destekUnsurlari = getDestekUnsurlariByBolge(selectedIl, selectedIlce, osb);
 
       const pdfProps = {
-        selectedIl,
-        selectedIlce,
-        naceValue,
+        il: selectedIl,
+        ilce: selectedIlce,
+        nace: naceValue,
         osb,
+        bolge: getBolge(selectedIl) || 1,
+        destekBolgesi: destekBolgesi || 'Bilinmiyor',
+        asgariYatirimTutari: asgariTutar,
         isHedefYatirim: isHedefYatirim(naceValue),
-        isYuksekTeknoloji: isYuksekTeknoloji(naceValue.kod),
-        isOrtaYuksekTeknoloji: isOrtaYuksekTeknoloji(naceValue.kod),
+        isYuksekTeknoloji: isYuksekTeknoloji(naceValue?.kod || ''),
+        isOrtaYuksekTeknoloji: isOrtaYuksekTeknoloji(naceValue?.kod || ''),
         isOncelikliYatirim: isOncelikliYatirim(naceValue),
-        destekBolgesi,
-        asgariTutar,
-        destekUnsurlari,
+        destekUnsurlar: Array.isArray(destekUnsurlari) ? destekUnsurlari : [],
       };
 
       console.log('PDF oluşturuluyor...', pdfProps);
@@ -290,6 +291,9 @@ export default function Home() {
                   open={naceOpen} // NACE dropdown açık/kapalı durumu
                   onOpen={() => setNaceOpen(true)} // Autocomplete açıldığında açık olsun
                   onClose={() => setNaceOpen(false)} // Autocomplete kapandığında kapalı olsun
+                  freeSolo
+                  clearOnBlur={false}
+                  noOptionsText="Sonuç bulunamadı"
                   renderInput={(params: any) => (
                     <TextField
                       {...params}
@@ -308,10 +312,10 @@ export default function Home() {
                     option.kod === value.kod && option.tanim === value.tanim
                   }
                   ListboxProps={{
-                    style: { maxHeight: 260, overflowY: 'auto' },
+                    style: { maxHeight: 180, overflowY: 'auto' },
                   }}
                   renderOption={(props, option) => {
-                    const { ...otherProps } = props;
+                    const { key, ...otherProps } = props;
                     // Unique key için uniqueId kullan
                     return (
                       <li key={option.uniqueId || `${option.kod}-${option.tanim.substring(0, 20)}`} {...otherProps}>
@@ -323,6 +327,50 @@ export default function Home() {
                     );
                   }}
                 />
+                
+                {/* NACE Kodu Bulunamadı Uyarısı */}
+                {naceInput.length >= 2 && filteredNace.length === 0 && !naceValue && (
+                  <div style={{
+                    marginTop: '16px',
+                    padding: '16px',
+                    background: mode === 'dark' ? 'rgba(255,152,0,0.15)' : 'rgba(255,152,0,0.1)',
+                    border: `2px solid ${mode === 'dark' ? 'rgba(255,152,0,0.4)' : 'rgba(255,152,0,0.3)'}`,
+                    borderRadius: '12px',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    zIndex: 1400
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      <div style={{
+                        fontSize: '24px',
+                        lineHeight: '1',
+                        marginTop: '2px'
+                      }}>
+                        ⚠️
+                      </div>
+                      <div>
+                        <Typography variant="body1" style={{
+                          color: mode === 'dark' ? '#ffb74d' : '#e65100',
+                          fontWeight: 600,
+                          marginBottom: '8px',
+                          lineHeight: 1.5
+                        }}>
+                          Bu yatırım 9903 sayılı Yatırımlarda Devlet Yardımları Hakkında Karar kapsamında desteklenmiyor.
+                        </Typography>
+                        <Typography variant="body2" style={{
+                          color: mode === 'dark' ? '#ffcc80' : '#f57c00',
+                          lineHeight: 1.6
+                        }}>
+                          Daha detaylı bilgi için iletişim formu ile varsa bize sorularınızı sorabilirsiniz.
+                        </Typography>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -476,11 +524,10 @@ export default function Home() {
               <Button
                 variant="outlined"
                 size="large"
-                onClick={generatePDF}
-                
+                disabled
                 sx={{
-                  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                  color: 'white',
+                  background: mode === 'dark' ? 'rgba(150, 150, 150, 0.2)' : 'rgba(200, 200, 200, 0.3)',
+                  color: mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
                   px: 4,
                   py: 2,
                   fontSize: '16px',
@@ -488,15 +535,14 @@ export default function Home() {
                   borderRadius: '12px',
                   textTransform: 'none',
                   transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.4)',
-                  '&:hover': {
-                    background: 'linear-gradient(45deg, #1976D2 30%, #1CB5E0 90%)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 20px rgba(33, 150, 243, 0.6)',
+                  cursor: 'not-allowed',
+                  '&.Mui-disabled': {
+                    background: mode === 'dark' ? 'rgba(150, 150, 150, 0.2)' : 'rgba(200, 200, 200, 0.3)',
+                    color: mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
                   }
                 }}
               >
-                📊 Raporu PDF olarak İndir
+                📊 Raporu PDF olarak İndir (Çok Yakında)
               </Button>
             </div>
             

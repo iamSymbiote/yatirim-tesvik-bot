@@ -105,6 +105,11 @@
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
       "deger": "4 YIL"
+    },
+    {
+      "ad": "Faiz veya Kar Payı Desteği",
+      "aciklama": "Teşvik belgesi kapsamında kullanılmak üzere en az bir yıl vadeli yatırım kredileri için ödenecek faiz veya kar payının belirli bir kısmının Bakanlıkça karşılanmasıdır.",
+      "deger": "2 PUAN"
     }
   ],
   "5. Bölge": [
@@ -132,6 +137,11 @@
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
       "deger": "8 YIL"
+    },
+    {
+      "ad": "Faiz veya Kar Payı Desteği",
+      "aciklama": "Teşvik belgesi kapsamında kullanılmak üzere en az bir yıl vadeli yatırım kredileri için ödenecek faiz veya kar payının belirli bir kısmının Bakanlıkça karşılanmasıdır.",
+      "deger": "4 PUAN"
     }
   ],
   "6. Bölge": [
@@ -159,6 +169,11 @@
       "ad": "Sigorta Primi İşveren Hissesi Desteği",
       "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
       "deger": "12 YIL"
+    },
+    {
+      "ad": "Faiz veya Kar Payı Desteği",
+      "aciklama": "Teşvik belgesi kapsamında kullanılmak üzere en az bir yıl vadeli yatırım kredileri için ödenecek faiz veya kar payının belirli bir kısmının Bakanlıkça karşılanmasıdır.",
+      "deger": "5 PUAN"
     }
   ]
 }
