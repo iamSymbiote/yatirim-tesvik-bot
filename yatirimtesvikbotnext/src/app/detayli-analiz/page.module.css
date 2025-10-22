@@ -1,0 +1,412 @@
+/* Detaylı Analiz Sayfası CSS Modülü */
+
+.container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+.darkMode {
+  background-color: #1a1a1a;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #0732ef, #517a06);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin-top: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.formSection {
+  background-color: #f8fafc;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border-top: 5px solid #0732ef;
+  transition: background-color 0.3s ease;
+}
+
+.darkMode .formSection {
+  background-color: #2d2d2d;
+  border-top-color: #4f46e5;
+}
+
+.formSection h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+.darkMode .formSection h2 {
+  color: #f9fafb;
+}
+
+.formSection h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e40af;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  transition: color 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+.darkMode .formSection h3 {
+  color: #60a5fa;
+  border-bottom-color: #4b5563;
+}
+
+.description {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.darkMode .description {
+  color: #9ca3af;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.formLabel {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.darkMode .formLabel {
+  color: #d1d5db;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+  font-weight: 500;
+  font-size: 1rem;
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+.darkMode .formInput,
+.darkMode .formSelect,
+.darkMode .formTextarea {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #0732ef;
+  box-shadow: 0 0 0 3px rgba(7, 50, 239, 0.2);
+}
+
+.darkMode .formInput:focus,
+.darkMode .formSelect:focus,
+.darkMode .formTextarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.formInput:disabled,
+.formSelect:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #6c757d;
+}
+
+.darkMode .formInput:disabled,
+.darkMode .formSelect:disabled {
+  background-color: #1f2937;
+  color: #6b7280;
+}
+
+.totalInput {
+  background-color: #e9ecef;
+  font-weight: 700;
+  font-size: 1.125rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.darkMode .totalInput {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.submitContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.submitButton {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border: none;
+  background: linear-gradient(to right, #0732ef, #0b48ff);
+  color: white;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.submitButton:active {
+  transform: translateY(0px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Radio Button Styles */
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-left: 1rem;
+}
+
+.customRadio {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.customRadio input {
+  display: none;
+}
+
+.customRadio span {
+  position: relative;
+  display: inline-block;
+  padding-left: 2rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.customRadio span:hover {
+  color: #0732ef;
+}
+
+.customRadio span::before,
+.customRadio span::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.customRadio span::before {
+  left: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: -0.625rem;
+  border: 2px solid #adb5bd;
+}
+
+.customRadio span::after {
+  left: 0.3125rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-top: -0.3125rem;
+  background-color: #0732ef;
+  transform: scale(0);
+}
+
+.customRadio input:checked + span::before {
+  border-color: #0732ef;
+}
+
+.customRadio input:checked + span::after {
+  transform: scale(1);
+}
+
+/* Additional Inputs */
+.additionalInputs {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.darkMode .additionalInputs {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.additionalTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1e40af;
+  transition: color 0.3s ease;
+}
+
+.darkMode .additionalTitle {
+  color: #60a5fa;
+}
+
+/* Report Styles */
+.reportContainer {
+  background-color: white;
+  border: none;
+  border-radius: 1rem;
+  padding: 0;
+  margin-top: 3rem;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.darkMode .reportContainer {
+  background-color: #2d2d2d;
+}
+
+.reportContent {
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+.darkMode .reportContent {
+  background-color: #2d2d2d;
+}
+
+.reportHeader {
+  background: linear-gradient(to right, #0732ef, #517a06);
+  color: white;
+  padding: 2rem;
+  border-bottom: 5px solid #0732ef;
+}
+
+.reportHeader h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+}
+
+.reportOutput {
+  color: #374151;
+  line-height: 1.7;
+  padding: 2.5rem;
+  transition: color 0.3s ease;
+}
+
+.darkMode .reportOutput {
+  color: #d1d5db;
+}
+
+.downloadContainer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  transition: background-color 0.3s ease;
+}
+
+.darkMode .downloadContainer {
+  background-color: #1f2937;
+}
+
+.downloadButton {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border: none;
+  background: linear-gradient(to right, #517a06, #6ab007);
+  color: white;
+}
+
+.downloadButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.downloadButton:active {
+  transform: translateY(0px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .formSection {
+    padding: 1.5rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .radioGroup {
+    padding-left: 0.5rem;
+  }
+}
+
+/* Dark mode support - using .darkMode class instead of @media query */

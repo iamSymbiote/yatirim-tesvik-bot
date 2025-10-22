@@ -189,6 +189,18 @@ export default function Home() {
     const bolgeKey = `${destekBolgesi}. Bölge` as keyof typeof destekUnsurlariBolgeBazli;
     return destekUnsurlariBolgeBazli[bolgeKey] || destekVerileri.destekUnsurlari;
   };
+
+  // Tüm yatırım özelliklerinin "Hayır" olup olmadığını kontrol et
+  const isAllFeaturesNo = () => {
+    if (!naceValue) return false;
+    
+    const yuksekTek = isYuksekTeknoloji(naceValue.kod);
+    const ortaYuksekTek = isOrtaYuksekTeknoloji(naceValue.kod);
+    const oncelikli = isOncelikliYatirim(naceValue);
+    const hedef = isHedefYatirim(naceValue.kod);
+    
+    return !yuksekTek && !ortaYuksekTek && !oncelikli && !hedef;
+  };
   
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -522,27 +534,45 @@ export default function Home() {
               padding: '20px'
             }}>
               <Button
-                variant="outlined"
+                variant="contained"
                 size="large"
-                disabled
+                onClick={() => window.open('/detayli-analiz', '_blank')}
                 sx={{
-                  background: mode === 'dark' ? 'rgba(150, 150, 150, 0.2)' : 'rgba(200, 200, 200, 0.3)',
-                  color: mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                  background: 'linear-gradient(45deg, #f58802 30%, #ff9500 90%)',
+                  color: 'white',
                   px: 4,
                   py: 2,
                   fontSize: '16px',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   borderRadius: '12px',
                   textTransform: 'none',
                   transition: 'all 0.3s ease',
-                  cursor: 'not-allowed',
-                  '&.Mui-disabled': {
-                    background: mode === 'dark' ? 'rgba(150, 150, 150, 0.2)' : 'rgba(200, 200, 200, 0.3)',
-                    color: mode === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                  boxShadow: '0 6px 20px rgba(245, 136, 2, 0.4)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #e67a02 30%, #f58802 90%)',
+                    transform: 'translateY(-3px)',
+                    boxShadow: '0 8px 25px rgba(245, 136, 2, 0.6)',
+                  },
+                  '&::before': {
+                    content: '"YENİ"',
+                    position: 'absolute',
+                    top: '-3px',
+                    right: '-1px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    transform: 'rotate(15deg)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                    zIndex: 1
                   }
                 }}
               >
-                📊 Raporu PDF olarak İndir (Çok Yakında)
+                🤖 Teşvik Robotu Detaylı Yatırım Analizimi Hazırlasın
               </Button>
             </div>
             
@@ -933,11 +963,90 @@ export default function Home() {
               background: `linear-gradient(90deg, transparent 0%, ${mode === 'dark' ? '#404040' : '#e9ecef'} 50%, transparent 100%)`,
               transition: 'background 0.3s ease'
             }} />
-            {/* DESTEK UNSURLARI VE TÜRLERİ Birleşik Tablosu */}
-            <div className="section-title" style={{ 
-              color: mode === 'dark' ? '#e9ecef' : '#495057',
-              transition: 'color 0.3s ease'
-            }}>DESTEK UNSURLARI VE TÜRLERİ</div>
+            
+            {/* Tüm özellikler "Hayır" ise özel uyarı mesajı */}
+            {isAllFeaturesNo() ? (
+              <div style={{
+                background: mode === 'dark' ? 'rgba(255,87,34,0.15)' : 'rgba(255,87,34,0.1)',
+                border: `2px solid ${mode === 'dark' ? 'rgba(255,87,34,0.4)' : 'rgba(255,87,34,0.3)'}`,
+                borderRadius: '12px',
+                padding: '24px',
+                marginBottom: '32px',
+                textAlign: 'center',
+                transition: 'all 0.3s ease'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '16px',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{
+                    fontSize: '32px',
+                    lineHeight: '1'
+                  }}>
+                    ⚠️
+                  </div>
+                  <Typography variant="h5" style={{
+                    color: mode === 'dark' ? '#ff7043' : '#d84315',
+                    fontWeight: 700,
+                    margin: 0
+                  }}>
+                    Destek Kapsamı Dışı
+                  </Typography>
+                </div>
+                <Typography variant="body1" style={{
+                  color: mode === 'dark' ? '#ffccbc' : '#bf360c',
+                  fontSize: '1.1rem',
+                  lineHeight: 1.6,
+                  marginBottom: '20px',
+                  fontWeight: 500
+                }}>
+                  Yatırımınız mevcut teşvik mevzuatı kapsamında desteklenmiyor.
+                </Typography>
+                <Typography variant="body2" style={{
+                  color: mode === 'dark' ? '#ffab91' : '#ff5722',
+                  fontSize: '1rem',
+                  marginBottom: '16px'
+                }}>
+                  Yerel kalkınma hamlesi programını kontrol ediniz.
+                </Typography>
+                <a 
+                  href="https://www.yatirimtesvikbelgesi.com/post/yerel-kalkınma-hamlesi-yatırım-teşvik-belgesi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-block',
+                    background: mode === 'dark' ? 'rgba(255,87,34,0.2)' : 'rgba(255,87,34,0.1)',
+                    color: mode === 'dark' ? '#ff7043' : '#d84315',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                    border: `1px solid ${mode === 'dark' ? 'rgba(255,87,34,0.4)' : 'rgba(255,87,34,0.3)'}`,
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = mode === 'dark' ? 'rgba(255,87,34,0.3)' : 'rgba(255,87,34,0.2)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = mode === 'dark' ? 'rgba(255,87,34,0.2)' : 'rgba(255,87,34,0.1)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  📋 Yerel Kalkınma Hamlesi Programı Detayları
+                </a>
+              </div>
+            ) : (
+              <>
+                {/* DESTEK UNSURLARI VE TÜRLERİ Birleşik Tablosu */}
+                <div className="section-title" style={{ 
+                  color: mode === 'dark' ? '#e9ecef' : '#495057',
+                  transition: 'color 0.3s ease'
+                }}>DESTEK UNSURLARI VE TÜRLERİ</div>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
@@ -1046,6 +1155,8 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+              </>
+            )}
             {/* Bölge Hesaplama Test Paneli */}
             {showResult && (
               <div style={{

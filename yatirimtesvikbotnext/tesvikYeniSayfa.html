@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yatırım Teşvik Raporu Oluşturucu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #0732ef, #517a06);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .form-section {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            margin-bottom: 2.5rem;
+            border-top: 5px solid #0732ef;
+        }
+        .form-section h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2rem;
+        }
+        .form-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e40af;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-weight: 500;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0732ef;
+            box-shadow: 0 0 0 3px rgba(7, 50, 239, 0.2);
+        }
+        input:disabled, select:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #0732ef, #0b48ff);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+         .btn-secondary {
+            background: linear-gradient(to right, #517a06, #6ab007);
+            color: white;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        #report-container {
+            background-color: white;
+            border: none;
+            border-radius: 1rem;
+            padding: 0;
+            margin-top: 3rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        #report-header {
+             background: linear-gradient(to right, #0732ef, #517a06);
+             color: white;
+             padding: 2rem;
+             border-bottom: 5px solid #0732ef;
+        }
+        #report-output {
+            color: #374151;
+            line-height: 1.7;
+            padding: 2.5rem;
+        }
+        #naceResults .result-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        #naceResults .result-item:hover {
+            background-color: #eef2ff;
+            color: #0732ef;
+        }
+        .custom-radio input { display: none; }
+        .custom-radio span { position: relative; display: inline-block; padding-left: 2rem; cursor: pointer; font-weight: 500; transition: color 0.3s; }
+        .custom-radio span:hover { color: #0732ef; }
+        .custom-radio span::before, .custom-radio span::after { content: ''; position: absolute; top: 50%; border-radius: 50%; transition: all 0.3s; }
+        .custom-radio span::before { left: 0; width: 1.25rem; height: 1.25rem; margin-top: -0.625rem; border: 2px solid #adb5bd; }
+        .custom-radio span::after { left: 0.3125rem; width: 0.625rem; height: 0.625rem; margin-top: -0.3125rem; background-color: #0732ef; transform: scale(0); }
+        .custom-radio input:checked + span::before { border-color: #0732ef; }
+        .custom-radio input:checked + span::after { transform: scale(1); }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold gradient-text">Yatırım Teşvik Raporu Oluşturucu</h1>
+            <p class="text-xl text-gray-600 mt-4">Proje detaylarınızı girin, potansiyel devlet destekleri için anında bir ön değerlendirme raporu alın.</p>
+        </header>
+
+        <form id="investmentForm">
+            <!-- A. Şirket Bilgileri -->
+            <div class="form-section">
+                <h2>A. Şirket Bilgileri</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div><label for="sirketAdi">Şirket Adı/Unvanı</label><input type="text" id="sirketAdi" required></div>
+                    <div><label for="kobiStatusu">KOBİ Statüsü</label><select id="kobiStatusu"><option value="KOBİ">KOBİ</option><option value="Büyük İşletme">Büyük İşletme</option></select></div>
+                    <div class="relative md:col-span-2"><label for="naceSearch">Faaliyet Alanı (NACE Kodu ve Açıklaması)</label><input type="text" id="naceSearch" placeholder="Faaliyet alanı veya kodu ile arama yapın..." autocomplete="off" required><input type="hidden" id="naceKodu"><div id="naceResults" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto hidden shadow-lg"></div></div>
+                </div>
+            </div>
+
+            <!-- B. Yatırım Projesi Bilgileri -->
+            <div class="form-section">
+                <h2>B. Yatırım Projesi Bilgileri</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div><label for="yatirimTuru">Yatırımın Türü</label><select id="yatirimTuru"><option value="Komple yeni yatırım">Komple yeni yatırım</option><option value="Tevsi">Tevsi</option><option value="Modernizasyon">Modernizasyon</option><option value="Ürün çeşitlendirme">Ürün çeşitlendirme</option><option value="Entegrasyon">Entegrasyon</option><option value="Nakil">Nakil</option></select></div>
+                    <div><label for="mevcutIstihdam">Mevcut İstihdam Sayısı</label><input type="number" id="mevcutIstihdam" min="0" required></div>
+                    <div><label for="faaliyetSuresi">Faaliyette Bulunma Süresi (Yıl)</label><input type="number" id="faaliyetSuresi" min="0" required></div>
+                    <div><label for="ilaveIstihdam">Sağlanacak İlave İstihdam Sayısı</label><input type="number" id="ilaveIstihdam" min="0" required></div>
+                    
+                    <div><label for="ithalMakine">İthal Makine Teçhizat (TL)</label><input type="text" id="ithalMakine" class="yatirim-kalemi"></div>
+                    <div><label for="yerliMakine">Yerli Makine Teçhizat (TL)</label><input type="text" id="yerliMakine" class="yatirim-kalemi"></div>
+                    <div><label for="binaInsaat">Bina İnşaat Giderleri (TL)</label><input type="text" id="binaInsaat" class="yatirim-kalemi"></div>
+                    <div><label for="digerGiderler">Diğer Yatırım Giderleri (TL)</label><input type="text" id="digerGiderler" class="yatirim-kalemi" placeholder="Nakliye, gümrükleme vb."></div>
+
+                    <div class="md:col-span-2"><label for="sabitYatirimTutari">Toplam Sabit Yatırım Tutarı (TL)</label><input type="text" id="sabitYatirimTutari" disabled readonly class="bg-gray-200 font-bold text-lg"></div>
+                    
+                    <div><label for="yatirimIli">Yatırım Yapılacak İl</label><select id="yatirimIli" required><option value="">Lütfen İl Seçin</option></select></div>
+                    <div id="ilceContainer" class="hidden"><label for="yatirimIlcesi">Yatırım Yapılacak İlçe</label><select id="yatirimIlcesi" required></select></div>
+                    <div><label for="yatirimBolgesi">Yatırım Yapılacak Bölge</label><select id="yatirimBolgesi" disabled><option value="1">1. Bölge</option><option value="2">2. Bölge</option><option value="3">3. Bölge</option><option value="4">4. Bölge</option><option value="5">5. Bölge</option><option value="6">6. Bölge</option></select></div>
+                    <div>
+                        <label for="tamamlanmaSuresiAy">Yatırımın Tamamlanma Süresi (Ay)</label>
+                        <input type="number" id="tamamlanmaSuresiAy" min="1" required>
+                        <p id="sureUyarisi" class="text-sm text-red-600 mt-1 hidden">Azami süre 36 ay + 18 ay ek süre (toplam 54 ay) olabilir.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C. Yatırım Teşvik Belgesi Programı Kapsamı -->
+            <div class="form-section">
+                <h2>Yatırım Teşvik Belgesi Programı Kapsamı</h2>
+                <p class="text-gray-600 mb-6">Projeniz aşağıdaki programlardan hangisi kapsamında değerlendirilebilir?</p>
+                
+                <h3>Sektörel ve Bölgesel Teşvik Sistemi</h3>
+                <div class="flex flex-col gap-4 pl-4">
+                    <label class="custom-radio"><input type="radio" name="ozelProgram" value="HedefYatirim" checked><span>Hedef Yatırımlar Teşvik Sistemi</span></label>
+                    <label class="custom-radio"><input type="radio" name="ozelProgram" value="OncelikliYatirim"><span>Öncelikli Yatırımlar Teşvik Sistemi</span></label>
+                </div>
+
+                <h3>Türkiye Yüzyılı Kalkınma Hamlesi</h3>
+                 <div class="flex flex-col gap-4 pl-4">
+                    <label class="custom-radio"><input type="radio" name="ozelProgram" value="THP"><span>Teknoloji Hamlesi Programı</span></label>
+                    <label class="custom-radio"><input type="radio" name="ozelProgram" value="YKHP"><span>Yerel Kalkınma Hamlesi Programı</span></label>
+                    <label class="custom-radio"><input type="radio" name="ozelProgram" value="SHP"><span>Stratejik Hamle Programı</span></label>
+                </div>
+                
+                <h3>Yeşil ve Dijital Dönüşüm</h3>
+                <div class="flex flex-col gap-4 pl-4">
+                     <label class="custom-radio"><input type="radio" name="ozelProgram" value="DDP"><span>Dijital Dönüşüm Programı (DDP)</span></label>
+                    <label class="custom-radio"><input type="radio" name="ozelProgram" value="YDP"><span>Yeşil Dönüşüm Programı (YDP)</span></label>
+                </div>
+
+                 <div id="oncelikliYatirimInputs" class="hidden mt-6">
+                    <h3 class="font-semibold text-lg mb-2 text-blue-800">Öncelikli Yatırım Konusu Detayları</h3>
+                    <label for="oncelikliYatirimKonusu">Lütfen Yatırım Konusunu Seçiniz</label>
+                    <select id="oncelikliYatirimKonusu"></select>
+                 </div>
+                 <div id="thpInputs" class="hidden mt-6">
+                    <h3 class="font-semibold text-lg mb-2 text-blue-800">Teknoloji Hamlesi Programı Detayları</h3>
+                    <label for="oncelikliUrun">Öncelikli Ürün Listesi'ndeki Ürün Adı</label>
+                    <input type="text" id="oncelikliUrun" placeholder="Örn: Biyoteknolojik İlaç">
+                 </div>
+            </div>
+            
+            <div class="flex justify-center mt-10"><button type="submit" class="btn btn-primary">Rapor Oluştur</button></div>
+        </form>
+
+        <div id="report-container" class="hidden">
+            <div id="report-content">
+                <div id="report-header"><h2 class="text-3xl font-bold text-center">Yatırım Teşvik Ön Değerlendirme Raporu</h2></div>
+                <div id="report-output"></div>
+            </div>
+            <div class="text-center p-8 bg-gray-50"><button id="downloadPdfBtn" class="btn btn-secondary">PDF Olarak İndir</button></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('investmentForm');
+            const reportContainer = document.getElementById('report-container');
+            const reportOutput = document.getElementById('report-output');
+
+            // Data maps
+            // Lütfen NACE kodlarını bu alana ekleyin. Örnek format: { code: '01.11', description: 'Tahıl (pirinç hariç), baklagil ve yağlı tohumların yetiştirilmesi' }
+            const naceCodes = [];
+            const oncelikliYatirimKonulari = { 'a': 'Dijital/Yeşil Dönüşüm Programı kapsamındaki yatırımlar', 'b': 'Yüksek teknolojili ürün üretimi yatırımları', 'c': 'Orta-yüksek teknolojili ürün üretimi yatırımları', 'ç': '6. bölge yatırımları', 'd': 'Savunma sanayii yatırımları', 'e': 'Güneş/Rüzgar enerjisi elektrik üretim tesisi yatırımları', 'f': 'Maden girdili elektrik üretimi yatırımları', 'g': 'Nükleer enerji santrali yatırımları', 'ğ': 'LNG ve yer altı doğal gaz depolama yatırımları', 'h': 'Maden istihraç ve/veya işleme yatırımları', 'ı': 'Maden arama yatırımları', 'i': 'Ar-Ge yatırımları', 'j': 'Ar-Ge/Tasarım projesi ilişkili yatırımlar', 'k': 'Teknolojik Ürün Deneyim Belgeli ürün üretimi yatırımları', 'l': 'Test merkezi yatırımları', 'm': 'İhtisas serbest bölgelerinde yazılım/bilişim yatırımları', 'n': 'Veri merkezi yatırımları', 'o': 'Bulut hizmeti sağlayıcı yatırımları', 'ö': 'Çevre lisansına tabi yatırımlar', 'p': 'Demiryolu, denizyolu veya havayolu taşımacılık yatırımları', 'r': 'Yük taşımacılığına yönelik liman yatırımları', 's': 'Turizm konaklama yatırımları', 'ş': 'Özel sektör eğitim yatırımları', 't': 'Yaşlı/engelli bakım merkezi yatırımları', 'u': 'Lisanslı depoculuk yatırımları', 'ü': 'Otomasyona dayalı topraksız sera yatırımları', 'v': 'Deprem/yangın riskine karşı yapılan yatırımlar', 'y': 'Afet teknolojileri alanındaki yatırımlar' };
+            const ilBolgeMap = { "Adana": 3, "Adıyaman": 6, "Afyonkarahisar": 4, "Ağrı": 6, "Aksaray": 4, "Amasya": 4, "Ankara": 1, "Antalya": 1, "Ardahan": 6, "Artvin": 4, "Aydın": 2, "Balıkesir": 2, "Bartın": 5, "Batman": 6, "Bayburt": 5, "Bilecik": 3, "Bingöl": 6, "Bitlis": 6, "Bolu": 2, "Burdur": 3, "Bursa": 1, "Çanakkale": 2, "Çankırı": 5, "Çorum": 4, "Denizli": 2, "Diyarbakır": 6, "Düzce": 3, "Edirne": 2, "Elazığ": 4, "Erzincan": 4, "Erzurum": 5, "Eskişehir": 1, "Gaziantep": 3, "Giresun": 5, "Gümüşhane": 6, "Hakkari": 6, "Hatay": 5, "Iğdır": 6, "Isparta": 3, "İstanbul": 1, "İzmir": 1, "Kahramanmaraş": 5, "Karabük": 3, "Karaman": 3, "Kars": 6, "Kastamonu": 4, "Kayseri": 2, "Kilis": 5, "Kırıkkale": 3, "Kırklareli": 3, "Kırşehir": 4, "Kocaeli": 1, "Konya": 2, "Kütahya": 3, "Malatya": 4, "Manisa": 2, "Mardin": 6, "Mersin": 3, "Muğla": 1, "Muş": 6, "Nevşehir": 3, "Niğde": 5, "Ordu": 5, "Osmaniye": 5, "Rize": 3, "Sakarya": 2, "Samsun": 3, "Siirt": 6, "Sinop": 5, "Sivas": 4, "Şanlıurfa": 6, "Şırnak": 6, "Tekirdağ": 2, "Tokat": 5, "Trabzon": 3, "Tunceli": 5, "Uşak": 3, "Van": 6, "Yalova": 2, "Yozgat": 5, "Zonguldak": 3 };
+            const ilceTesvikMap = { "Adana": ["Aladağ", "Feke", "İmamoğlu", "Karaisalı", "Karataş", "Pozantı", "Saimbeyli", "Tufanbeyli", "Yumurtalık"], "Afyonkarahisar": ["Bayat", "Çobanlar", "Evciler", "Hocalar", "İhsaniye", "Kızılören", "Sinanpaşa"], "Aksaray": ["Ağaçören", "Eskil", "Gülağaç", "Güzelyurt", "Sultanhanı"], "Amasya": ["Göynücek", "Hamamözü"], "Ankara": ["Bala", "Çamlıdere", "Evren", "Güdül", "Haymana", "Kalecik"], "Antalya": ["Akseki", "Gündoğmuş", "İbradı"], "Aydın": ["Bozdoğan", "Buharkent", "Germencik", "Karacasu", "Karpuclu", "Koçarlı", "Köşk", "Kuyucak", "Sultanhisar", "Yenipazar"], "Balıkesir": ["Balya", "Dursunbey", "Havran", "İvrindi", "Kepsut", "Manyas", "Savaştepe", "Sındırgı"], "Bilecik": ["Gölpazarı", "İnhisar", "Pazaryeri", "Yenipazar"], "Bolu": ["Dörtdivan", "Göynük", "Kıbrıscık", "Mengen", "Mudurnu", "Seben"], "Burdur": ["Ağlasun", "Altınyayla", "Çavdır", "Çeltikçi", "Kemer", "Tefenni", "Yeşilova"], "Bursa": ["Büyükorhan", "Harmancık", "Keles", "Orhaneli"], "Çanakkale": ["Bayramiç", "Yenice"], "Çankırı": ["Bayramören", "Yapraklı"], "Çorum": ["Bayat", "Boğazkale", "Dodurga", "Kargı", "Laçin", "Mecitözü", "Oğuzlar", "Ortaköy", "Uğurludağ"], "Denizli": ["Babadağ", "Baklan", "Bekilli", "Beyağaç", "Bozkurt", "Çal", "Çameli", "Çardak", "Güney", "Kale"], "Düzce": ["Cumayeri", "Çilimli", "Gölyaka", "Yığılca"], "Edirne": ["Enez", "Havsa", "İpsala", "Lalapaşa", "Meriç", "Süloğlu"], "Elazığ": ["Ağın"], "Erzincan": ["Çayırlı", "Kemah", "Otlukbeli", "Tercan", "Üzümlü"], "Erzurum": ["Çat", "Hınıs", "Karaçoban", "Karayazı", "Köpröy", "Şenkaya", "Tekman"], "Eskişehir": ["Alpu", "Beylikova", "Çifteler", "Günyüzü", "Han", "Mahmudiye", "Mihalgazi", "Mihalıççık", "Sarıcakaya", "Seyitgazi"], "Gaziantep": ["Karkamış", "Oğuzeli", "Yavuzeli"], "Giresun": ["Çamoluk"], "Isparta": ["Aksu", "Atabey", "Gelendost", "Senirkent", "Sütçüler", "Şarkikaraağaç", "Yenişarbademli"], "İzmir": ["Bayındır", "Beydağ", "Kınık", "Kiraz"], "Karabük": ["Eflani", "Eskipazar", "Ovacık", "Yenice"], "Karaman": ["Ayrancı", "Başyayla", "Ermenek", "Sarıveliler"], "Kastamonu": ["Ağlı", "Araç", "Cide", "Doğanyurt", "Küre", "Pınarbaşı", "Şenpazar"], "Kayseri": ["Akkışla", "Bünyan", "Felahiye", "İncesu", "Özvatan", "Pınarbaşı", "Sarıoğlan", "Sarız", "Tomarza", "Yahyalı", "Yeşilhisar"], "Kırıkkale": ["Balışeyh", "Çelebi", "Delice", "Karakeçili", "Keskin", "Sulakyurt"], "Kırklareli": ["Demirköy", "Kofçaz", "Pehlivanköy"], "Kırşehir": ["Akçakent", "Akpınar", "Boztepe", "Çiçekdağı"], "Kilis": ["Elbeyli"], "Kocaeli": ["Kandıra"], "Konya": ["Ahırlı", "Akören", "Altınekin", "Bozkır", "Çeltik", "Çumra", "Derbent", "Derebucak", "Doğanhisar", "Emirgazi", "Güneysınır", "Hadim", "Halkapınar", "Hüyük", "Kadınhanı", "Sarayönü", "Taşkent", "Tuzlukçu", "Yalıhüyük", "Yunak"], "Kütahya": ["Altıntaş", "Aslanapa", "Çavdarhisar", "Domaniç", "Dumlupınar", "Emet", "Hisarcık", "Pazarlar", "Şaphane"], "Manisa": ["Ahmetli", "Demirci", "Gölmarmara", "Gördes", "Kırkağaç", "Köprübaşı", "Sarıgöl", "Saruhanlı", "Selendi"], "Mersin": ["Aydıncık", "Bozyazı", "Çamlıyayla", "Gülnar", "Mut"], "Muğla": ["Kavaklıdere", "Seydikemer"], "Nevşehir": ["Acıgöl", "Derinkuyu", "Gülşehir", "Hacıbektaş"], "Niğde": ["Altunhisar", "Çiftlik"], "Ordu": ["Akkuş", "Çatalpınar", "Çaybaşı", "Gürgentepe", "İkizce", "Mesudiye"], "Osmaniye": ["Sumbas"], "Rize": ["Çamlıhemşin", "Derepazarı", "Güneysu", "Hemşin", "İkizdere", "Kalkandere"], "Sakarya": ["Karapürçek", "Kaynarca", "Kocaali", "Taraklı"], "Samsun": ["Alaçam", "Asarcık", "Ayvacık", "Kavak", "Ladik", "Salıpazarı", "Terme", "Vezirköprü", "Yakakent"], "Sinop": ["Dikmen"], "Sivas": ["Akıncılar", "Altınyayla", "Doğanşar", "Gölova", "Hafik", "İmranlı", "Koyulhisar", "Ulaş", "Yıldızeli"], "Tekirdağ": ["Hayrabolu"], "Tokat": ["Başçiftlik", "Sulusaray"], "Trabzon": ["Araklı", "Çarşıbaşı", "Dernekpazarı", "Düzköy", "Hayrat", "Köprübaşı", "Şalpazarı", "Tonya"], "Uşak": ["Banaz", "Karahallı", "Sivaslı", "Ulubey"], "Yozgat": ["Aydıncık", "Kadışehri"], "Zonguldak": ["Kilimli"] };
+            
+            const programConfigs = {
+                HedefYatirim: {
+                    name: "Hedef Yatırımlar Teşvik Sistemi",
+                    yko: 20,
+                    vergiIndirimOrani: 60,
+                    sgkSure: { 1: 0, 2: 1, 3: 2, 4: 4, 5: 8, 6: 12 },
+                    faizDestegi: true,
+                    faizSadeceBolge456: true,
+                    faizMax: 12000000,
+                    faizAzamiOran: 0.10,
+                    minYatirim: { bolge12: 12000000, bolge3456: 6000000 }
+                },
+                OncelikliYatirim: {
+                    name: "Öncelikli Yatırımlar Teşvik Sistemi",
+                    yko: 30,
+                    vergiIndirimOrani: 60,
+                    sgkSure: { 1: 0, 2: 1, 3: 2, 4: 4, 5: 8, 6: 12 },
+                    faizDestegi: true,
+                    faizSadeceBolge456: false,
+                    faizMax: 24000000,
+                    faizAzamiOran: 0.10,
+                    minYatirim: { bolge12: 12000000, bolge3456: 6000000 }
+                },
+                THP: {
+                    name: "Teknoloji Hamlesi Programı",
+                    yko: 50,
+                    vergiIndirimOrani: 60,
+                    sgkSure: {},
+                    faizDestegi: true,
+                    faizMax: 240000000,
+                    faizAzamiOran: 0.20,
+                    minYatirim: { text: "Program kapsamında çıkılan çağrıda belirlenmektedir." }
+                },
+                YKHP: {
+                    name: "Yerel Kalkınma Hamlesi Programı",
+                    yko: 50,
+                    vergiIndirimOrani: 60,
+                    sgkSure: { 1: 8, 2: 8, 3: 8, 4: 8, 5: 8, 6: 12 },
+                    faizDestegi: true,
+                    faizMax: 240000000,
+                    faizAzamiOran: 0.20,
+                    minYatirim: { text: "Program kapsamında yapılan çağrıda belirlenmektedir." }
+                },
+                SHP: {
+                    name: "Stratejik Hamle Programı",
+                    yko: 40,
+                    vergiIndirimOrani: 60,
+                    sgkSure: {},
+                    faizDestegi: true,
+                    faizMax: 180000000,
+                    faizAzamiOran: 0.15,
+                    minYatirim: { text: "Yüksek teknolojili ürünler için 100 Milyon TL, diğer yatırımlar için 200 Milyon TL'dir." }
+                }
+            };
+            
+            // Element Selectors
+            const yatirimTuruSelect = document.getElementById('yatirimTuru');
+            const mevcutIstihdamInput = document.getElementById('mevcutIstihdam');
+            const faaliyetSuresiInput = document.getElementById('faaliyetSuresi');
+            const sabitYatirimTutariInput = document.getElementById('sabitYatirimTutari');
+            const yatirimKalemleri = document.querySelectorAll('.yatirim-kalemi');
+            const tamamlanmaSuresiAyInput = document.getElementById('tamamlanmaSuresiAy');
+            const sureUyarisi = document.getElementById('sureUyarisi');
+            const ozelProgramRadios = document.querySelectorAll('input[name="ozelProgram"]');
+            const oncelikliYatirimInputs = document.getElementById('oncelikliYatirimInputs');
+            const thpInputs = document.getElementById('thpInputs');
+            const yatirimIliSelect = document.getElementById('yatirimIli');
+            const ilceContainer = document.getElementById('ilceContainer');
+            const yatirimIlcesiSelect = document.getElementById('yatirimIlcesi');
+            const yatirimBolgesiSelect = document.getElementById('yatirimBolgesi');
+
+            // Initial Population
+            Object.keys(ilBolgeMap).sort((a, b) => a.localeCompare(b, 'tr')).forEach(il => yatirimIliSelect.add(new Option(il, il)));
+            const oncelikliSelect = document.getElementById('oncelikliYatirimKonusu');
+            for (const [key, value] of Object.entries(oncelikliYatirimKonulari)) {
+                oncelikliSelect.add(new Option(value, key));
+            }
+            
+            // Event Listeners & Functions
+            yatirimTuruSelect.addEventListener('change', () => {
+                const isYeniYatirim = yatirimTuruSelect.value === 'Komple yeni yatırım';
+                mevcutIstihdamInput.disabled = isYeniYatirim;
+                faaliyetSuresiInput.disabled = isYeniYatirim;
+                if(isYeniYatirim) {
+                    mevcutIstihdamInput.value = '';
+                    faaliyetSuresiInput.value = '';
+                }
+            });
+            mevcutIstihdamInput.disabled = true; 
+            faaliyetSuresiInput.disabled = true;
+
+            function formatNumberInput(e) {
+                let value = e.target.value.replace(/\./g, '');
+                if (!isNaN(value) && value.length > 0) {
+                    e.target.value = new Intl.NumberFormat('tr-TR').format(value);
+                } else {
+                    e.target.value = '';
+                }
+            }
+
+            function calculateTotalInvestment() {
+                let total = 0;
+                yatirimKalemleri.forEach(input => {
+                    const value = parseInt(input.value.replace(/\./g, ''), 10) || 0;
+                    total += value;
+                });
+
+                if (total > 0) {
+                    sabitYatirimTutariInput.value = new Intl.NumberFormat('tr-TR').format(total);
+                } else {
+                    sabitYatirimTutariInput.value = '';
+                }
+            }
+
+            yatirimKalemleri.forEach(input => {
+                input.addEventListener('input', (e) => {
+                    formatNumberInput(e);
+                    calculateTotalInvestment();
+                });
+            });
+
+            tamamlanmaSuresiAyInput.addEventListener('input', (e) => {
+                const sure = parseInt(e.target.value);
+                sureUyarisi.classList.toggle('hidden', !sure || sure <= 54);
+            });
+
+            ozelProgramRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    thpInputs.classList.toggle('hidden', radio.value !== 'THP');
+                    oncelikliYatirimInputs.classList.toggle('hidden', radio.value !== 'OncelikliYatirim');
+                });
+            });
+
+            yatirimIliSelect.addEventListener('change', () => {
+                const il = yatirimIliSelect.value;
+                if (!il) {
+                    ilceContainer.classList.add('hidden');
+                    yatirimBolgesiSelect.value = 1;
+                    return;
+                }
+                const baseBolge = ilBolgeMap[il];
+                yatirimBolgesiSelect.value = baseBolge;
+                yatirimIlcesiSelect.innerHTML = '';
+                
+                if (ilceTesvikMap[il]) {
+                    ilceContainer.classList.remove('hidden');
+                    yatirimIlcesiSelect.add(new Option("Lütfen İlçe Seçin", ""));
+                    ilceTesvikMap[il].forEach(ilce => yatirimIlcesiSelect.add(new Option(ilce, ilce)));
+                    yatirimIlcesiSelect.add(new Option("Bunların Dışında", "diger"));
+                } else {
+                    ilceContainer.classList.add('hidden');
+                }
+            });
+
+            yatirimIlcesiSelect.addEventListener('change', () => {
+                const ilce = yatirimIlcesiSelect.value;
+                const il = yatirimIliSelect.value;
+                const baseBolge = ilBolgeMap[il];
+                if (ilce && ilce !== 'diger') {
+                    yatirimBolgesiSelect.value = Math.min(6, baseBolge + 1);
+                } else {
+                    yatirimBolgesiSelect.value = baseBolge;
+                }
+            });
+            
+            const naceSearch = document.getElementById('naceSearch');
+            const naceResults = document.getElementById('naceResults');
+            const naceKoduInput = document.getElementById('naceKodu');
+
+            function renderNaceResults(filter = '') {
+                naceResults.innerHTML = '';
+                const filtered = naceCodes.filter(nace => nace.code.includes(filter) || nace.description.toLowerCase().includes(filter.toLowerCase()));
+                if (filtered.length > 0) {
+                    filtered.forEach(nace => {
+                        const item = document.createElement('div');
+                        item.classList.add('result-item');
+                        item.textContent = `${nace.code} - ${nace.description}`;
+                        item.addEventListener('click', () => {
+                            const fullText = `${nace.code} - ${nace.description}`;
+                            naceSearch.value = fullText;
+                            naceKoduInput.value = fullText;
+                            naceResults.classList.add('hidden');
+                        });
+                        naceResults.appendChild(item);
+                    });
+                    naceResults.classList.remove('hidden');
+                } else {
+                    naceResults.classList.add('hidden');
+                }
+            }
+            naceSearch.addEventListener('focus', () => renderNaceResults(naceSearch.value));
+            naceSearch.addEventListener('input', () => renderNaceResults(naceSearch.value));
+            document.addEventListener('click', (e) => { if (!naceSearch.contains(e.target) && !naceResults.contains(e.target)) naceResults.classList.add('hidden'); });
+
+            const formatCurrency = (value) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(value);
+
+            function generateSupportListHTML(data, config, bolgeNo) {
+                 if (!config) return '<p>Seçilen program için destek detayları bulunamadı.</p>';
+
+                const ithalMakineValue = parseInt(document.getElementById('ithalMakine').value.replace(/\./g, ''), 10) || 0;
+                const yerliMakineValue = parseInt(document.getElementById('yerliMakine').value.replace(/\./g, ''), 10) || 0;
+                const sabitYatirimTutariValue = parseInt(data.sabitYatirimTutari.replace(/\./g, ''), 10) || 0;
+                
+                let html = '<ul class="list-disc list-inside space-y-4">';
+
+                // KDV & Gümrük
+                html += `<li><strong>KDV İstisnası:</strong> Yatırım malı makine, teçhizat, yazılım ve gayri maddi hak alımları KDV'den istisnadır.</li>`;
+                html += `<li><strong>Gümrük Vergisi Muafiyeti:</strong> Yatırım malı ithal makine ve teçhizat için uygulanır.</li>`;
+
+                // Vergi İndirimi
+                const yatirimaKatkiTutari = sabitYatirimTutariValue * (config.yko / 100);
+                html += `<li><strong>Vergi İndirimi:</strong> Toplam <strong>${formatCurrency(yatirimaKatkiTutari)}</strong> tutarındaki yatırıma katkı tutarına ulaşıncaya kadar, Kurumlar/Gelir Vergisi'ni <strong>%${config.vergiIndirimOrani}</strong> oranında indirimli ödersiniz.</li>`;
+
+                // SGK Desteği
+                const sgkSureYil = config.sgkSure[bolgeNo];
+                 if (sgkSureYil !== undefined && sgkSureYil > 0) {
+                    const sgkKisiBasiDestek = 4095.87; 
+                    let yillikSgkDestek = (parseInt(data.ilaveIstihdam, 10) || 0) * sgkKisiBasiDestek * 12;
+                    if (bolgeNo < 6) { yillikSgkDestek /= 2; }
+                    const toplamSgkDestek = yillikSgkDestek * sgkSureYil;
+                    html += `<li><strong>Sigorta Primi İşveren Hissesi Desteği:</strong> İlave istihdamınız için <strong>${sgkSureYil} yıl</strong> boyunca destek sağlanır. Tahmini yıllık destek tutarı <strong>${formatCurrency(yillikSgkDestek)}</strong>, toplam destek tutarı ise <strong>${formatCurrency(toplamSgkDestek)}</strong> olabilir.</li>`;
+                } else {
+                     html += `<li><strong>Sigorta Primi İşveren Hissesi Desteği:</strong> Seçilen program veya bölge için bu destek uygulanmamaktadır.</li>`;
+                }
+                 if(bolgeNo === 6){
+                     html += `<li><strong>Sigorta Primi Desteği (İşçi Hissesi):</strong> Sadece 6. bölgede olduğunuz için, ilave istihdamın asgari ücrete tekabül eden sigorta primi işçi hissesi 10 yıl boyunca karşılanır.</li>`;
+                 }
+
+                // Faiz Desteği
+                if (config.faizDestegi) {
+                    if (config.faizSadeceBolge456 && bolgeNo < 4) {
+                        html += `<li><strong>Faiz veya Kâr Payı Desteği:</strong> Bu destek, seçtiğiniz programda sadece 4., 5. ve 6. bölgelerdeki yatırımlar için geçerlidir.</li>`;
+                    } else {
+                        html += `<li><strong>Faiz veya Kâr Payı Desteği:</strong> Kullanılacak yatırım kredilerinde azami <strong>${formatCurrency(config.faizMax)}</strong> tutarında destek sağlanabilir. Bu destek, toplam yatırımın %${config.faizAzamiOran * 100}'ini geçemez.</li>`;
+                    }
+                }
+                
+                html += `<li><strong>Yatırım Yeri Tahsisi:</strong> Projenizin uygun bulunması halinde, indirimli bedellerle yatırım yeri tahsisi için <a href="https://www.milliemlak.gov.tr/#/yatirim-tesvik" target="_blank" class="text-blue-600 hover:underline font-semibold">Milli Emlak Genel Müdürlüğü</a> sayfasından sorgulama yapabilirsiniz.</li>`;
+                html += '</ul>';
+                return html;
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const oncelikliSelectEl = document.getElementById('oncelikliYatirimKonusu');
+                const data = {
+                    sirketAdi: document.getElementById('sirketAdi').value,
+                    kobiStatusu: document.getElementById('kobiStatusu').value,
+                    faaliyetSuresi: document.getElementById('faaliyetSuresi').value,
+                    naceKodu: naceKoduInput.value,
+                    yatirimTuru: document.getElementById('yatirimTuru').value,
+                    yatirimIli: document.getElementById('yatirimIli').value,
+                    yatirimIlcesi: document.getElementById('yatirimIlcesi').value,
+                    yatirimBolgesi: document.getElementById('yatirimBolgesi').value,
+                    yatirimBolgesiText: document.getElementById('yatirimBolgesi').options[document.getElementById('yatirimBolgesi').selectedIndex].text,
+                    sabitYatirimTutari: document.getElementById('sabitYatirimTutari').value,
+                    tamamlanmaSuresiAy: document.getElementById('tamamlanmaSuresiAy').value,
+                    mevcutIstihdam: document.getElementById('mevcutIstihdam').value,
+                    ilaveIstihdam: document.getElementById('ilaveIstihdam').value,
+                    ozelProgram: document.querySelector('input[name="ozelProgram"]:checked').value,
+                    oncelikliUrun: document.getElementById('oncelikliUrun').value,
+                    oncelikliYatirimKonusuText: oncelikliSelectEl?.options[oncelikliSelectEl.selectedIndex]?.text || ''
+                };
+                
+                const sabitYatirimTutariValue = parseInt(data.sabitYatirimTutari.replace(/\./g, ''), 10) || 0;
+                let investmentWarningHTML = '';
+                const bolgeNo = parseInt(data.yatirimBolgesi, 10);
+                
+                let config = programConfigs[data.ozelProgram];
+                let raporBolgeNo = bolgeNo;
+                let programAciklama = `<p>Projeniz, <strong>${config?.name}</strong> kapsamında değerlendirilmiştir.</p>`;
+
+                if (data.ozelProgram === 'DDP' || data.ozelProgram === 'YDP') {
+                    config = programConfigs['OncelikliYatirim'];
+                    programAciklama = `<p>Yeşil/Dijital Dönüşüm Programları kapsamındaki projeniz, asgari yatırım şartını sağlaması halinde <strong>Öncelikli Yatırımlar Teşvik Sistemi</strong> kapsamında desteklenecektir.</p>`;
+                }
+                
+                if (data.ozelProgram === 'OncelikliYatirim') {
+                     programAciklama = `<p>Projeniz, <strong>"${data.oncelikliYatirimKonusuText}"</strong> konusunda olduğu için <strong>Öncelikli Yatırımlar Teşvik Sistemi</strong> kapsamındadır.</p>`;
+                }
+
+                const minYatirim = config?.minYatirim;
+                if (minYatirim?.bolge12) {
+                    if ((bolgeNo <= 2 && sabitYatirimTutariValue < minYatirim.bolge12) || (bolgeNo > 2 && sabitYatirimTutariValue < minYatirim.bolge3456)) {
+                        const minTutar = bolgeNo <= 2 ? formatCurrency(minYatirim.bolge12) : formatCurrency(minYatirim.bolge3456);
+                        investmentWarningHTML = `<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100" role="alert">
+                                <span class="font-bold">Uyarı:</span> Toplam sabit yatırım tutarınız (${data.sabitYatirimTutari} TL), bölgeniz için belirlenen asgari yatırım tutarı olan ${minTutar}'nin altındadır. Bu nedenle yatırımınız, yatırım teşvik belgesi desteklerinden faydalanamamaktadır.
+                            </div>`;
+                    }
+                } else if(minYatirim?.text) {
+                     investmentWarningHTML = `<div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50" role="alert">
+                            <span class="font-bold">Bilgilendirme:</span> Bu program için asgari yatırım tutarı, ${minYatirim.text}. Lütfen yatırımınızın bu şarta uygunluğunu kontrol ediniz.
+                        </div>`;
+                }
+
+                let reportHTML = `
+                    ${investmentWarningHTML}
+                    <p class="mb-4"><strong>Sayın ${data.sirketAdi},</strong></p>
+                    <p class="mb-4">Yatırım projenizle ilgili vermiş olduğunuz bilgiler doğrultusunda, potansiyel yatırım teşvik destekleri kapsamında ön değerlendirmeniz yapılmıştır.</p>
+                    
+                    <h3 class="text-xl font-semibold mt-6 mb-3 text-[#0732ef]">Projenizin Genel Değerlendirmesi:</h3>
+                    <p class="mb-4">Şirketiniz <strong>${data.kobiStatusu}</strong> statüsünde olup, <strong>${data.naceKodu || 'Belirtilmedi'}</strong> alanında 
+                    ${data.yatirimTuru !== 'Komple yeni yatırım' && data.faaliyetSuresi ? `<strong>${data.faaliyetSuresi} yıldır</strong> faaliyettedir. ` : ''}
+                    Gerçekleştirmeyi planladığınız <strong>${data.yatirimTuru}</strong> projesi, toplam <strong>${data.sabitYatirimTutari} TL</strong> sabit yatırım tutarına sahiptir. Yatırım teşvik belgesinin 36 ay orijinal süre ve 18 ay ek süre hakkı bulunmasına rağmen, yatırımınızın <strong>${data.tamamlanmaSuresiAy} ayda</strong> tamamlanması öngörülmektedir.
+                    ${data.yatirimTuru !== 'Komple yeni yatırım' && data.mevcutIstihdam ? `Mevcut <strong>${data.mevcutIstihdam}</strong> kişilik istihdamınıza ek olarak, projeniz kapsamında ` : 'Projeniz kapsamında '}
+                    <strong>${data.ilaveIstihdam}</strong> kişi ilave istihdam edilmesi planlanmaktadır.</p>
+
+                    <h3 class="text-xl font-semibold mt-6 mb-3 text-[#0732ef]">Yatırım Yeriniz ve Program Kapsamı:</h3>
+                    <p class="mb-4">Yatırımınız <strong>${data.yatirimIli}</strong> ilinde
+                    ${data.yatirimIlcesi && data.yatirimIlcesi !== 'diger' ? `, <strong>${data.yatirimIlcesi}</strong> ilçesinde` : ''}
+                    , <strong>${data.yatirimBolgesiText}</strong> sınırları içerisinde yer almaktadır.</p>`;
+                
+                reportHTML += programAciklama;
+                reportHTML += `<h3 class="text-xl font-semibold mt-6 mb-3 text-[#0732ef]">Faydalanabileceğiniz Potansiyel Destek Unsurları:</h3>`;
+                reportHTML += generateSupportListHTML(data, config, raporBolgeNo);
+                reportHTML += `<p class="mt-8 text-sm text-gray-500 italic"><strong>Not:</strong> Bu rapor yalnızca bir ön değerlendirme niteliğindedir ve resmi bir belge yerine geçmez. Başvuru ve değerlendirme süreçlerinde eksiksiz ve doğru bilgi sağlanması büyük önem taşımaktadır.</p>`;
+                
+                reportOutput.innerHTML = reportHTML;
+                reportContainer.classList.remove('hidden');
+                reportContainer.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+                const reportContent = document.getElementById('report-content');
+                const sirketAdi = document.getElementById('sirketAdi').value || "firma";
+                const filename = `Yatirim_Tesvik_Raporu_${sirketAdi.replace(/ /g,"_")}.pdf`;
+
+                const opt = {
+                    margin:       [0.5, 0.5, 0.5, 0.5],
+                    filename:     filename,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf().from(reportContent).set(opt).save();
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
