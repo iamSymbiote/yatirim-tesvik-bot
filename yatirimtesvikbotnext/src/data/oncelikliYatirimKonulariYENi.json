@@ -348,27 +348,27 @@
     "tanim": "Kimyasalların ve kimyasal ürünlerin imalatı"
   },
   {
-    "kod": "45677",
+    "kod": "20.11",
     "tanim": "Temel kimyasalların, gübrelerin ve azot bileşiklerinin, plastiklerin ve sentetik kauçuğun (birincil formlarda) imalatı"
   },
   {
-    "kod": "45981",
+    "kod": "20.11.10",
     "tanim": "Sanayi gazları imalatı"
   },
   {
-    "kod": "37215",
+    "kod": "20.11.10",
     "tanim": "Sanayi gazları imalatı"
   },
   {
-    "kod": "46011",
+    "kod": "20.12.01",
     "tanim": "Boya maddeleri ve pigment imalatı"
   },
   {
-    "kod": "37245",
+    "kod": "20.12.01",
     "tanim": "Boya maddeleri ve pigment imalatı (birincil formda veya konsantre olarak herhangi bir kaynaktan) (hazır boyalar hariç)"
   },
   {
-    "kod": "37610",
+    "kod": "20.12.02",
     "tanim": "Tabaklama ekstreleri, bitkisel kökenli; tanenler ve tuzları, eterleri, esterleri ve diğer türevleri; bitkisel veya hayvansal kökenli renklendirme maddelerinin imalatı"
   },
   {
@@ -452,7 +452,7 @@
     "tanim": "Birincil formda sentetik kauçuk imalatı"
   },
   {
-    "kod": "45708",
+    "kod": "20.12.03",
     "tanim": "Haşere ilaçları, dezenfektanlar ve diğer zirai-kimyasal ürünlerin imalatı"
   },
   {
@@ -480,7 +480,7 @@
     "tanim": "Diğer zirai kimyasal ürünlerin imalatı (gübre ve azotlu bileşik imalatı hariç)"
   },
   {
-    "kod": "45736",
+    "kod": "20.12.04",
     "tanim": "Boya, vernik ve benzeri kaplayıcı maddeler ile matbaa mürekkebi ve macun imalatı"
   },
   {
@@ -516,7 +516,7 @@
     "tanim": "Diğer boya, vernik ve ilgili ürünlerin imalatı (renk ayarlayıcılar, matbaa mürekkepleri, solventler, incelticiler (tiner))"
   },
   {
-    "kod": "45767",
+    "kod": "20.12.05",
     "tanim": "Yıkama, temizleme ve cilalama preparatlarının (müstahzarlarının) imalatı"
   },
   {
@@ -560,7 +560,7 @@
     "tanim": "Şampuan, saç kremi, saç spreyi, jöle, saç düzleştirme ve perma ürünleri, saç losyonları, saç boyaları, vb. imalatı"
   },
   {
-    "kod": "45797",
+    "kod": "20.12.06",
     "tanim": "Diğer kimyasal ürünlerin imalatı"
   },
   {
@@ -652,7 +652,7 @@
     "tanim": "Başka yerde sınıflandırılmamış diğer kimyasal ürünlerin imalatı (vakum tüpleri için emiciler, pirolinyitler, kazan taşı önleyici bileşikler, yağ emülsiyonlaştırıcıları, dökümhanelerde kullanılan yardımcı kimyasal ürünler ve hazır bağlayıcılar, vb.)"
   },
   {
-    "kod": "45828",
+    "kod": "20.12.07",
     "tanim": "Suni veya sentetik elyaf imalatı"
   },
   {
@@ -668,7 +668,7 @@
     "tanim": "Sentetik filament ipliği ve sentetik monofilamentlerin, şeritlerin ve benzerlerinin imalatı (poliamidden ve polyesterden yüksek mukavemetli filament iplikler dahil) (bükülü, katlı ve tekstürize olanlar hariç)"
   },
   {
-    "kod": "45741",
+    "kod": "20.12.08",
     "tanim": "Silah ve mühimmat (cephane) imalatı"
   },
   {
@@ -692,19 +692,19 @@
     "tanim": "Elektrikli teçhizat imalatı"
   },
   {
-    "kod": "45684",
+    "kod": "27.11",
     "tanim": "Elektrik motoru, jeneratör, transformatör ile elektrik dağıtım ve kontrol cihazlarının imalatı"
   },
   {
-    "kod": "45988",
+    "kod": "27.11.01",
     "tanim": "Elektrik motorları, jeneratörler ve transformatörlerin imalatı"
   },
   {
-    "kod": "37222",
+    "kod": "27.11.01",
     "tanim": "Elektrik motoru, jeneratör ve transformatörlerin imalatı (aksam ve parçaları hariç)"
   },
   {
-    "kod": "37952",
+    "kod": "27.11.02",
     "tanim": "Elektrik motoru, jeneratör ve transformatörlerin aksam ve parçalarının imalatı"
   },
   {
@@ -904,31 +904,31 @@
     "tanim": "Başka yerde sınıflandırılmamış makine ve ekipman imalatı"
   },
   {
-    "kod": "45685",
+    "kod": "28.29",
     "tanim": "Genel amaçlı makinelerin imalatı"
   },
   {
-    "kod": "45989",
+    "kod": "28.11",
     "tanim": "Motor ve türbin imalatı (hava taşıtı, motorlu kara taşıtı ve motosiklet motorları hariç)"
   },
   {
-    "kod": "39780",
+    "kod": "28.11.08",
     "tanim": "Türbin ve türbin parçalarının imalatı (rüzgar, gaz, su ve buhar türbinleri ile su çarkları ve bunların parçaları) (hava taşıtları için turbo jetler veya turbo pervaneler hariç)"
   },
   {
-    "kod": "40145",
+    "kod": "28.11.09",
     "tanim": "Deniz taşıtlarında, demir yolu taşıtlarında ve sanayide kullanılan kıvılcım ateşlemeli veya sıkıştırma ateşlemeli içten yanmalı motorların ve bunların parçalarının imalatı (hava taşıtı, motorlu kara taşıtı ve motosiklet motorları hariç)"
   },
   {
-    "kod": "40510",
+    "kod": "28.11.10",
     "tanim": "İçten yanmalı motorlar, dizel motorlar vb.de kullanılan pistonlar, silindirler ve silindir blokları, silindir başları, silindir gömlekleri, emme ve egzos subapları, segmanlar, hareket kolları, karbüratörler, yakıt memeleri vb.nin imalatı (hava taşıtı, motorlu kara taşıtı ve motosiklet motorları hariç)"
   },
   {
-    "kod": "46019",
+    "kod": "28.12",
     "tanim": "Akışkan gücü ile çalışan ekipmanların imalatı"
   },
   {
-    "kod": "38714",
+    "kod": "28.12.05",
     "tanim": "Akışkan gücü ile çalışan ekipmanların ve bunların parçalarının imalatı (hidrolik ve pnömatik motorlar, hidrolik pompalar, hidrolik ve pnömatik valfler, hidrolik sistemler ve bunların parçaları)"
   },
   {
