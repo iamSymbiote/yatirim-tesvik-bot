@@ -416,8 +416,22 @@ export default function Home() {
                 selectOnFocus
                 handleHomeEndKeys
                 filterOptions={(options, { inputValue }) => {
+                  // Türkçe karakterleri normalize et
+                  const normalizeText = (text: string) => {
+                    return text
+                      .toLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '') // Diacritics kaldır
+                      .replace(/ı/g, 'i')
+                      .replace(/ğ/g, 'g')
+                      .replace(/ü/g, 'u')
+                      .replace(/ş/g, 's')
+                      .replace(/ö/g, 'o')
+                      .replace(/ç/g, 'c');
+                  };
+                  
                   const filtered = options.filter(option =>
-                    option.toLowerCase().includes(inputValue.toLowerCase())
+                    normalizeText(option).includes(normalizeText(inputValue))
                   );
                   return filtered;
                 }}
@@ -543,6 +557,17 @@ export default function Home() {
                   if (naceValue) {
                     params.set('naceKodu', naceValue.kod);
                     params.set('naceAciklama', naceValue.tanim || 'Açıklama bulunamadı');
+                    
+                    // Teşvik programı verilerini gönder
+                    const hedef = isHedefYatirim(naceValue.kod);
+                    const oncelikli = isOncelikliYatirim(naceValue);
+                    const yuksekTek = isYuksekTeknoloji(naceValue.kod);
+                    const ortaYuksekTek = isOrtaYuksekTeknoloji(naceValue.kod);
+                    
+                    params.set('hedefYatirim', hedef ? 'true' : 'false');
+                    params.set('oncelikliYatirim', oncelikli ? 'true' : 'false');
+                    params.set('yuksekTeknoloji', yuksekTek ? 'true' : 'false');
+                    params.set('ortaYuksekTeknoloji', ortaYuksekTek ? 'true' : 'false');
                   }
                   
                   if (selectedIl) {

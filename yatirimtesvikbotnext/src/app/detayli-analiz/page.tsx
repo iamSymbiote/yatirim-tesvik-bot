@@ -29,7 +29,12 @@ function DetayliAnalizContent() {
     tamamlanmaSuresiAy: '',
     ozelProgram: 'HedefYatirim',
     oncelikliUrun: '',
-    oncelikliYatirimKonusu: ''
+    oncelikliYatirimKonusu: '',
+    // Teşvik programı verileri
+    hedefYatirim: false,
+    oncelikliYatirim: false,
+    yuksekTeknoloji: false,
+    ortaYuksekTeknoloji: false
   });
 
   const [showReport, setShowReport] = useState(false);
@@ -53,14 +58,35 @@ function DetayliAnalizContent() {
     const osb = searchParams.get('osb');
     const faydalanacakBolge = searchParams.get('faydalanacakBolge');
     
+    // Teşvik programı verilerini oku
+    const hedefYatirim = searchParams.get('hedefYatirim') === 'true';
+    const oncelikliYatirim = searchParams.get('oncelikliYatirim') === 'true';
+    const yuksekTeknoloji = searchParams.get('yuksekTeknoloji') === 'true';
+    const ortaYuksekTeknoloji = searchParams.get('ortaYuksekTeknoloji') === 'true';
+    
     if (naceKodu) {
       const aciklama = naceAciklama && naceAciklama !== 'undefined' ? naceAciklama : 'Açıklama bulunamadı';
+      
+      // Öncelikli yatırım varsa onu seç, yoksa hedef yatırımı seç
+      let selectedProgram = 'HedefYatirim';
+      if (oncelikliYatirim) {
+        selectedProgram = 'OncelikliYatirim';
+      } else if (hedefYatirim) {
+        selectedProgram = 'HedefYatirim';
+      }
+      
       setFormData(prev => ({
         ...prev,
         naceKodu: naceKodu,
         naceSearch: `${naceKodu} - ${aciklama}`,
         yatirimIli: il || '',
-        yatirimBolgesi: faydalanacakBolge || ''
+        yatirimBolgesi: faydalanacakBolge || '',
+        // Teşvik programı verileri
+        hedefYatirim: hedefYatirim,
+        oncelikliYatirim: oncelikliYatirim,
+        yuksekTeknoloji: yuksekTeknoloji,
+        ortaYuksekTeknoloji: ortaYuksekTeknoloji,
+        ozelProgram: selectedProgram
       }));
     }
   }, [searchParams]);
@@ -461,6 +487,7 @@ function DetayliAnalizContent() {
                 className={styles.formSelect}
                 value={formData.yatirimIli}
                 onChange={(e) => handleInputChange('yatirimIli', e.target.value)}
+                disabled={!!formData.yatirimIli}
                 required
               >
                 <option value="">Lütfen İl Seçin</option>
@@ -517,6 +544,7 @@ function DetayliAnalizContent() {
                 value="HedefYatirim"
                 checked={formData.ozelProgram === 'HedefYatirim'}
                 onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                disabled={true}
               />
               <span>Hedef Yatırımlar Teşvik Sistemi</span>
             </label>
@@ -527,6 +555,7 @@ function DetayliAnalizContent() {
                 value="OncelikliYatirim"
                 checked={formData.ozelProgram === 'OncelikliYatirim'}
                 onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                disabled={true}
               />
               <span>Öncelikli Yatırımlar Teşvik Sistemi</span>
             </label>
