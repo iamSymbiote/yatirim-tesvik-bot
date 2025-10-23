@@ -536,7 +536,37 @@ export default function Home() {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => window.open('/detayli-analiz', '_blank')}
+                onClick={() => {
+                  // Ana sayfadaki verileri URL parametreleri olarak gönder
+                  const params = new URLSearchParams();
+                  
+                  if (naceValue) {
+                    params.set('naceKodu', naceValue.kod);
+                    params.set('naceAciklama', naceValue.tanim || 'Açıklama bulunamadı');
+                  }
+                  
+                  if (selectedIl) {
+                    params.set('il', selectedIl);
+                  }
+                  
+                  if (selectedIlce) {
+                    params.set('ilce', selectedIlce);
+                  }
+                  
+                  if (osb) {
+                    params.set('osb', osb);
+                  }
+                  
+                  // Faydalanacak bölgeyi hesapla
+                  if (selectedIl && selectedIlce && osb) {
+                    const faydalanacakBolge = getDestekBolgesi(selectedIl, selectedIlce, osb);
+                    if (faydalanacakBolge !== null) {
+                      params.set('faydalanacakBolge', faydalanacakBolge.toString());
+                    }
+                  }
+                  
+                  window.open(`/detayli-analiz?${params.toString()}`, '_blank');
+                }}
                 sx={{
                   background: 'linear-gradient(45deg, #f58802 30%, #ff9500 90%)',
                   color: 'white',

@@ -1,11 +1,13 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { IconButton } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import styles from './page.module.css';
 
 export default function DetayliAnaliz() {
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState<'light' | 'dark'>('light');
   const [formData, setFormData] = useState({
     sirketAdi: '',
@@ -41,6 +43,27 @@ export default function DetayliAnaliz() {
       return newMode;
     });
   };
+
+  // URL parametrelerini oku ve form verilerini güncelle
+  useEffect(() => {
+    const naceKodu = searchParams.get('naceKodu');
+    const naceAciklama = searchParams.get('naceAciklama');
+    const il = searchParams.get('il');
+    const ilce = searchParams.get('ilce');
+    const osb = searchParams.get('osb');
+    const faydalanacakBolge = searchParams.get('faydalanacakBolge');
+    
+    if (naceKodu) {
+      const aciklama = naceAciklama && naceAciklama !== 'undefined' ? naceAciklama : 'Açıklama bulunamadı';
+      setFormData(prev => ({
+        ...prev,
+        naceKodu: naceKodu,
+        naceSearch: `${naceKodu} - ${aciklama}`,
+        yatirimIli: il || '',
+        yatirimBolgesi: faydalanacakBolge || ''
+      }));
+    }
+  }, [searchParams]);
 
   // Component mount olduğunda body background'ını ayarla
   useEffect(() => {
@@ -186,8 +209,53 @@ export default function DetayliAnaliz() {
     const totalInvestment = calculateTotalInvestment();
     setFormData(prev => ({ ...prev, sabitYatirimTutari: totalInvestment }));
     
-    // Rapor oluşturma mantığı burada olacak
-    setReportContent('Rapor oluşturuluyor...');
+    // Rapor oluşturma mantığı
+    const report = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #0732ef; border-bottom: 2px solid #0732ef; padding-bottom: 10px;">
+          YATIRIM TEŞVİK RAPORU
+        </h2>
+        
+        <h3 style="color: #517a06; margin-top: 30px;">A. ŞİRKET BİLGİLERİ</h3>
+        <p><strong>Şirket Adı/Unvanı:</strong> ${formData.sirketAdi}</p>
+        <p><strong>KOBİ Statüsü:</strong> ${formData.kobiStatusu}</p>
+        <p><strong>Faaliyet Alanı:</strong> ${formData.naceSearch}</p>
+        
+        <h3 style="color: #517a06; margin-top: 30px;">B. YATIRIM PROJESİ BİLGİLERİ</h3>
+        <p><strong>Yatırımın Türü:</strong> ${formData.yatirimTuru}</p>
+        <p><strong>Mevcut İstihdam Sayısı:</strong> ${formData.mevcutIstihdam}</p>
+        <p><strong>Faaliyette Bulunma Süresi:</strong> ${formData.faaliyetSuresi} yıl</p>
+        <p><strong>Sağlanacak İlave İstihdam Sayısı:</strong> ${formData.ilaveIstihdam}</p>
+        
+        <h3 style="color: #517a06; margin-top: 30px;">C. YATIRIM MALİYETLERİ</h3>
+        <p><strong>İthal Makine Teçhizat:</strong> ${formData.ithalMakine} TL</p>
+        <p><strong>Yerli Makine Teçhizat:</strong> ${formData.yerliMakine} TL</p>
+        <p><strong>Bina İnşaat Giderleri:</strong> ${formData.binaInsaat} TL</p>
+        <p><strong>Diğer Yatırım Giderleri:</strong> ${formData.digerGiderler} TL</p>
+        <p><strong>Toplam Sabit Yatırım Tutarı:</strong> ${calculateTotalInvestment()} TL</p>
+        
+        <h3 style="color: #517a06; margin-top: 30px;">D. YATIRIM LOKASYONU</h3>
+        <p><strong>Yatırım Yapılacak İl:</strong> ${formData.yatirimIli}</p>
+        <p><strong>Yatırım Yapılacak Bölge:</strong> ${formData.yatirimBolgesi}</p>
+        <p><strong>Yatırımın Tamamlanma Süresi:</strong> ${formData.tamamlanmaSuresiAy} ay</p>
+        
+        <h3 style="color: #517a06; margin-top: 30px;">E. TEŞVİK PROGRAMI</h3>
+        <p><strong>Seçilen Program:</strong> ${formData.ozelProgram}</p>
+        ${formData.ozelProgram === 'OncelikliYatirim' ? `
+          <p><strong>Öncelikli Yatırım Konusu:</strong> ${formData.oncelikliYatirimKonusu}</p>
+          <p><strong>Öncelikli Ürün:</strong> ${formData.oncelikliUrun}</p>
+        ` : ''}
+        
+        <div style="margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-left: 4px solid #0732ef;">
+          <p style="margin: 0; font-style: italic;">
+            Bu rapor, girilen bilgilere dayanarak oluşturulmuş bir ön değerlendirmedir. 
+            Kesin teşvik miktarları ve koşulları için resmi başvuru yapılması gerekmektedir.
+          </p>
+        </div>
+      </div>
+    `;
+    
+    setReportContent(report);
     setShowReport(true);
   };
 
@@ -254,6 +322,7 @@ export default function DetayliAnaliz() {
                 value={formData.naceSearch}
                 onChange={(e) => handleInputChange('naceSearch', e.target.value)}
                 placeholder="Faaliyet alanı veya kodu ile arama yapın..."
+                disabled={!!formData.naceKodu} // NACE kodu varsa disabled yap
                 required
               />
             </div>
