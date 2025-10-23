@@ -1,12 +1,12 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { IconButton } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import styles from './page.module.css';
 
-export default function DetayliAnaliz() {
+function DetayliAnalizContent() {
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<'light' | 'dark'>('light');
   const [formData, setFormData] = useState({
@@ -651,5 +651,13 @@ export default function DetayliAnaliz() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function DetayliAnaliz() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DetayliAnalizContent />
+    </Suspense>
   );
 }
