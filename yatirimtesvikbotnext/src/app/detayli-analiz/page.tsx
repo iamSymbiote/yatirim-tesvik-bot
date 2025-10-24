@@ -11,10 +11,10 @@ function DetayliAnalizContent() {
   const [mode, setMode] = useState<'light' | 'dark'>('light');
   const [formData, setFormData] = useState({
     sirketAdi: '',
-    kobiStatusu: 'KOBİ',
+    kobiStatusu: '', // Zorunlu alan - boş başlat
     naceKodu: '',
     naceSearch: '',
-    yatirimTuru: 'Komple yeni yatırım',
+    yatirimTuru: '', // Zorunlu alan - boş başlat
     mevcutIstihdam: '',
     faaliyetSuresi: '',
     ilaveIstihdam: '',
@@ -27,7 +27,9 @@ function DetayliAnalizContent() {
     yatirimIlcesi: '',
     yatirimBolgesi: '1',
     tamamlanmaSuresiAy: '',
-    ozelProgram: 'HedefYatirim',
+    sektorelProgram: 'HedefYatirim',
+    ozelProgram: '', // Türkiye Yüzyılı Kalkınma Hamlesi
+    dijitalProgram: '', // Yeşil ve Dijital Dönüşüm
     oncelikliUrun: '',
     oncelikliYatirimKonusu: '',
     // Teşvik programı verileri
@@ -39,6 +41,23 @@ function DetayliAnalizContent() {
 
   const [showReport, setShowReport] = useState(false);
   const [reportContent, setReportContent] = useState('');
+
+  // Link okundu durumları için state
+  const [readLinks, setReadLinks] = useState({
+    THP: false,
+    YKHP: false,
+    SHP: false
+  });
+
+  // Form validasyon hataları için state
+  const [validationErrors, setValidationErrors] = useState({
+    sirketAdi: false,
+    kobiStatusu: false,
+    ilaveIstihdam: false,
+    tamamlanmaSuresiAy: false,
+    tamamlanmaSuresiAyMax: false, // 54 ay limiti için
+    yatirimTuru: false
+  });
 
   const toggleTheme = () => {
     setMode(prev => {
@@ -64,16 +83,22 @@ function DetayliAnalizContent() {
     const yuksekTeknoloji = searchParams.get('yuksekTeknoloji') === 'true';
     const ortaYuksekTeknoloji = searchParams.get('ortaYuksekTeknoloji') === 'true';
     
+    
     if (naceKodu) {
       const aciklama = naceAciklama && naceAciklama !== 'undefined' ? naceAciklama : 'Açıklama bulunamadı';
       
       // Öncelikli yatırım varsa onu seç, yoksa hedef yatırımı seç
-      let selectedProgram = 'HedefYatirim';
+      let selectedSektorelProgram = '';
       if (oncelikliYatirim) {
-        selectedProgram = 'OncelikliYatirim';
+        selectedSektorelProgram = 'OncelikliYatirim';
       } else if (hedefYatirim) {
-        selectedProgram = 'HedefYatirim';
+        selectedSektorelProgram = 'HedefYatirim';
       }
+      // Eğer ikisi de false ise, varsayılan olarak HedefYatirim seç
+      if (!selectedSektorelProgram) {
+        selectedSektorelProgram = 'HedefYatirim';
+      }
+      
       
       setFormData(prev => ({
         ...prev,
@@ -86,7 +111,7 @@ function DetayliAnalizContent() {
         oncelikliYatirim: oncelikliYatirim,
         yuksekTeknoloji: yuksekTeknoloji,
         ortaYuksekTeknoloji: ortaYuksekTeknoloji,
-        ozelProgram: selectedProgram
+        sektorelProgram: selectedSektorelProgram
       }));
     }
   }, [searchParams]);
@@ -209,6 +234,60 @@ function DetayliAnalizContent() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Tamamlanma süresi için özel kontrol
+    if (field === 'tamamlanmaSuresiAy') {
+      const numValue = parseInt(value);
+      const isOverLimit = !isNaN(numValue) && numValue > 54;
+      
+      setValidationErrors(prev => ({
+        ...prev,
+        tamamlanmaSuresiAy: !value.trim(),
+        tamamlanmaSuresiAyMax: isOverLimit
+      }));
+      return;
+    }
+    
+    // Eğer bu field validasyon hatası veriyorsa, hatayı temizle
+    if (field in validationErrors && validationErrors[field as keyof typeof validationErrors]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [field]: false
+      }));
+    }
+  };
+
+  // Link tıklama fonksiyonu
+  const handleLinkClick = (programType: 'THP' | 'YKHP' | 'SHP') => {
+    setReadLinks(prev => ({
+      ...prev,
+      [programType]: true
+    }));
+  };
+
+  // Form validasyon fonksiyonu
+  const validateForm = () => {
+    const numValue = parseInt(formData.tamamlanmaSuresiAy);
+    const isOverLimit = !isNaN(numValue) && numValue > 54;
+    
+    const errors = {
+      sirketAdi: !formData.sirketAdi.trim(),
+      kobiStatusu: !formData.kobiStatusu,
+      ilaveIstihdam: !formData.ilaveIstihdam.trim(),
+      tamamlanmaSuresiAy: !formData.tamamlanmaSuresiAy.trim(),
+      tamamlanmaSuresiAyMax: isOverLimit,
+      yatirimTuru: !formData.yatirimTuru
+    };
+    
+    console.log('Form Data:', formData);
+    console.log('Validation Errors:', errors);
+    
+    setValidationErrors(errors);
+    
+    // Eğer herhangi bir hata varsa false döndür
+    const hasErrors = Object.values(errors).some(error => error);
+    console.log('Has Errors:', hasErrors);
+    return !hasErrors;
   };
 
   const formatNumber = (value: string) => {
@@ -231,6 +310,13 @@ function DetayliAnalizContent() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Form validasyonunu kontrol et
+    if (!validateForm()) {
+      // Sayfayı en üste kaydır
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     
     const totalInvestment = calculateTotalInvestment();
     setFormData(prev => ({ ...prev, sabitYatirimTutari: totalInvestment }));
@@ -317,27 +403,33 @@ function DetayliAnalizContent() {
           <h2>A. Şirket Bilgileri</h2>
           <div className={styles.grid}>
             <div>
-              <label htmlFor="sirketAdi" className={styles.formLabel}>Şirket Adı/Unvanı</label>
+              <label htmlFor="sirketAdi" className={styles.formLabel}>Şirket Adı/Unvanı *</label>
               <input
                 type="text"
                 id="sirketAdi"
-                className={styles.formInput}
+                className={`${styles.formInput} ${validationErrors.sirketAdi ? styles.errorInput : ''}`}
                 value={formData.sirketAdi}
                 onChange={(e) => handleInputChange('sirketAdi', e.target.value)}
-                required
               />
+              {validationErrors.sirketAdi && (
+                <div className={styles.errorMessage}>Bu alan zorunludur</div>
+              )}
             </div>
             <div>
-              <label htmlFor="kobiStatusu" className={styles.formLabel}>KOBİ Statüsü</label>
+              <label htmlFor="kobiStatusu" className={styles.formLabel}>KOBİ Statüsü *</label>
               <select
                 id="kobiStatusu"
-                className={styles.formSelect}
+                className={`${styles.formSelect} ${validationErrors.kobiStatusu ? styles.errorInput : ''}`}
                 value={formData.kobiStatusu}
                 onChange={(e) => handleInputChange('kobiStatusu', e.target.value)}
               >
+                <option value="">Seçiniz</option>
                 <option value="KOBİ">KOBİ</option>
                 <option value="Büyük İşletme">Büyük İşletme</option>
               </select>
+              {validationErrors.kobiStatusu && (
+                <div className={styles.errorMessage}>Bu alan zorunludur</div>
+              )}
             </div>
             <div className={styles.fullWidth}>
               <label htmlFor="naceSearch" className={styles.formLabel}>Faaliyet Alanı (NACE Kodu ve Açıklaması)</label>
@@ -349,7 +441,6 @@ function DetayliAnalizContent() {
                 onChange={(e) => handleInputChange('naceSearch', e.target.value)}
                 placeholder="Faaliyet alanı veya kodu ile arama yapın..."
                 disabled={!!formData.naceKodu} // NACE kodu varsa disabled yap
-                required
               />
             </div>
           </div>
@@ -360,10 +451,10 @@ function DetayliAnalizContent() {
           <h2>B. Yatırım Projesi Bilgileri</h2>
           <div className={styles.grid}>
             <div>
-              <label htmlFor="yatirimTuru" className={styles.formLabel}>Yatırımın Türü</label>
+              <label htmlFor="yatirimTuru" className={styles.formLabel}>Yatırımın Türü *</label>
               <select
                 id="yatirimTuru"
-                className={styles.formSelect}
+                className={`${styles.formSelect} ${validationErrors.yatirimTuru ? styles.errorInput : ''}`}
                 value={formData.yatirimTuru}
                 onChange={(e) => handleInputChange('yatirimTuru', e.target.value)}
               >
@@ -374,6 +465,9 @@ function DetayliAnalizContent() {
                 <option value="Entegrasyon">Entegrasyon</option>
                 <option value="Nakil">Nakil</option>
               </select>
+              {validationErrors.yatirimTuru && (
+                <div className={styles.errorMessage}>Bu alan zorunludur</div>
+              )}
             </div>
             <div>
               <label htmlFor="mevcutIstihdam" className={styles.formLabel}>Mevcut İstihdam Sayısı</label>
@@ -385,7 +479,6 @@ function DetayliAnalizContent() {
                 onChange={(e) => handleInputChange('mevcutIstihdam', e.target.value)}
                 min="0"
                 disabled={formData.yatirimTuru === 'Komple yeni yatırım'}
-                required
               />
             </div>
             <div>
@@ -398,20 +491,21 @@ function DetayliAnalizContent() {
                 onChange={(e) => handleInputChange('faaliyetSuresi', e.target.value)}
                 min="0"
                 disabled={formData.yatirimTuru === 'Komple yeni yatırım'}
-                required
               />
             </div>
             <div>
-              <label htmlFor="ilaveIstihdam" className={styles.formLabel}>Sağlanacak İlave İstihdam Sayısı</label>
+              <label htmlFor="ilaveIstihdam" className={styles.formLabel}>Sağlanacak İlave İstihdam Sayısı *</label>
               <input
                 type="number"
                 id="ilaveIstihdam"
-                className={styles.formInput}
+                className={`${styles.formInput} ${validationErrors.ilaveIstihdam ? styles.errorInput : ''}`}
                 value={formData.ilaveIstihdam}
                 onChange={(e) => handleInputChange('ilaveIstihdam', e.target.value)}
                 min="0"
-                required
               />
+              {validationErrors.ilaveIstihdam && (
+                <div className={styles.errorMessage}>Bu alan zorunludur</div>
+              )}
             </div>
 
             <div>
@@ -488,7 +582,6 @@ function DetayliAnalizContent() {
                 value={formData.yatirimIli}
                 onChange={(e) => handleInputChange('yatirimIli', e.target.value)}
                 disabled={!!formData.yatirimIli}
-                required
               >
                 <option value="">Lütfen İl Seçin</option>
                 {Object.keys(ilBolgeMap).sort((a, b) => a.localeCompare(b, 'tr')).map(il => (
@@ -514,16 +607,22 @@ function DetayliAnalizContent() {
               </select>
             </div>
             <div>
-              <label htmlFor="tamamlanmaSuresiAy" className={styles.formLabel}>Yatırımın Tamamlanma Süresi (Ay)</label>
+              <label htmlFor="tamamlanmaSuresiAy" className={styles.formLabel}>Yatırımın Tamamlanma Süresi (Ay) *</label>
               <input
                 type="number"
                 id="tamamlanmaSuresiAy"
-                className={styles.formInput}
+                className={`${styles.formInput} ${(validationErrors.tamamlanmaSuresiAy || validationErrors.tamamlanmaSuresiAyMax) ? styles.errorInput : ''}`}
                 value={formData.tamamlanmaSuresiAy}
                 onChange={(e) => handleInputChange('tamamlanmaSuresiAy', e.target.value)}
                 min="1"
-                required
+                max="54"
               />
+              {validationErrors.tamamlanmaSuresiAy && (
+                <div className={styles.errorMessage}>Bu alan zorunludur</div>
+              )}
+              {validationErrors.tamamlanmaSuresiAyMax && (
+                <div className={styles.errorMessage}>Tamamlanma süresi 54 aydan fazla olamaz</div>
+              )}
             </div>
           </div>
         </div>
@@ -536,29 +635,67 @@ function DetayliAnalizContent() {
           </p>
           
           <h3>Sektörel ve Bölgesel Teşvik Sistemi</h3>
+          
+          {/* Ana sorgudan gelen sonuca göre bilgilendirme */}
+          <div className={styles.infoBox}>
+            <div className={styles.infoIcon}>ℹ️</div>
+            <div className={styles.infoText}>
+              <strong>Bu bölüm ana sayfadaki sorgu sonucuna göre otomatik belirlenmiştir.</strong>
+              <br />
+              {formData.oncelikliYatirim ? (
+                <>Bu NACE kodu <strong>Öncelikli Yatırım</strong> kapsamında olduğu için otomatik seçilmiştir.</>
+              ) : formData.hedefYatirim ? (
+                <>Bu NACE kodu <strong>Hedef Yatırım</strong> kapsamında olduğu için otomatik seçilmiştir.</>
+              ) : (
+                <>Bu NACE kodu için varsayılan olarak <strong>Hedef Yatırım</strong> sistemi seçilmiştir.</>
+              )}
+            </div>
+          </div>
+          
           <div className={styles.radioGroup}>
             <label className={styles.customRadio}>
               <input
                 type="radio"
-                name="ozelProgram"
+                name="sektorelProgram"
                 value="HedefYatirim"
-                checked={formData.ozelProgram === 'HedefYatirim'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                checked={formData.sektorelProgram === 'HedefYatirim'}
+                onChange={(e) => handleInputChange('sektorelProgram', e.target.value)}
                 disabled={true}
               />
               <span>Hedef Yatırımlar Teşvik Sistemi</span>
             </label>
+            
+            {/* Hedef Yatırım Tooltip */}
+            {formData.sektorelProgram === 'HedefYatirim' && (
+              <div className={styles.tooltipBox}>
+                <div className={styles.tooltipIcon}>💡</div>
+                <div className={styles.tooltipText}>
+                  <strong>Otomatik Seçim:</strong> Yatırımınız hedef yatırım kapsamında değerlendirileceği için bu seçenek sorgunuz sonrasında otomatik gelmiştir ve değiştirilemez.
+                </div>
+              </div>
+            )}
+            
             <label className={styles.customRadio}>
               <input
                 type="radio"
-                name="ozelProgram"
+                name="sektorelProgram"
                 value="OncelikliYatirim"
-                checked={formData.ozelProgram === 'OncelikliYatirim'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                checked={formData.sektorelProgram === 'OncelikliYatirim'}
+                onChange={(e) => handleInputChange('sektorelProgram', e.target.value)}
                 disabled={true}
               />
               <span>Öncelikli Yatırımlar Teşvik Sistemi</span>
             </label>
+            
+            {/* Öncelikli Yatırım Tooltip */}
+            {formData.sektorelProgram === 'OncelikliYatirim' && (
+              <div className={styles.tooltipBox}>
+                <div className={styles.tooltipIcon}>💡</div>
+                <div className={styles.tooltipText}>
+                  <strong>Otomatik Seçim:</strong> Yatırımınız öncelikli konusunda değerlendirildiği için bu seçenek sorgunuz sonrasında otomatik gelmiştir ve değiştirilemez.
+                </div>
+              </div>
+            )}
           </div>
 
           <h3>Türkiye Yüzyılı Kalkınma Hamlesi</h3>
@@ -594,26 +731,73 @@ function DetayliAnalizContent() {
               <span>Stratejik Hamle Programı</span>
             </label>
           </div>
+
+          {/* Program Detay Linki ve Uyarı Mesajı */}
+          {(formData.ozelProgram === 'THP' || formData.ozelProgram === 'YKHP' || formData.ozelProgram === 'SHP') && (
+            <div className={styles.programInfoBox}>
+              <div className={styles.warningIcon}>⚠️</div>
+              <div className={styles.warningText}>
+                <strong>Rapor oluşturmadan önce seçtiğiniz programın detaylarını içeren linki lütfen inceleyiniz:</strong>
+                <br />
+                {formData.ozelProgram === 'THP' && (
+                  <a 
+                    href="https://www.yatirimtesvikbelgesi.com/post/teknoloji-odaklı-sanayi-hamlesi-programı-yatırım-teşvikleri-ve-dikkat-edilmesi-gerekenler" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.programLink}
+                    onClick={() => handleLinkClick('THP')}
+                  >
+                    📋 Teknoloji Hamlesi Programı Detayları
+                    {readLinks.THP && <span style={{ marginLeft: '8px', color: '#4CAF50' }}>✅ Okundu</span>}
+                  </a>
+                )}
+                {formData.ozelProgram === 'YKHP' && (
+                  <a 
+                    href="https://www.yatirimtesvikbelgesi.com/post/yerel-kalkınma-hamlesi-yatırım-teşvik-belgesi" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.programLink}
+                    onClick={() => handleLinkClick('YKHP')}
+                  >
+                    📋 Yerel Kalkınma Hamlesi Programı Detayları
+                    {readLinks.YKHP && <span style={{ marginLeft: '8px', color: '#4CAF50' }}>✅ Okundu</span>}
+                  </a>
+                )}
+                {formData.ozelProgram === 'SHP' && (
+                  <a 
+                    href="https://www.yatirimtesvikbelgesi.com/post/stratejik-yatırım-teşvik-belgesi" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.programLink}
+                    onClick={() => handleLinkClick('SHP')}
+                  >
+                    📋 Stratejik Hamle Programı Detayları
+                    {readLinks.SHP && <span style={{ marginLeft: '8px', color: '#4CAF50' }}>✅ Okundu</span>}
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
           
           <h3>Yeşil ve Dijital Dönüşüm</h3>
           <div className={styles.radioGroup}>
             <label className={styles.customRadio}>
               <input
                 type="radio"
-                name="ozelProgram"
+                name="dijitalProgram"
                 value="DDP"
-                checked={formData.ozelProgram === 'DDP'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                checked={formData.dijitalProgram === 'DDP'}
+                onChange={(e) => handleInputChange('dijitalProgram', e.target.value)}
               />
               <span>Dijital Dönüşüm Programı (DDP)</span>
             </label>
             <label className={styles.customRadio}>
               <input
                 type="radio"
-                name="ozelProgram"
+                name="dijitalProgram"
                 value="YDP"
-                checked={formData.ozelProgram === 'YDP'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                checked={formData.dijitalProgram === 'YDP'}
+                onChange={(e) => handleInputChange('dijitalProgram', e.target.value)}
               />
               <span>Yeşil Dönüşüm Programı (YDP)</span>
             </label>

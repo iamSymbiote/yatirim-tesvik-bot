@@ -270,6 +270,49 @@
   transform: scale(1);
 }
 
+/* Disabled Radio Button Styles */
+.customRadio input:disabled + span {
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.customRadio input:disabled + span:hover {
+  color: #9ca3af;
+}
+
+.customRadio input:disabled + span::before {
+  border-color: #d1d5db;
+  background-color: #f3f4f6;
+}
+
+.customRadio input:disabled:checked + span::before {
+  border-color: #9ca3af;
+  background-color: #e5e7eb;
+}
+
+.customRadio input:disabled:checked + span::after {
+  background-color: #9ca3af;
+}
+
+.darkMode .customRadio input:disabled + span {
+  color: #6b7280;
+}
+
+.darkMode .customRadio input:disabled + span::before {
+  border-color: #4b5563;
+  background-color: #374151;
+}
+
+.darkMode .customRadio input:disabled:checked + span::before {
+  border-color: #6b7280;
+  background-color: #1f2937;
+}
+
+.darkMode .customRadio input:disabled:checked + span::after {
+  background-color: #6b7280;
+}
+
 /* Additional Inputs */
 .additionalInputs {
   margin-top: 1.5rem;
@@ -407,6 +450,170 @@
   .radioGroup {
     padding-left: 0.5rem;
   }
+}
+
+/* Tooltip Box Styles */
+.tooltipBox {
+  margin-left: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #0ea5e9;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.1);
+  font-size: 0.85rem;
+}
+
+.darkMode .tooltipBox {
+  background: linear-gradient(135deg, #0c4a6e 0%, #075985 100%);
+  border-color: #38bdf8;
+}
+
+.tooltipIcon {
+  font-size: 1rem;
+  line-height: 1;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.tooltipText {
+  flex: 1;
+  color: #0369a1;
+  line-height: 1.4;
+  transition: color 0.3s ease;
+}
+
+.darkMode .tooltipText {
+  color: #7dd3fc;
+}
+
+/* Info Box Styles */
+.infoBox {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border: 2px solid #3b82f6;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.darkMode .infoBox {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-color: #60a5fa;
+}
+
+.infoIcon {
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.infoText {
+  flex: 1;
+  color: #1e40af;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+.darkMode .infoText {
+  color: #93c5fd;
+}
+
+/* Program Info Box Styles */
+.programInfoBox {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.1);
+}
+
+.darkMode .programInfoBox {
+  background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+  border-color: #d97706;
+}
+
+.warningIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.warningText {
+  flex: 1;
+  color: #92400e;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+.darkMode .warningText {
+  color: #fbbf24;
+}
+
+.programLink {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
+}
+
+.programLink:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(30, 64, 175, 0.3);
+  text-decoration: none;
+  color: white;
+}
+
+.programLink:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
+}
+
+/* Error styling for form validation */
+.errorInput {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.errorMessage::before {
+  content: "⚠️";
+  font-size: 0.75rem;
 }
 
 /* Dark mode support - using .darkMode class instead of @media query */
