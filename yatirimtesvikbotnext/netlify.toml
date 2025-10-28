@@ -9,14 +9,8 @@
 # This rewrites /detayli-rapor to the actual page /detayli-analiz
 # with a 200 status (no visible redirect) and preserves query parameters.
 [[redirects]]
-  from = "/detayli-rapor"
-  to = "/detayli-analiz"
-  status = 200
-  force = true
-
-# Optional: also support a trailing slash version
-[[redirects]]
-  from = "/detayli-rapor/"
-  to = "/detayli-analiz"
+  # Match /detayli-rapor and anything after it, preserve querystring
+  from = "/detayli-rapor*"
+  to = "/detayli-analiz:splat"
   status = 200
   force = true
