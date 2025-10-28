@@ -590,7 +590,7 @@ export default function Home() {
                     }
                   }
                   
-                  window.open(`/detayli-rapor?${params.toString()}`, '_blank');
+                  window.open(`/detayli-analiz?${params.toString()}`, '_blank');
                 }}
                 sx={{
                   background: 'linear-gradient(45deg, #f58802 30%, #ff9500 90%)',
