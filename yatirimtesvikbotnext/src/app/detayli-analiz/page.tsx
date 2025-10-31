@@ -1,10 +1,14 @@
 "use client";
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { IconButton } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import styles from './page.module.css';
+import destekUnsurlariBolgeBazli from '@/data/destekUnsurlariBolgeBazli.json';
+import { generateAndDownloadPDF as generateAndDownloadPDFNew } from '@/components/PDFReportNew';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 function DetayliAnalizContent() {
   const searchParams = useSearchParams();
@@ -41,6 +45,14 @@ function DetayliAnalizContent() {
 
   const [showReport, setShowReport] = useState(false);
   const [reportContent, setReportContent] = useState('');
+  const reportRef = useRef<HTMLDivElement | null>(null);
+
+  // Rapor oluşturulduğunda otomatik olarak rapor bölümüne kaydır
+  useEffect(() => {
+    if (showReport && reportRef.current) {
+      reportRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [showReport]);
 
   // Link okundu durumları için state
   const [readLinks, setReadLinks] = useState({
@@ -66,6 +78,35 @@ function DetayliAnalizContent() {
       document.body.style.backgroundColor = newMode === 'dark' ? '#1a1a1a' : '#ffffff';
       return newMode;
     });
+  };
+
+  const exportReportAsPDF = async () => {
+    if (!reportRef.current) return;
+    const element = reportRef.current;
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      logging: false,
+      windowWidth: element.scrollWidth,
+    });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const imgWidth = pageWidth - 20; // 10mm margin on both sides
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 10;
+    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight, undefined, 'FAST');
+    heightLeft -= pageHeight - 20;
+    while (heightLeft > 0) {
+      pdf.addPage();
+      position = 10 - (imgHeight - heightLeft);
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight, undefined, 'FAST');
+      heightLeft -= pageHeight - 20;
+    }
+    pdf.save(`yatirim-tesvik-raporu-${new Date().toISOString().slice(0,10)}.pdf`);
   };
 
   // URL parametrelerini oku ve form verilerini güncelle
@@ -257,6 +298,22 @@ function DetayliAnalizContent() {
     }
   };
 
+  const handleRadioToggle = (field: keyof typeof formData, option: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: (prev as any)[field] === option ? '' : option
+    }));
+  };
+
+  const handleRadioClickToggle = (field: keyof typeof formData, option: string) => {
+    setFormData(prev => {
+      if ((prev as any)[field] === option) {
+        return { ...prev, [field]: '' };
+      }
+      return prev;
+    });
+  };
+
   // Link tıklama fonksiyonu
   const handleLinkClick = (programType: 'THP' | 'YKHP' | 'SHP') => {
     setReadLinks(prev => ({
@@ -298,6 +355,22 @@ function DetayliAnalizContent() {
     return '';
   };
 
+  const getAsgariTutarText = () => {
+    const bolgeNum = parseInt(formData.yatirimBolgesi || '0', 10);
+    const cfg = programConfigs[formData.sektorelProgram as keyof typeof programConfigs];
+    if (!cfg) return '-';
+    if ('minYatirim' in cfg && cfg.minYatirim) {
+      const key = bolgeNum === 1 || bolgeNum === 2 ? 'bolge12' : 'bolge3456';
+      const amount = (cfg.minYatirim as any)[key];
+      if (!amount) return '-';
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(amount);
+    }
+    // Text tabanlı olanlar için
+    // @ts-ignore
+    if (cfg.minYatirim?.text) return cfg.minYatirim.text as string;
+    return '-';
+  };
+
   const calculateTotalInvestment = () => {
     const ithalMakine = parseInt(formData.ithalMakine.replace(/\./g, ''), 10) || 0;
     const yerliMakine = parseInt(formData.yerliMakine.replace(/\./g, ''), 10) || 0;
@@ -306,6 +379,69 @@ function DetayliAnalizContent() {
     
     const total = ithalMakine + yerliMakine + binaInsaat + digerGiderler;
     return total > 0 ? formatNumber(total.toString()) : '';
+  };
+
+  const buildReportHTML = () => {
+    const toplam = calculateTotalInvestment();
+    const bolgeLabel = formData.yatirimBolgesi ? `${formData.yatirimBolgesi}. Bölge` : '-';
+    const bolgeKey = `${bolgeLabel}` as keyof typeof destekUnsurlariBolgeBazli;
+    const destekList: Array<{ ad: string; aciklama?: string; deger?: string }> =
+      (destekUnsurlariBolgeBazli as any)[bolgeKey] || [];
+
+    const destekHTML = destekList
+      .map(d => `
+        <li style="margin-bottom:8px;">
+          <strong>${d.ad}:</strong> <span>${d.deger || ''}</span>
+          ${d.aciklama ? `<div style=\"color:#505a6b; font-size:13px; margin-top:4px;\">${d.aciklama}</div>` : ''}
+        </li>
+      `)
+      .join('');
+
+    const uygunlukBadge = (v: boolean) => `<span style="padding:2px 8px; border-radius:12px; font-weight:600; color:${v ? '#166534' : '#991b1b'}; background:${v ? '#dcfce7' : '#fee2e2'};">${v ? 'Evet' : 'Hayır'}</span>`;
+
+    return `
+      <div style="font-family: Inter, Arial, sans-serif; line-height:1.6; color:#0f172a;">
+        <h2 style="color:#0732ef; border-bottom:2px solid #0732ef; padding-bottom:10px;">YATIRIM TEŞVİK RAPORU</h2>
+
+        <h3 style="color:#0369a1; margin-top:24px;">A. ŞİRKET BİLGİLERİ</h3>
+        <p><strong>Şirket Adı/Unvanı:</strong> ${formData.sirketAdi}</p>
+        <p><strong>KOBİ Statüsü:</strong> ${formData.kobiStatusu}</p>
+        <p><strong>Faaliyet Alanı:</strong> ${formData.naceSearch}</p>
+
+        <h3 style="color:#0369a1; margin-top:24px;">B. YATIRIM PROJESİ BİLGİLERİ</h3>
+        <p><strong>Yatırımın Türü:</strong> ${formData.yatirimTuru}</p>
+        <p><strong>Mevcut İstihdam Sayısı:</strong> ${formData.mevcutIstihdam || '-'}</p>
+        <p><strong>Faaliyette Bulunma Süresi:</strong> ${formData.faaliyetSuresi || '-'} yıl</p>
+        <p><strong>Sağlanacak İlave İstihdam:</strong> ${formData.ilaveIstihdam}</p>
+
+        <h3 style="color:#0369a1; margin-top:24px;">C. YATIRIM MALİYETLERİ</h3>
+        <p><strong>İthal Makine Teçhizat:</strong> ${formData.ithalMakine || '-'} TL</p>
+        <p><strong>Yerli Makine Teçhizat:</strong> ${formData.yerliMakine || '-'} TL</p>
+        <p><strong>Bina İnşaat Giderleri:</strong> ${formData.binaInsaat || '-'} TL</p>
+        <p><strong>Diğer Yatırım Giderleri:</strong> ${formData.digerGiderler || '-'} TL</p>
+        <p style="font-size:18px; margin-top:8px;"><strong>Toplam Sabit Yatırım:</strong> ${toplam || '-'} TL</p>
+
+        <h3 style="color:#0369a1; margin-top:24px;">D. YATIRIM LOKASYONU</h3>
+        <p><strong>İl:</strong> ${formData.yatirimIli || '-'}</p>
+        <p><strong>Bölge:</strong> ${bolgeLabel}</p>
+        <p><strong>Yatırımın Tamamlanma Süresi:</strong> ${formData.tamamlanmaSuresiAy} ay</p>
+
+        <h3 style="color:#0369a1; margin-top:24px;">E. UYGUNLUK ÖZETİ</h3>
+        <ul style="list-style:none; padding:0;">
+          <li style="margin-bottom:6px;"><strong>Hedef Yatırım:</strong> ${uygunlukBadge(!!formData.hedefYatirim)}</li>
+          <li style="margin-bottom:6px;"><strong>Öncelikli Yatırım:</strong> ${uygunlukBadge(!!formData.oncelikliYatirim)}</li>
+          <li style="margin-bottom:6px;"><strong>Yüksek Teknoloji:</strong> ${uygunlukBadge(!!formData.yuksekTeknoloji)}</li>
+          <li style="margin-bottom:6px;"><strong>Orta-Yüksek Teknoloji:</strong> ${uygunlukBadge(!!formData.ortaYuksekTeknoloji)}</li>
+        </ul>
+
+        <h3 style="color:#0369a1; margin-top:24px;">F. DESTEK UNSURLARI (${bolgeLabel})</h3>
+        <ul style="padding-left:18px;">${destekHTML || '<li>Veri bulunamadı</li>'}</ul>
+
+        <div style="margin-top:24px; padding:14px; background:#f1f5f9; border-left:4px solid #0732ef; color:#334155;">
+          Bu rapor, ana sayfa sorgusundan aktarılan kriterler ve bu sayfada sağlanan bilgilerle otomatik oluşturulmuştur. Nihai karar ve tutarlar için resmi başvuru gerekir.
+        </div>
+      </div>
+    `;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -322,50 +458,7 @@ function DetayliAnalizContent() {
     setFormData(prev => ({ ...prev, sabitYatirimTutari: totalInvestment }));
     
     // Rapor oluşturma mantığı
-    const report = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <h2 style="color: #0732ef; border-bottom: 2px solid #0732ef; padding-bottom: 10px;">
-          YATIRIM TEŞVİK RAPORU
-        </h2>
-        
-        <h3 style="color: #517a06; margin-top: 30px;">A. ŞİRKET BİLGİLERİ</h3>
-        <p><strong>Şirket Adı/Unvanı:</strong> ${formData.sirketAdi}</p>
-        <p><strong>KOBİ Statüsü:</strong> ${formData.kobiStatusu}</p>
-        <p><strong>Faaliyet Alanı:</strong> ${formData.naceSearch}</p>
-        
-        <h3 style="color: #517a06; margin-top: 30px;">B. YATIRIM PROJESİ BİLGİLERİ</h3>
-        <p><strong>Yatırımın Türü:</strong> ${formData.yatirimTuru}</p>
-        <p><strong>Mevcut İstihdam Sayısı:</strong> ${formData.mevcutIstihdam}</p>
-        <p><strong>Faaliyette Bulunma Süresi:</strong> ${formData.faaliyetSuresi} yıl</p>
-        <p><strong>Sağlanacak İlave İstihdam Sayısı:</strong> ${formData.ilaveIstihdam}</p>
-        
-        <h3 style="color: #517a06; margin-top: 30px;">C. YATIRIM MALİYETLERİ</h3>
-        <p><strong>İthal Makine Teçhizat:</strong> ${formData.ithalMakine} TL</p>
-        <p><strong>Yerli Makine Teçhizat:</strong> ${formData.yerliMakine} TL</p>
-        <p><strong>Bina İnşaat Giderleri:</strong> ${formData.binaInsaat} TL</p>
-        <p><strong>Diğer Yatırım Giderleri:</strong> ${formData.digerGiderler} TL</p>
-        <p><strong>Toplam Sabit Yatırım Tutarı:</strong> ${calculateTotalInvestment()} TL</p>
-        
-        <h3 style="color: #517a06; margin-top: 30px;">D. YATIRIM LOKASYONU</h3>
-        <p><strong>Yatırım Yapılacak İl:</strong> ${formData.yatirimIli}</p>
-        <p><strong>Yatırım Yapılacak Bölge:</strong> ${formData.yatirimBolgesi}</p>
-        <p><strong>Yatırımın Tamamlanma Süresi:</strong> ${formData.tamamlanmaSuresiAy} ay</p>
-        
-        <h3 style="color: #517a06; margin-top: 30px;">E. TEŞVİK PROGRAMI</h3>
-        <p><strong>Seçilen Program:</strong> ${formData.ozelProgram}</p>
-        ${formData.ozelProgram === 'OncelikliYatirim' ? `
-          <p><strong>Öncelikli Yatırım Konusu:</strong> ${formData.oncelikliYatirimKonusu}</p>
-          <p><strong>Öncelikli Ürün:</strong> ${formData.oncelikliUrun}</p>
-        ` : ''}
-        
-        <div style="margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-left: 4px solid #0732ef;">
-          <p style="margin: 0; font-style: italic;">
-            Bu rapor, girilen bilgilere dayanarak oluşturulmuş bir ön değerlendirmedir. 
-            Kesin teşvik miktarları ve koşulları için resmi başvuru yapılması gerekmektedir.
-          </p>
-        </div>
-      </div>
-    `;
+    const report = buildReportHTML();
     
     setReportContent(report);
     setShowReport(true);
@@ -458,6 +551,7 @@ function DetayliAnalizContent() {
                 value={formData.yatirimTuru}
                 onChange={(e) => handleInputChange('yatirimTuru', e.target.value)}
               >
+                <option value="">Seçiniz</option>
                 <option value="Komple yeni yatırım">Komple yeni yatırım</option>
                 <option value="Tevsi">Tevsi</option>
                 <option value="Modernizasyon">Modernizasyon</option>
@@ -706,7 +800,8 @@ function DetayliAnalizContent() {
                 name="ozelProgram"
                 value="THP"
                 checked={formData.ozelProgram === 'THP'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                onChange={() => handleRadioToggle('ozelProgram', 'THP')}
+                onClick={() => handleRadioClickToggle('ozelProgram', 'THP')}
               />
               <span>Teknoloji Hamlesi Programı</span>
             </label>
@@ -716,7 +811,8 @@ function DetayliAnalizContent() {
                 name="ozelProgram"
                 value="YKHP"
                 checked={formData.ozelProgram === 'YKHP'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                onChange={() => handleRadioToggle('ozelProgram', 'YKHP')}
+                onClick={() => handleRadioClickToggle('ozelProgram', 'YKHP')}
               />
               <span>Yerel Kalkınma Hamlesi Programı</span>
             </label>
@@ -726,7 +822,8 @@ function DetayliAnalizContent() {
                 name="ozelProgram"
                 value="SHP"
                 checked={formData.ozelProgram === 'SHP'}
-                onChange={(e) => handleInputChange('ozelProgram', e.target.value)}
+                onChange={() => handleRadioToggle('ozelProgram', 'SHP')}
+                onClick={() => handleRadioClickToggle('ozelProgram', 'SHP')}
               />
               <span>Stratejik Hamle Programı</span>
             </label>
@@ -848,16 +945,20 @@ function DetayliAnalizContent() {
 
       {showReport && (
         <div className={styles.reportContainer}>
-          <div className={styles.reportContent}>
+          <div className={styles.reportContent} ref={reportRef}>
             <div className={styles.reportHeader}>
               <h2>Yatırım Teşvik Ön Değerlendirme Raporu</h2>
             </div>
             <div className={styles.reportOutput}>
-              {reportContent}
+              {/* Render the generated HTML as formatted content */}
+              <div dangerouslySetInnerHTML={{ __html: reportContent }} />
             </div>
           </div>
           <div className={styles.downloadContainer}>
-            <button className={styles.downloadButton}>
+          <button
+            className={styles.downloadButton}
+            onClick={exportReportAsPDF}
+          >
               PDF Olarak İndir
             </button>
           </div>
