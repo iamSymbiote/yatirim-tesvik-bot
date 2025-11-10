@@ -446,10 +446,11 @@ export default function Home() {
                         <span style={{ fontWeight: 500 }}>{option}</span>
                         {(() => {
                           const ilData = iller[option as keyof typeof iller];
-                          const ilceCount = ilData?.length || 0;
-                          return ilceCount > 0 ? (
+                          // "Diğer Tüm İlçeler"i sayıdan çıkar
+                          const gercekIlceSayisi = ilData?.filter(ilce => ilce !== 'Diğer Tüm İlçeler').length || 0;
+                          return gercekIlceSayisi > 0 ? (
                             <span style={{ fontSize: '0.8rem', color: '#666', opacity: 0.7 }}>
-                              ({ilceCount} ilçe)
+                              ({gercekIlceSayisi} ilçe)
                             </span>
                           ) : null;
                         })()}

@@ -1,5 +1,6 @@
 {
   "Adana": [
+    "Aladağ",
     "Feke",
     "İmamoğlu",
     "Karaisalı",
@@ -11,6 +12,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Afyonkarahisar": [
+    "Bayat",
     "Çobanlar",
     "Evciler",
     "Hocalar",
@@ -20,6 +22,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Aksaray": [
+    "Ağaçören",
     "Eskil",
     "Gülağaç",
     "Güzelyurt",
@@ -27,10 +30,12 @@
     "Diğer Tüm İlçeler"
   ],
   "Amasya": [
+    "Göynücek",
     "Hamamözü",
     "Diğer Tüm İlçeler"
   ],
   "Ankara": [
+    "Bala",
     "Çamlıdere",
     "Evren",
     "Güdül",
@@ -39,11 +44,13 @@
     "Diğer Tüm İlçeler"
   ],
   "Antalya": [
+    "Akseki",
     "Gündoğmuş",
     "İbradı",
     "Diğer Tüm İlçeler"
   ],
   "Aydın": [
+    "Bozdoğan",
     "Buharkent",
     "Germencik",
     "Karacasu",
@@ -56,6 +63,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Balıkesir": [
+    "Balya",
     "Dursunbey",
     "Havran",
     "İvrindi",
@@ -66,12 +74,14 @@
     "Diğer Tüm İlçeler"
   ],
   "Bilecik": [
+    "Gölpazarı",
     "İnhisar",
     "Pazaryeri",
     "Yenipazar",
     "Diğer Tüm İlçeler"
   ],
   "Bolu": [
+    "Dörtdivan",
     "Göynük",
     "Kıbrısçık",
     "Mengen",
@@ -80,6 +90,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Burdur": [
+    "Ağlasun",
     "Altmyayla",
     "Çavdır",
     "Çeltikçi",
@@ -89,21 +100,36 @@
     "Diğer Tüm İlçeler"
   ],
   "Bursa": [
+    "Büyükorhan",
     "Harmancık",
     "Keles",
     "Orhaneli",
     "Diğer Tüm İlçeler"
   ],
   "Çanakkale": [
+    "Bayramiç",
+    "Yenice",
     "Diğer Tüm İlçeler"
   ],
   "Çankırı": [
+    "Bayramören",
+    "Yapraklı",
     "Diğer Tüm İlçeler"
   ],
   "Çorum": [
+    "Bayat",
+    "Boğazkale",
+    "Dodurga",
+    "Kargı",
+    "Laçin",
+    "Mecitözü",
+    "Oğuzlar",
+    "Ortaköy",
+    "Uğurludağ",
     "Diğer Tüm İlçeler"
   ],
   "Denizli": [
+    "Babadağ",
     "Baklan",
     "Bekilli",
     "Beyağaç",
@@ -116,12 +142,14 @@
     "Diğer Tüm İlçeler"
   ],
   "Düzce": [
+    "Cumayeri",
     "Çilimli",
     "Gölyaka",
     "Yığılca",
     "Diğer Tüm İlçeler"
   ],
   "Edirne": [
+    "Enez",
     "Havsa",
     "İpsala",
     "Lalapaşa",
@@ -130,24 +158,51 @@
     "Diğer Tüm İlçeler"
   ],
   "Elazığ": [
+    "Ağın",
     "Diğer Tüm İlçeler"
   ],
   "Erzincan": [
+    "Çayırlı",
+    "Kemah",
+    "Otlukbeli",
+    "Tercan",
+    "Üzümlü",
     "Diğer Tüm İlçeler"
   ],
   "Erzurum": [
+    "Çat",
+    "Hınıs",
+    "Karaçoban",
+    "Karayazı",
+    "Köprüköy",
+    "Şenkaya",
+    "Tekman",
     "Diğer Tüm İlçeler"
   ],
   "Eskişehir": [
+    "Alpu",
+    "Beylikova",
+    "Çifteler",
+    "Günyüzü",
+    "Han",
+    "Mahmudiye",
+    "Mihalgazi",
+    "Mihalıççık",
+    "Sarıcakaya",
+    "Seyitgazi",
     "Diğer Tüm İlçeler"
   ],
   "Gaziantep": [
+    "Karkamış",
     "Oğuzeli",
     "Yavuzeli",
     "Diğer Tüm İlçeler"
   ],
-  "Giresun": [],
+  "Giresun": [
+    "Çamoluk"
+  ],
   "Isparta": [
+    "Aksu",
     "Atabey",
     "Gelendost",
     "Senirkent",
@@ -157,18 +212,28 @@
     "Diğer Tüm İlçeler"
   ],
   "İzmir": [
+    "Bayındır",
+    "Beydağ",
+    "Kınık",
+    "Kiraz",
     "Diğer Tüm İlçeler"
   ],
   "Karabük": [
+    "Eflani",
+    "Eskipazar",
+    "Ovacık",
+    "Yenice",
     "Diğer Tüm İlçeler"
   ],
   "Karaman": [
+    "Ayrancı",
     "Başyayla",
     "Ermenek",
     "Sarıveliler",
     "Diğer Tüm İlçeler"
   ],
   "Kastamonu": [
+    "Ağlı",
     "Araç",
     "Cide",
     "Doğanyurt",
@@ -178,6 +243,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Kayseri": [
+    "Akkışla",
     "Bünyan",
     "Felahiye",
     "İncesu",
@@ -191,6 +257,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Kırıkkale": [
+    "Balışeyh",
     "Çelebi",
     "Delice",
     "Karakeçili",
@@ -199,16 +266,26 @@
     "Diğer Tüm İlçeler"
   ],
   "Kırklareli": [
+    "Demirköy",
     "Kofçaz",
     "Pehlivanköy",
     "Diğer Tüm İlçeler"
   ],
   "Kırşehir": [
+    "Akçakent",
+    "Akpınar",
+    "Boztepe",
+    "Çiçekdağı",
     "Diğer Tüm İlçeler"
   ],
-  "Kilis": [],
-  "Kocaeli": [],
+  "Kilis": [
+    "Elbeyli"
+  ],
+  "Kocaeli": [
+    "Kandıra"
+  ],
   "Konya": [
+    "Ahırlı",
     "Akören",
     "Altınekin",
     "Bozkır",
@@ -231,9 +308,19 @@
     "Diğer Tüm İlçeler"
   ],
   "Kütahya": [
+    "Altıntaş",
+    "Aslanapa",
+    "Çavdarhisar",
+    "Domaniç",
+    "Dumlupınar",
+    "Emet",
+    "Hisarcık",
+    "Pazarlar",
+    "Şaphane",
     "Diğer Tüm İlçeler"
   ],
   "Manisa": [
+    "Ahmetli",
     "Demirci",
     "Gölmarmara",
     "Gördes",
@@ -245,6 +332,7 @@
     "Diğer Tüm İlçeler"
   ],
   "Mersin": [
+    "Aydıncık",
     "Bozyazı",
     "Çamlıyayla",
     "Gülnar",
@@ -252,15 +340,24 @@
     "Diğer Tüm İlçeler"
   ],
   "Muğla": [
+    "Kavaklıdere",
+    "Seydikemer",
     "Diğer Tüm İlçeler"
   ],
   "Nevşehir": [
+    "Acıgöl",
+    "Derinkuyu",
+    "Gülşehir",
+    "Hacıbektaş",
     "Diğer Tüm İlçeler"
   ],
   "Niğde": [
+    "Altunhisar",
+    "Çiftlik",
     "Diğer Tüm İlçeler"
   ],
   "Ordu": [
+    "Akkuş",
     "Çatalpınar",
     "Çaybaşı",
     "Gürgentepe",
@@ -268,8 +365,11 @@
     "Mesudiye",
     "Diğer Tüm İlçeler"
   ],
-  "Osmaniye": [],
+  "Osmaniye": [
+    "Sumbas"
+  ],
   "Rize": [
+    "Çamlıhemşin",
     "Derepazarı",
     "Güneysu",
     "Hemşin",
@@ -279,12 +379,14 @@
     "Diğer Tüm İlçeler"
   ],
   "Sakarya": [
+    "Karapürçek",
     "Kaynarca",
     "Kocaali",
     "Taraklı",
     "Diğer Tüm İlçeler"
   ],
   "Samsun": [
+    "Alaçam",
     "Asarcık",
     "Ayvacık",
     "Kavak",
@@ -295,8 +397,11 @@
     "Yakakent",
     "Diğer Tüm İlçeler"
   ],
-  "Sinop": [],
+  "Sinop": [
+    "Dikmen"
+  ],
   "Sivas": [
+    "Akıncılar",
     "Altınyayla",
     "Doğanşar",
     "Gölova",
@@ -308,13 +413,16 @@
     "Diğer Tüm İlçeler"
   ],
   "Tekirdağ": [
+    "Hayrabolu",
     "Diğer Tüm İlçeler"
   ],
   "Tokat": [
+    "Başçiftlik",
     "Sulusaray",
     "Diğer Tüm İlçeler"
   ],
   "Trabzon": [
+    "Araklı",
     "Çarşıbaşı",
     "Dernekpazarı",
     "Düzköy",
@@ -325,13 +433,20 @@
     "Diğer Tüm İlçeler"
   ],
   "Uşak": [
+    "Banaz",
+    "Karahallı",
+    "Sivaslı",
+    "Ulubey",
     "Diğer Tüm İlçeler"
   ],
   "Yozgat": [
+    "Aydıncık",
     "Kadışehri",
     "Diğer Tüm İlçeler"
   ],
-  "Zonguldak": [],
+  "Zonguldak": [
+    "Kilimli"
+  ],
   "Adıyaman": [
     "Diğer Tüm İlçeler"
   ],
