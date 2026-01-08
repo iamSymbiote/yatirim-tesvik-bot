@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Excel data source files (source files, not needed in git)
+*.xlsx
+*.xls
+!src/data_sources/*.xlsx
+!src/data_sources/*.xls
