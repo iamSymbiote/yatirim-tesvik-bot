@@ -27,7 +27,7 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const ilceler = selectedIl ? iller.find((il) => il.ad === selectedIl)?.ilceler || [] : [];
+  const ilceler = selectedIl ? (iller[selectedIl as keyof typeof iller] || []) : [];
   // Tüm şehirlerde ilçe listesi + separator + Diğer Tüm İlçeler
   const ilceOptions = selectedIl ? (ilceler.length > 0 ? [...ilceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
   const filteredNace: any[] = naceInput.length >= 2
@@ -171,7 +171,7 @@ export default function Home() {
           <div className="tesvik-row-vertical">
             <div className="tesvik-box yatirim-blok">
               <Autocomplete
-                options={iller.map(il => il.ad)}
+                options={Object.keys(iller)}
                 value={selectedIl}
                 onChange={(_: any, newValue: string | null) => {
                   setSelectedIl(newValue || '');
@@ -190,7 +190,7 @@ export default function Home() {
                     fullWidth
                     margin="normal"
                     helperText="İl adını yazabilir veya listeden seçebilirsiniz"
-                    error={!!(selectedIl && !iller.some(il => il.ad.toLowerCase() === selectedIl.toLowerCase()))}
+                    error={!!(selectedIl && !Object.keys(iller).some(il => il.toLowerCase() === selectedIl.toLowerCase()))}
                   />
                 )}
                 freeSolo
@@ -213,9 +213,9 @@ export default function Home() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontWeight: 500 }}>{option}</span>
                         {(() => {
-                          const ilData = iller.find(il => il.ad === option);
+                          const ilData = iller[option as keyof typeof iller];
                           // "Diğer Tüm İlçeler"i sayıdan çıkar
-                          const gercekIlceSayisi = ilData?.ilceler?.filter(ilce => ilce !== 'Diğer Tüm İlçeler').length || 0;
+                          const gercekIlceSayisi = ilData?.filter(ilce => ilce !== 'Diğer Tüm İlçeler').length || 0;
                           return gercekIlceSayisi > 0 ? (
                             <span style={{ fontSize: '0.8rem', color: '#666', opacity: 0.7 }}>
                               ({gercekIlceSayisi} ilçe)
