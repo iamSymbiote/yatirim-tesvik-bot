@@ -106,6 +106,8 @@ export default function Home() {
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(0, 0, 0, 0.1)',
+          width: { xs: 40, sm: 48 },
+          height: { xs: 40, sm: 48 },
           '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
           },
@@ -114,6 +116,15 @@ export default function Home() {
             border: '1px solid rgba(255, 255, 255, 0.1)',
             '&:hover': {
               backgroundColor: 'rgba(30, 30, 30, 0.95)',
+            },
+          },
+          '@media (max-width: 768px)': {
+            top: 12,
+            right: 12,
+            width: 36,
+            height: 36,
+            '& svg': {
+              fontSize: '1.2rem',
             },
           },
         }}
@@ -203,10 +214,11 @@ export default function Home() {
                         <span style={{ fontWeight: 500 }}>{option}</span>
                         {(() => {
                           const ilData = iller.find(il => il.ad === option);
-                          const ilceCount = ilData?.ilceler?.length || 0;
-                          return ilceCount > 0 ? (
+                          // "Diğer Tüm İlçeler"i sayıdan çıkar
+                          const gercekIlceSayisi = ilData?.ilceler?.filter(ilce => ilce !== 'Diğer Tüm İlçeler').length || 0;
+                          return gercekIlceSayisi > 0 ? (
                             <span style={{ fontSize: '0.8rem', color: '#666', opacity: 0.7 }}>
-                              ({ilceCount} ilçe)
+                              ({gercekIlceSayisi} ilçe)
                             </span>
                           ) : null;
                         })()}
@@ -297,13 +309,14 @@ export default function Home() {
               </div>
             )}
             {/* Yatırım Yeri Tablosu */}
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 32 }}>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
-              marginBottom: 32, 
               background: mode === 'dark' ? '#2d2d2d' : '#fff', 
               fontSize: '1.08rem',
-              transition: 'background-color 0.3s ease'
+              transition: 'background-color 0.3s ease',
+              minWidth: '280px'
             }}>
               <tbody>
                 <tr>
@@ -354,6 +367,7 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
+            </div>
             <hr style={{ 
               margin: '40px 0', 
               border: 0, 
@@ -366,13 +380,14 @@ export default function Home() {
               color: mode === 'dark' ? '#e9ecef' : '#495057',
               transition: 'color 0.3s ease'
             }}>YATIRIMIN ÖZELLİKLERİ</div>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 32 }}>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
-              marginBottom: 32, 
               background: mode === 'dark' ? '#2d2d2d' : '#fff', 
               fontSize: '1.08rem',
-              transition: 'background-color 0.3s ease'
+              transition: 'background-color 0.3s ease',
+              minWidth: '280px'
             }}>
               <tbody>
                 <tr>
@@ -437,6 +452,7 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
+            </div>
             <hr style={{ 
               margin: '40px 0', 
               border: 0, 
@@ -449,13 +465,14 @@ export default function Home() {
               color: mode === 'dark' ? '#e9ecef' : '#495057',
               transition: 'color 0.3s ease'
             }}>YATIRIM BÖLGESİ ve ASGARİ YATIRIM TUTARI</div>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 32 }}>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
-              marginBottom: 32, 
               background: mode === 'dark' ? '#2d2d2d' : '#fff', 
               fontSize: '1.08rem',
-              transition: 'background-color 0.3s ease'
+              transition: 'background-color 0.3s ease',
+              minWidth: '280px'
             }}>
               <tbody>
                 <tr>
@@ -517,6 +534,7 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
+            </div>
             {/* Buradan sonra yeni ekran veya kutular eklenebilir */}
             <hr style={{ 
               margin: '40px 0', 
@@ -530,13 +548,14 @@ export default function Home() {
               color: mode === 'dark' ? '#e9ecef' : '#495057',
               transition: 'color 0.3s ease'
             }}>DESTEK UNSURLARI</div>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 32 }}>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
-              marginBottom: 32, 
               background: mode === 'dark' ? '#2d2d2d' : '#fff', 
               fontSize: '1.08rem',
-              transition: 'background-color 0.3s ease'
+              transition: 'background-color 0.3s ease',
+              minWidth: '400px'
             }}>
               <tbody>
                 {getDestekUnsurlariByBolge(selectedIl, selectedIlce, osb).map((destek, index) => (
@@ -570,6 +589,7 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+            </div>
             <hr style={{ 
               margin: '40px 0', 
               border: 0, 
@@ -582,13 +602,14 @@ export default function Home() {
               color: mode === 'dark' ? '#e9ecef' : '#495057',
               transition: 'color 0.3s ease'
             }}>DESTEK TÜRLERİ</div>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 32 }}>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse', 
-              marginBottom: 32, 
               background: mode === 'dark' ? '#2d2d2d' : '#fff', 
               fontSize: '1.08rem',
-              transition: 'background-color 0.3s ease'
+              transition: 'background-color 0.3s ease',
+              minWidth: '400px'
             }}>
               <tbody>
                 {destekVerileri.destekTurleri.map((destek, index) => (
@@ -622,6 +643,7 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>
