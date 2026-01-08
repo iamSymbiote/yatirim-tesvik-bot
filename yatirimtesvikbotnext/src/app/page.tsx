@@ -32,9 +32,9 @@ export default function Home() {
   const ilceOptions = selectedIl ? (ilceler.length > 0 ? [...ilceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
   const filteredNace: any[] = naceInput.length >= 2
     ? (naceList as any[]).filter(option =>
-        option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
-        option.tanim.toLowerCase().includes(naceInput.toLowerCase())
-      )
+          option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
+          option.tanim.toLowerCase().includes(naceInput.toLowerCase())
+        )
     : [];
   
   // Hedef yatırım kontrolü
@@ -85,7 +85,7 @@ export default function Home() {
     }
   }, [showResult]);
 
-  // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
+    // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
   useEffect(() => {
     console.log('Yüksek Teknoloji Listesi Yüklendi:', yuksekTekno.length, 'kod');
     console.log('Orta-Yüksek Teknoloji Listesi Yüklendi:', ortaYuksekTekno.length, 'kod');
@@ -223,7 +223,7 @@ export default function Home() {
                           ) : null;
                         })()}
                       </div>
-                    </li>
+          </li>
                   );
                 }}
               />
@@ -452,7 +452,7 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
-            </div>
+                  </div>
             <hr style={{ 
               margin: '40px 0', 
               border: 0, 
@@ -534,7 +534,7 @@ export default function Home() {
                 </tr>
               </tbody>
             </table>
-            </div>
+                </div>
             {/* Buradan sonra yeni ekran veya kutular eklenebilir */}
             <hr style={{ 
               margin: '40px 0', 
@@ -544,9 +544,9 @@ export default function Home() {
               transition: 'background 0.3s ease'
             }} />
             {/* DESTEK UNSURLARI Tablosu */}
-            <div className="section-title" style={{ 
-              color: mode === 'dark' ? '#e9ecef' : '#495057',
-              transition: 'color 0.3s ease'
+                <div className="section-title" style={{ 
+                  color: mode === 'dark' ? '#e9ecef' : '#495057',
+                  transition: 'color 0.3s ease'
             }}>DESTEK UNSURLARI</div>
             <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 32 }}>
             <table style={{ 
@@ -643,10 +643,10 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
-            </div>
+                  </div>
           </div>
         )}
-      </div>
+        </div>
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -691,17 +691,96 @@ export default function Home() {
             boxShadow: 24,
             p: 4,
             minWidth: 340,
-            maxWidth: 480,
+            maxWidth: 700,
+            maxHeight: '80vh',
+            overflowY: 'auto',
             transition: 'background-color 0.3s ease',
           }}
         >
-          <Typography id="terms-modal-title" variant="h6" component="h2" gutterBottom>
+          <Typography id="terms-modal-title" variant="h6" component="h2" gutterBottom sx={{ fontWeight: 700 }}>
             Kullanım Koşulları
           </Typography>
-          <Typography id="terms-modal-desc" sx={{ mt: 2 }}>
-            Buraya kullanım koşulları metni gelecek. (Daha sonra güncellenebilir)
+          <Box id="terms-modal-desc" sx={{ mt: 2, color: mode === 'dark' ? '#e0e0e0' : '#333' }}>
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              1. Kabul Edilme
           </Typography>
-          <Button onClick={() => setTermsOpen(false)} sx={{ mt: 2 }} variant="contained" color="error">
+            <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.7 }}>
+              Lore Danışmanlık web sitesine erişerek veya hizmetlerimizi kullanarak, bu kullanım koşullarının tamamını okuduğunuzu, anladığınızı ve bunlara bağlı kalmayı kabul ettiğinizi beyan etmiş olursunuz. Eğer bu koşullardan herhangi birini kabul etmiyorsanız, lütfen hizmeti kullanmayı durdurun.
+            </Typography>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              2. Hizmet Tanımı ve Değişiklikler
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.7 }}>
+              Lore Danışmanlık, kullanıcılara dijital danışmanlık, içerik analizi ve bilgi paylaşımı hizmetleri sunan bir platformdur. Hizmet kapsamını, içeriğini veya teknik özelliklerini önceden haber vermeksizin değiştirme veya durdurma hakkımızı saklı tutarız.
+            </Typography>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              3. Kullanıcı Yükümlülükleri
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 1, lineHeight: 1.7 }}>
+              Kullanıcı olarak şunları kabul edersiniz:
+            </Typography>
+            <Box component="ul" sx={{ pl: 3, mb: 3, lineHeight: 1.8 }}>
+              <li><Typography variant="body2" component="span">Hizmeti yasalara aykırı amaçlarla kullanmamak.</Typography></li>
+              <li><Typography variant="body2" component="span">Sistemin güvenliğini bozacak, aşırı yük getirecek veya diğer kullanıcıların deneyimini engelleyecek (DDOS, otomatik tarama, veri madenciliği vb.) faaliyetlerde bulunmamak.</Typography></li>
+              <li><Typography variant="body2" component="span">Platform üzerinden sunulan veya platform aracılığıyla üretilen içeriklerin doğruluğunu şahsen teyit etmek.</Typography></li>
+            </Box>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              4. Yapay Zeka ve İçerik Sorumluluğu
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 1, lineHeight: 1.7 }}>
+              Platformumuzda sunulan bazı analizler ve içerikler yapay zeka destekli sistemler tarafından üretilebilir.
+            </Typography>
+            <Box component="ul" sx={{ pl: 3, mb: 3, lineHeight: 1.8 }}>
+              <li>
+                <Typography variant="body2" component="span" sx={{ fontWeight: 600 }}>Hatalar: </Typography>
+                <Typography variant="body2" component="span">Üretilen bilgilerin %100 doğru, eksiksiz veya güncel olduğu garanti edilmez.</Typography>
+              </li>
+              <li>
+                <Typography variant="body2" component="span" sx={{ fontWeight: 600 }}>Sorumluluk: </Typography>
+                <Typography variant="body2" component="span">Kullanıcı, Lore Danışmanlık üzerinden aldığı bilgilere dayanarak yaptığı işlemlerden bizzat sorumludur. Bu bilgilere dayanılarak yapılan işlemlerden doğabilecek maddi veya manevi zararlardan Lore Danışmanlık sorumlu tutulamaz.</Typography>
+              </li>
+            </Box>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              5. Fikri Mülkiyet Hakları
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.7 }}>
+              Sitede yer alan tüm tasarım, logo, metin, grafik ve yazılım kodlarının mülkiyeti Lore Danışmanlık'a aittir. Yazılı izin olmaksızın bu içeriklerin kopyalanması, çoğaltılması veya ticari amaçla kullanılması yasaktır.
+            </Typography>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              6. Sorumluluğun Sınırlandırılması
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.7 }}>
+              Lore Danışmanlık, hizmetin kesintisiz veya hatasız olacağına dair herhangi bir garanti vermez. Hizmet "olduğu gibi" (as-is) sunulmaktadır. Teknik aksaklıklar, internet kesintileri, veri kayıpları veya üçüncü taraf müdahalelerinden kaynaklanan zararlardan platform sorumlu değildir.
+            </Typography>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              7. Gizlilik Politikası
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.7 }}>
+              Hizmeti kullanırken paylaştığınız veriler ve tarafımızca toplanan bilgiler, Gizlilik Politikamız çerçevesinde işlenir. Lütfen verilerinizin nasıl toplandığını ve saklandığını öğrenmek için ilgili politikayı inceleyin.
+            </Typography>
+
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 600 }}>
+              8. İletişim
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.7 }}>
+              Bu koşullarla ilgili her türlü soru, görüş ve öneriniz için bizimle aşağıdaki bağlantı üzerinden iletişime geçebilirsiniz:{' '}
+              <a 
+                href="https://www.lore.com.tr/iletisim/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ color: '#1976d2', textDecoration: 'underline' }}
+              >
+                https://www.lore.com.tr/iletisim/
+              </a>
+            </Typography>
+          </Box>
+          <Button onClick={() => setTermsOpen(false)} sx={{ mt: 2 }} variant="contained" color="error" fullWidth>
             Kapat
           </Button>
         </Box>
