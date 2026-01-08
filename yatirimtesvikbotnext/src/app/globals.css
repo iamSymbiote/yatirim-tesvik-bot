@@ -80,6 +80,16 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+@media (max-width: 768px) {
+  .tesvik-card {
+    padding: 24px 16px;
+    border-radius: 20px;
+    margin: 16px auto;
+    gap: 20px;
+    width: 98vw;
+  }
+}
+
 [data-theme="dark"] .tesvik-card {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 20px 60px rgba(0,0,0,0.4);
@@ -96,6 +106,14 @@ body {
   display: block;
 }
 
+@media (max-width: 768px) {
+  .tesvik-logo {
+    width: 160px;
+    max-height: 90px;
+    margin-bottom: 8px;
+  }
+}
+
 .tesvik-title {
   font-size: 2.8rem;
   font-weight: 700;
@@ -109,6 +127,13 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+@media (max-width: 768px) {
+  .tesvik-title {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
 }
 
 [data-theme="dark"] .tesvik-title {
@@ -136,6 +161,13 @@ body {
   font-family: var(--font-inter), sans-serif;
   transition: color 0.3s ease;
   letter-spacing: 0.2px;
+}
+
+@media (max-width: 768px) {
+  .tesvik-subtitle {
+    font-size: 0.95rem;
+    padding: 0 8px;
+  }
 }
 
 [data-theme="dark"] .tesvik-subtitle {
@@ -700,6 +732,71 @@ body {
     padding: 12px 8px;
   }
 }
+
+@media (max-width: 768px) {
+  .tesvik-form {
+    gap: 16px;
+    padding: 0 4px;
+  }
+  
+  .tesvik-box {
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+  
+  .tesvik-radio-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .tesvik-checkbox-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .tesvik-footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+    padding: 12px 8px;
+  }
+  
+  .tesvik-footer .MuiTypography-root {
+    font-size: 0.7rem !important;
+    line-height: 1.4;
+  }
+  
+  .tesvik-sonuc-panel {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tesvik-sonuc-panel table {
+    font-size: 0.9rem !important;
+    min-width: 100%;
+  }
+  
+  .tesvik-sonuc-panel table td {
+    padding: 8px 6px !important;
+    word-break: break-word;
+  }
+  
+  .nace-info-panel {
+    padding: 16px 12px !important;
+  }
+  
+  .nace-code-display {
+    font-size: 1.4rem !important;
+  }
+  
+  .section-title {
+    font-size: 1rem !important;
+    margin-bottom: 16px !important;
+  }
+}
 /* index.css'ten alınanlar */
 /* ... (devamı yukarıdaki gibi eklenecek) ... */
 .us97-autocomplete-row {
@@ -707,8 +804,23 @@ body {
   min-width: 340px;
   max-width: 900px;
 }
+
+@media (max-width: 768px) {
+  .us97-autocomplete-row {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
 .tesvik-box.us97-vertical-flex {
   width: 100%;
   min-width: 340px;
   max-width: 900px;
+}
+
+@media (max-width: 768px) {
+  .tesvik-box.us97-vertical-flex {
+    min-width: 0;
+    max-width: 100%;
+  }
 }
