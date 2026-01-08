@@ -51,10 +51,10 @@ export function getDestekBolgesi(il: string, ilce: string, osb: string): number 
  */
 export function getAsgariYatirimTutari(bolge: number): string {
   if (bolge === 1 || bolge === 2) {
-    return "12.000.000 TL";
+    return "15.100.000 TL";
   }
   if ([3, 4, 5, 6].includes(bolge)) {
-    return "6.000.000 TL";
+    return "7.500.000 TL";
   }
   return "-";
 } 

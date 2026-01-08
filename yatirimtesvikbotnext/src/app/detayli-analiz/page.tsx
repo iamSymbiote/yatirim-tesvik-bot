@@ -228,7 +228,7 @@ function DetayliAnalizContent() {
       faizSadeceBolge456: true,
       faizMax: 12000000,
       faizAzamiOran: 0.10,
-      minYatirim: { bolge12: 12000000, bolge3456: 6000000 }
+      minYatirim: { bolge12: 15100000, bolge3456: 7500000 }
     },
     OncelikliYatirim: {
       name: "Öncelikli Yatırımlar Teşvik Sistemi",
@@ -239,7 +239,7 @@ function DetayliAnalizContent() {
       faizSadeceBolge456: false,
       faizMax: 24000000,
       faizAzamiOran: 0.10,
-      minYatirim: { bolge12: 12000000, bolge3456: 6000000 }
+      minYatirim: { bolge12: 15100000, bolge3456: 7500000 }
     },
     THP: {
       name: "Teknoloji Hamlesi Programı",
