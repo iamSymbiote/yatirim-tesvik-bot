@@ -28,8 +28,10 @@ export default function Home() {
   const [termsOpen, setTermsOpen] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const ilceler = selectedIl ? (iller[selectedIl as keyof typeof iller] || []) : [];
-  // Tüm şehirlerde ilçe listesi + separator + Diğer Tüm İlçeler
-  const ilceOptions = selectedIl ? (ilceler.length > 0 ? [...ilceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
+  // Gerçek ilçeleri ayır (Diğer Tüm İlçeler hariç)
+  const gercekIlceler = ilceler.filter(ilce => ilce !== 'Diğer Tüm İlçeler');
+  // İlçe seçenekleri: gerçek ilçeler + separator + Diğer Tüm İlçeler
+  const ilceOptions = selectedIl ? (gercekIlceler.length > 0 ? [...gercekIlceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
   const filteredNace: any[] = naceInput.length >= 2
     ? (naceList as any[]).filter(option =>
           option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
@@ -190,7 +192,22 @@ export default function Home() {
                     fullWidth
                     margin="normal"
                     helperText="İl adını yazabilir veya listeden seçebilirsiniz"
-                    error={!!(selectedIl && !Object.keys(iller).some(il => il.toLowerCase() === selectedIl.toLowerCase()))}
+                    error={!!(selectedIl && (() => {
+                      const normalizeText = (text: string) => {
+                        return text
+                          .toLowerCase()
+                          .normalize('NFD')
+                          .replace(/[\u0300-\u036f]/g, '')
+                          .replace(/ı/g, 'i')
+                          .replace(/ğ/g, 'g')
+                          .replace(/ü/g, 'u')
+                          .replace(/ş/g, 's')
+                          .replace(/ö/g, 'o')
+                          .replace(/ç/g, 'c');
+                      };
+                      const normalizedInput = normalizeText(selectedIl);
+                      return !Object.keys(iller).some(il => normalizeText(il) === normalizedInput);
+                    })())}
                   />
                 )}
                 freeSolo
@@ -198,8 +215,23 @@ export default function Home() {
                 selectOnFocus
                 handleHomeEndKeys
                 filterOptions={(options, { inputValue }) => {
+                  // Türkçe karakter normalizasyonu
+                  const normalizeText = (text: string) => {
+                    return text
+                      .toLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '') // Diacritics kaldır
+                      .replace(/ı/g, 'i')
+                      .replace(/ğ/g, 'g')
+                      .replace(/ü/g, 'u')
+                      .replace(/ş/g, 's')
+                      .replace(/ö/g, 'o')
+                      .replace(/ç/g, 'c');
+                  };
+                  
+                  const normalizedInput = normalizeText(inputValue);
                   const filtered = options.filter(option =>
-                    option.toLowerCase().includes(inputValue.toLowerCase())
+                    normalizeText(option).includes(normalizedInput)
                   );
                   return filtered;
                 }}
