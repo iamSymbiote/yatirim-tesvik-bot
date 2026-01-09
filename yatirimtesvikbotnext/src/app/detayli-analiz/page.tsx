@@ -113,10 +113,11 @@ function DetayliAnalizContent() {
   useEffect(() => {
     const naceKodu = searchParams.get('naceKodu');
     const naceAciklama = searchParams.get('naceAciklama');
-    const il = searchParams.get('il');
-    const ilce = searchParams.get('ilce');
+    const il = searchParams.get('yatirimIli') || searchParams.get('il'); // Geriye dönük uyumluluk için
+    const ilce = searchParams.get('yatirimIlcesi') || searchParams.get('ilce'); // Geriye dönük uyumluluk için
     const osb = searchParams.get('osb');
-    const faydalanacakBolge = searchParams.get('faydalanacakBolge');
+    const yatirimBolgesi = searchParams.get('yatirimBolgesi');
+    const faydalanacakBolge = searchParams.get('destekBolgesi') || searchParams.get('faydalanacakBolge'); // Geriye dönük uyumluluk için
     
     // Teşvik programı verilerini oku
     const hedefYatirim = searchParams.get('hedefYatirim') === 'true';
@@ -146,7 +147,8 @@ function DetayliAnalizContent() {
         naceKodu: naceKodu,
         naceSearch: `${naceKodu} - ${aciklama}`,
         yatirimIli: il || '',
-        yatirimBolgesi: faydalanacakBolge || '',
+        yatirimIlcesi: ilce || '',
+        yatirimBolgesi: yatirimBolgesi || faydalanacakBolge || '',
         // Teşvik programı verileri
         hedefYatirim: hedefYatirim,
         oncelikliYatirim: oncelikliYatirim,

@@ -15,9 +15,11 @@ import oncelikliYatirimlar from '../data/oncelikliYatirimlar.json';
 import Image from 'next/image';
 import { getBolge, getDestekBolgesi, getAsgariYatirimTutari } from "../utils/yatirimbolgesihesap";
 import { useTheme } from './ThemeProvider';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { mode, toggleTheme } = useTheme();
+  const router = useRouter();
   const [selectedIl, setSelectedIl] = useState('');
   const [selectedIlce, setSelectedIlce] = useState('');
   const [naceValue, setNaceValue] = useState<any>(null);
@@ -621,6 +623,62 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+            </div>
+            {/* Detaylı Analiz Butonu */}
+            <div style={{ 
+              marginTop: 50, 
+              marginBottom: 50, 
+              display: 'flex', 
+              justifyContent: 'center',
+              width: '100%',
+              position: 'relative',
+              zIndex: 10
+            }}>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => {
+                  const params = new URLSearchParams();
+                  if (naceValue) {
+                    params.set('naceKodu', naceValue.kod);
+                    params.set('naceAciklama', naceValue.tanim);
+                  }
+                  if (selectedIl) params.set('yatirimIli', selectedIl);
+                  if (selectedIlce) params.set('yatirimIlcesi', selectedIlce);
+                  if (osb) params.set('osb', osb);
+                  const bolge = getBolge(selectedIl);
+                  if (bolge) params.set('yatirimBolgesi', bolge.toString());
+                  const destekBolgesi = getDestekBolgesi(selectedIl, selectedIlce, osb);
+                  if (destekBolgesi) params.set('destekBolgesi', destekBolgesi.toString());
+                  // Teşvik programı bayrakları
+                  if (naceValue) {
+                    if (isHedefYatirim(naceValue.kod)) params.set('hedefYatirim', 'true');
+                    if (isOncelikliYatirim(naceValue)) params.set('oncelikliYatirim', 'true');
+                    if (isYuksekTeknoloji(naceValue.kod)) params.set('yuksekTeknoloji', 'true');
+                    if (isOrtaYuksekTeknoloji(naceValue.kod)) params.set('ortaYuksekTeknoloji', 'true');
+                  }
+                  router.push(`/detayli-analiz?${params.toString()}`);
+                }}
+                sx={{
+                  fontSize: '1.2rem',
+                  padding: '16px 48px',
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 6px 20px rgba(102, 126, 234, 0.5)',
+                  minWidth: '280px',
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.7)',
+                    transform: 'translateY(-3px)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                📊 Detaylı Analiz Sayfasına Git
+              </Button>
             </div>
             <hr style={{ 
               margin: '40px 0', 
