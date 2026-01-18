@@ -187,7 +187,7 @@ function DetayliAnalizContent() {
         sektorelProgram: {
           program: aktifProgram,
           programAdi: programConfig?.name || null,
-          yko: programConfig?.yko || null,
+          yatirimaKatkiOrani: programConfig?.yko || null,
           vergiIndirimOrani: programConfig?.vergiIndirimOrani || null,
           sgkSure: programConfig?.sgkSure || null,
           faizDestegi: programConfig?.faizDestegi || false,
