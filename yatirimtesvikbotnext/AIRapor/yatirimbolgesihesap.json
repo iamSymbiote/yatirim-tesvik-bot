@@ -1,0 +1,69 @@
+{
+  "description": "Bölge ve destek bölgesi hesaplama mantığı",
+  "functions": {
+    "getBolge": {
+      "description": "Seçilen il için bölge numarasını döndürür",
+      "parameters": {
+        "il": {
+          "type": "string",
+          "description": "İl adı"
+        }
+      },
+      "returns": {
+        "type": "number | null",
+        "description": "Bölge numarası (1-6) veya null"
+      },
+      "logic": "İl adını normalize ederek (trim + toLocaleLowerCase tr-TR) il_bolge.json dosyasında arar ve bölge numarasını döndürür"
+    },
+    "getDestekBolgesi": {
+      "description": "Seçilen il, ilçe ve OSB durumu için faydalanacağı destek bölgesini döndürür",
+      "parameters": {
+        "il": {
+          "type": "string",
+          "description": "İl adı"
+        },
+        "ilce": {
+          "type": "string",
+          "description": "İlçe adı (boş olabilir veya 'Diğer Tüm İlçeler' olabilir)"
+        },
+        "osb": {
+          "type": "string",
+          "description": "OSB durumu: 'evet' veya 'hayir'"
+        }
+      },
+      "returns": {
+        "type": "number | null",
+        "description": "Destek bölgesi numarası (1-6) veya null"
+      },
+      "logic": {
+        "step1": "Önce getBolge(il) ile ana bölgeyi al",
+        "step2": "Eğer ilce varsa ve 'Diğer Tüm İlçeler' değilse:",
+        "step2a": "osb === 'evet' ise: Math.min(bolge + 2, 6)",
+        "step2b": "osb === 'hayir' ise: Math.min(bolge + 1, 6)",
+        "step3": "Eğer ilce === 'Diğer Tüm İlçeler' ise:",
+        "step3a": "osb === 'evet' ise: Math.min(bolge + 1, 6)",
+        "step3b": "osb === 'hayir' ise: bolge",
+        "step4": "Eğer ilce yoksa: bolge döndür"
+      }
+    },
+    "getAsgariYatirimTutari": {
+      "description": "Ana bölgeye göre asgari yatırım tutarını döndürür",
+      "parameters": {
+        "bolge": {
+          "type": "number",
+          "description": "Bölge numarası (1-6)"
+        }
+      },
+      "returns": {
+        "type": "string",
+        "description": "Asgari yatırım tutarı (TL cinsinden)"
+      },
+      "logic": {
+        "bolge_1_2": "Eğer bölge === 1 veya bölge === 2 ise: '15.100.000 TL'",
+        "bolge_3_4_5_6": "Eğer bölge === 3, 4, 5 veya 6 ise: '7.500.000 TL'",
+        "default": "Diğer durumlarda: '-'"
+      }
+    }
+  },
+  "il_bolge_mapping": "il_bolge.json dosyasında her il için bölge numarası (1-6) saklanmaktadır"
+}

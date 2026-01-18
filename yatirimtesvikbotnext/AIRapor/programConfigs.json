@@ -1,0 +1,87 @@
+{
+  "HedefYatirim": {
+    "name": "Hedef Yatırımlar Teşvik Sistemi",
+    "yko": 20,
+    "vergiIndirimOrani": 60,
+    "sgkSure": {
+      "1": 0,
+      "2": 1,
+      "3": 2,
+      "4": 4,
+      "5": 8,
+      "6": 12
+    },
+    "faizDestegi": true,
+    "faizSadeceBolge456": true,
+    "faizMax": 12000000,
+    "faizAzamiOran": 0.10,
+    "minYatirim": {
+      "bolge12": 15100000,
+      "bolge3456": 7500000
+    }
+  },
+  "OncelikliYatirim": {
+    "name": "Öncelikli Yatırımlar Teşvik Sistemi",
+    "yko": 30,
+    "vergiIndirimOrani": 60,
+    "sgkSure": {
+      "1": 0,
+      "2": 1,
+      "3": 2,
+      "4": 4,
+      "5": 8,
+      "6": 12
+    },
+    "faizDestegi": true,
+    "faizSadeceBolge456": false,
+    "faizMax": 24000000,
+    "faizAzamiOran": 0.10,
+    "minYatirim": {
+      "bolge12": 15100000,
+      "bolge3456": 7500000
+    }
+  },
+  "THP": {
+    "name": "Teknoloji Hamlesi Programı",
+    "yko": 50,
+    "vergiIndirimOrani": 60,
+    "sgkSure": {},
+    "faizDestegi": true,
+    "faizMax": 240000000,
+    "faizAzamiOran": 0.20,
+    "minYatirim": {
+      "text": "Program kapsamında çıkılan çağrıda belirlenmektedir."
+    }
+  },
+  "YKHP": {
+    "name": "Yerel Kalkınma Hamlesi Programı",
+    "yko": 50,
+    "vergiIndirimOrani": 60,
+    "sgkSure": {
+      "1": 8,
+      "2": 8,
+      "3": 8,
+      "4": 8,
+      "5": 8,
+      "6": 12
+    },
+    "faizDestegi": true,
+    "faizMax": 240000000,
+    "faizAzamiOran": 0.20,
+    "minYatirim": {
+      "text": "Program kapsamında yapılan çağrıda belirlenmektedir."
+    }
+  },
+  "SHP": {
+    "name": "Stratejik Hamle Programı",
+    "yko": 40,
+    "vergiIndirimOrani": 60,
+    "sgkSure": {},
+    "faizDestegi": true,
+    "faizMax": 180000000,
+    "faizAzamiOran": 0.15,
+    "minYatirim": {
+      "text": "Yüksek teknolojili ürünler için 100 Milyon TL, diğer yatırımlar için 200 Milyon TL'dir."
+    }
+  }
+}

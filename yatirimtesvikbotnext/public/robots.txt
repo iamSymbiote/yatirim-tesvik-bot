@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /.env
+Disallow: /admin/
+
+# Sitemap (ileride ekleyebilirsiniz)
+# Sitemap: https://yourdomain.com/sitemap.xml

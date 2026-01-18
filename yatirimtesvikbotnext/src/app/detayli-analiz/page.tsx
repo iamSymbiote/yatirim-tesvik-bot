@@ -109,6 +109,130 @@ function DetayliAnalizContent() {
     pdf.save(`yatirim-tesvik-raporu-${new Date().toISOString().slice(0,10)}.pdf`);
   };
 
+  const exportReportAsJSON = () => {
+    const toplam = calculateTotalInvestment();
+    const bolgeLabel = formData.yatirimBolgesi ? `${formData.yatirimBolgesi}. Bölge` : '-';
+    const bolgeKey = `${bolgeLabel}` as keyof typeof destekUnsurlariBolgeBazli;
+    const destekList: Array<{ ad: string; aciklama?: string; deger?: string }> =
+      (destekUnsurlariBolgeBazli as any)[bolgeKey] || [];
+
+    // Sayısal değerleri hesapla
+    const ithalMakine = parseInt(formData.ithalMakine.replace(/\./g, ''), 10) || 0;
+    const yerliMakine = parseInt(formData.yerliMakine.replace(/\./g, ''), 10) || 0;
+    const binaInsaat = parseInt(formData.binaInsaat.replace(/\./g, ''), 10) || 0;
+    const digerGiderler = parseInt(formData.digerGiderler.replace(/\./g, ''), 10) || 0;
+    const toplamYatirim = ithalMakine + yerliMakine + binaInsaat + digerGiderler;
+
+    // Aktif program bilgilerini al
+    const aktifProgram = formData.sektorelProgram;
+    const programConfig = programConfigs[aktifProgram as keyof typeof programConfigs];
+
+    // JSON rapor objesi oluştur
+    const reportData = {
+      metadata: {
+        reportId: `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        createdAt: new Date().toISOString(),
+        reportType: 'Yatırım Teşvik Ön Değerlendirme Raporu',
+        version: '1.0'
+      },
+      sirketBilgileri: {
+        sirketAdi: formData.sirketAdi,
+        kobiStatusu: formData.kobiStatusu,
+        naceKodu: formData.naceKodu,
+        naceAciklama: formData.naceSearch,
+        faaliyetSuresi: formData.faaliyetSuresi ? parseInt(formData.faaliyetSuresi) : null,
+        mevcutIstihdam: formData.mevcutIstihdam ? parseInt(formData.mevcutIstihdam) : null
+      },
+      yatirimProjesi: {
+        yatirimTuru: formData.yatirimTuru,
+        ilaveIstihdam: formData.ilaveIstihdam ? parseInt(formData.ilaveIstihdam) : null,
+        tamamlanmaSuresiAy: formData.tamamlanmaSuresiAy ? parseInt(formData.tamamlanmaSuresiAy) : null
+      },
+      yatirimMaliyetleri: {
+        ithalMakineTeçhizat: {
+          formatted: formData.ithalMakine || '0 TL',
+          numeric: ithalMakine
+        },
+        yerliMakineTeçhizat: {
+          formatted: formData.yerliMakine || '0 TL',
+          numeric: yerliMakine
+        },
+        binaInsaatGiderleri: {
+          formatted: formData.binaInsaat || '0 TL',
+          numeric: binaInsaat
+        },
+        digerYatirimGiderleri: {
+          formatted: formData.digerGiderler || '0 TL',
+          numeric: digerGiderler
+        },
+        toplamSabitYatirim: {
+          formatted: toplam || '0 TL',
+          numeric: toplamYatirim
+        }
+      },
+      yatirimLokasyonu: {
+        il: formData.yatirimIli || null,
+        ilce: formData.yatirimIlcesi || null,
+        yatirimBolgesi: formData.yatirimBolgesi,
+        bolgeLabel: bolgeLabel,
+        osb: formData.yatirimBolgesi ? (formData.yatirimBolgesi.includes('OSB') ? true : false) : false
+      },
+      uygunlukOzeti: {
+        hedefYatirim: formData.hedefYatirim,
+        oncelikliYatirim: formData.oncelikliYatirim,
+        yuksekTeknoloji: formData.yuksekTeknoloji,
+        ortaYuksekTeknoloji: formData.ortaYuksekTeknoloji
+      },
+      teşvikProgramlari: {
+        sektorelProgram: {
+          program: aktifProgram,
+          programAdi: programConfig?.name || null,
+          yko: programConfig?.yko || null,
+          vergiIndirimOrani: programConfig?.vergiIndirimOrani || null,
+          sgkSure: programConfig?.sgkSure || null,
+          faizDestegi: programConfig?.faizDestegi || false,
+          faizMax: programConfig?.faizMax || null,
+          faizAzamiOran: programConfig?.faizAzamiOran || null,
+          minYatirim: getAsgariTutarText()
+        },
+        ozelProgram: formData.ozelProgram || null,
+        dijitalProgram: formData.dijitalProgram || null,
+        oncelikliUrun: formData.oncelikliUrun || null,
+        oncelikliYatirimKonusu: formData.oncelikliYatirimKonusu || null
+      },
+      destekUnsurlari: {
+        bolge: bolgeLabel,
+        unsurlar: destekList.map(item => ({
+          ad: item.ad,
+          deger: item.deger || null,
+          aciklama: item.aciklama || null
+        }))
+      },
+      hesaplamalar: {
+        asgariYatirimTutari: getAsgariTutarText(),
+        asgariYatirimKarsilama: toplamYatirim > 0 ? {
+          karsilaniyor: true,
+          tutar: toplamYatirim
+        } : {
+          karsilaniyor: false,
+          tutar: 0
+        }
+      }
+    };
+
+    // JSON'u formatla ve indir
+    const jsonString = JSON.stringify(reportData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `yatirim-tesvik-raporu-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // URL parametrelerini oku ve form verilerini güncelle
   useEffect(() => {
     const naceKodu = searchParams.get('naceKodu');
@@ -960,8 +1084,19 @@ function DetayliAnalizContent() {
           <button
             className={styles.downloadButton}
             onClick={exportReportAsPDF}
+            style={{ marginRight: '1rem' }}
           >
               PDF Olarak İndir
+            </button>
+          <button
+            className={styles.downloadButton}
+            onClick={exportReportAsJSON}
+            style={{ 
+              background: 'linear-gradient(to right, #667eea, #764ba2)',
+              marginLeft: '1rem'
+            }}
+          >
+              JSON Olarak İndir
             </button>
           </div>
         </div>

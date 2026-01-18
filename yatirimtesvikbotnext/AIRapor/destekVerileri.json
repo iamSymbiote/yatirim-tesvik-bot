@@ -1,0 +1,51 @@
+{
+  "destekUnsurlari": [
+    {
+      "ad": "KDV İstisnası",
+      "aciklama": "Teşvik belgesi kapsamında yurt içinden ve yurt dışından temin edilecek yatırım malı makine ve teçhizat ile belge kapsamındaki yazılım ve gayri maddi hak satış ve kiralamaları için katma değer vergisinin ödenmemesi şeklinde uygulanır.",
+      "deger": "VAR"
+    },
+    {
+      "ad": "Gümrük Vergisi Muafiyeti",
+      "aciklama": "Teşvik Belgesi kapsamında yurt dışından temin edilecek yatırım malı makine ve teçhizat için Yürürlükteki İthalat Rejimi Kararı gereğince uygulanması gereken gümrük vergisi oranının %0 olarak uygulanmasıdır.",
+      "deger": "VAR"
+    },
+    {
+      "ad": "Vergi İndirimi",
+      "aciklama": "Gelir veya kurumlar vergisinin, yatırım için öngörülen katkı tutarına ulaşıncaya kadar, % 60 indirimli olarak uygulanmasıdır.",
+      "deger": "%60"
+    },
+    {
+      "ad": "Yatırıma Katkı Oranı",
+      "aciklama": "Toplam Faydalanılacak vergi indiriminin yatırıma olan oranını ifade eder.",
+      "deger": "%20"
+    },
+    {
+      "ad": "Sigorta Primi İşveren Hissesi Desteği",
+      "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işveren hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamı, diğer bölgelerde gerçekleştirilen yatırımlar için %50'sinin Bakanlıkça karşılanmasıdır.",
+      "deger": "1 YIL"
+    }
+  ],
+  "destekTurleri": [
+    {
+      "ad": "Sigorta Primi (İşçi Hissesi Desteği)",
+      "aciklama": "Teşvik belgesi kapsamı yatırımla sağlanan ilave istihdam için ödenmesi gereken sigorta primi işçi hissesinin asgari ücrete tekabül eden kısmının 6 ncı bölgede gerçekleştirilen yatırımlar için tamamının Bakanlıkça karşılanmasıdır.",
+      "deger": "YOK"
+    },
+    {
+      "ad": "Faiz veya Kar Payı Desteği",
+      "aciklama": "Teşvik belgesi kapsamında kullanılmak üzere en az bir yıl vadeli yatırım kredileri için ödenecek faiz veya kar payının belirli bir kısmının Bakanlıkça karşılanmasıdır.",
+      "deger": "YOK"
+    },
+    {
+      "ad": "Makine Desteği",
+      "aciklama": "Teşvik belgesi kapsamında alınacak makine ve teçhizatın belirli bir kısmının maliyetinin Bakanlıkça karşılanmasıdır.",
+      "deger": "YOK"
+    },
+    {
+      "ad": "Yatırım Yeri Tahsisi",
+      "aciklama": "Teşvik belgesi kapsamındaki yatırımlar için yatırım yeri tahsis edilmesidir.",
+      "deger": "VAR"
+    }
+  ]
+} 
