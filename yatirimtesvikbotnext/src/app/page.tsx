@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Typography, Box, Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem, RadioGroup, FormControlLabel, Radio, Checkbox, Button, Modal, IconButton } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -28,18 +28,29 @@ export default function Home() {
   const [checked, setChecked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
+  const [hasScrolledTerms, setHasScrolledTerms] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const ilceler = selectedIl ? (iller[selectedIl as keyof typeof iller] || []) : [];
   // Gerçek ilçeleri ayır (Diğer Tüm İlçeler hariç)
   const gercekIlceler = ilceler.filter(ilce => ilce !== 'Diğer Tüm İlçeler');
   // İlçe seçenekleri: gerçek ilçeler + separator + Diğer Tüm İlçeler
   const ilceOptions = selectedIl ? (gercekIlceler.length > 0 ? [...gercekIlceler, '__SEPARATOR__', 'Diğer Tüm İlçeler'] : ['Diğer Tüm İlçeler']) : [];
+  const initialNaceOptions = useMemo(() => {
+    const list = [...(naceList as any[])];
+    // Karışık bir başlangıç listesi için basit shuffle
+    for (let i = list.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list.slice(0, 20);
+  }, []);
+
   const filteredNace: any[] = naceInput.length >= 2
     ? (naceList as any[]).filter(option =>
           option.kod.toLowerCase().includes(naceInput.toLowerCase()) ||
           option.tanim.toLowerCase().includes(naceInput.toLowerCase())
         )
-    : [];
+    : initialNaceOptions;
   
   // Hedef yatırım kontrolü
   const isHedefYatirim = (naceKodu: string) => {
@@ -88,6 +99,20 @@ export default function Home() {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [showResult]);
+
+  useEffect(() => {
+    if (termsOpen) {
+      setHasScrolledTerms(false);
+    }
+  }, [termsOpen]);
+
+  const handleTermsScroll = (e: any) => {
+    const target = e.target;
+    if (!target) return;
+    if (target.scrollTop + target.clientHeight >= target.scrollHeight - 50) {
+      setHasScrolledTerms(true);
+    }
+  };
 
     // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
   useEffect(() => {
@@ -293,6 +318,10 @@ export default function Home() {
           <Button className="tesvik-button" variant="contained" color="error" size="large" fullWidth
             onClick={(e: any) => {
               e.preventDefault();
+              if (!checked) {
+                setTermsOpen(true);
+                return;
+              }
               if (
                 selectedIl && selectedIlce && naceValue
               ) {
@@ -307,9 +336,8 @@ export default function Home() {
           <div className="tesvik-checkbox-row">
             <Checkbox 
               checked={checked} 
-              onChange={(e: any) => {
-                setChecked(e.target.checked);
-                if (e.target.checked) setTermsOpen(true);
+              onChange={() => {
+                setTermsOpen(true);
               }}
               color="error" 
             />
@@ -319,12 +347,14 @@ export default function Home() {
               </span>
             </Typography>
           </div>
+          {/*
           <div className="tesvik-footer">
             <InfoOutlinedIcon color="action" fontSize="small" style={{ marginTop: 2 }} />
             <Typography variant="caption" sx={{ color: mode === 'dark' ? '#a0a0a0' : '#666', transition: 'color 0.3s ease' }}>
               Yatırımlarda Devlet Yardımları Hakkında <a href="#" style={{ color: '#1976d2', textDecoration: 'underline' }}>Karar</a> ve <a href="#" style={{ color: '#1976d2', textDecoration: 'underline' }}>Tebliğine</a> göre hazırlanmıştır. <a href="#" style={{ color: '#1976d2', textDecoration: 'underline' }}>Kapsam Dışı Konular</a>
             </Typography>
           </div>
+          */}
         </form>
         {showResult && (
           <div ref={resultRef} className="tesvik-sonuc-panel" style={{ marginTop: 32 }}>
@@ -786,6 +816,7 @@ export default function Home() {
             overflowY: 'auto',
             transition: 'background-color 0.3s ease',
           }}
+          onScroll={handleTermsScroll}
         >
           <Typography id="terms-modal-title" variant="h6" component="h2" gutterBottom sx={{ fontWeight: 700 }}>
             Kullanım Koşulları
@@ -870,7 +901,18 @@ export default function Home() {
               </a>
             </Typography>
           </Box>
-          <Button onClick={() => setTermsOpen(false)} sx={{ mt: 2 }} variant="contained" color="error" fullWidth>
+          <Button
+            onClick={() => {
+              if (!hasScrolledTerms) return;
+              setChecked(true);
+              setTermsOpen(false);
+            }}
+            sx={{ mt: 2 }}
+            variant="contained"
+            color="error"
+            fullWidth
+            disabled={!hasScrolledTerms}
+          >
             Kapat
           </Button>
         </Box>
