@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { IconButton } from '@mui/material';
+import { IconButton, Modal, Box, Typography, Button } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import styles from './page.module.css';
@@ -50,6 +50,7 @@ function DetayliAnalizContent() {
 
   const [showReport, setShowReport] = useState(false);
   const [reportContent, setReportContent] = useState('');
+  const [aiModalOpen, setAiModalOpen] = useState(false);
   const reportRef = useRef<HTMLDivElement | null>(null);
 
   // Rapor oluşturulduğunda otomatik olarak rapor bölümüne kaydır
@@ -1081,6 +1082,40 @@ function DetayliAnalizContent() {
             Rapor Oluştur
           </button>
         </div>
+        
+        <div className={styles.submitContainer} style={{ marginTop: '20px' }}>
+          <button 
+            type="button" 
+            className={styles.submitButton}
+            onClick={() => setAiModalOpen(true)}
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
+              <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+                "LORE AI" Sizin İçin Yatırımınızı Yorumlayacak!
+              </span>
+              <span style={{ fontSize: '0.9rem', opacity: 0.95 }}>
+                Çok Yakında!
+              </span>
+            </div>
+          </button>
+        </div>
       </form>
 
       {showReport && (
@@ -1096,6 +1131,116 @@ function DetayliAnalizContent() {
           </div>
         </div>
       )}
+
+      {/* AI Yorumlama Modal */}
+      <Modal
+        open={aiModalOpen}
+        onClose={() => setAiModalOpen(false)}
+        aria-labelledby="ai-modal-title"
+        aria-describedby="ai-modal-desc"
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Box
+          sx={{
+            bgcolor: mode === 'dark' ? 'rgba(30,30,30,0.97)' : 'rgba(255,255,255,0.97)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: 4,
+            boxShadow: 24,
+            p: 4,
+            minWidth: 340,
+            maxWidth: 700,
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            transition: 'background-color 0.3s ease',
+          }}
+        >
+          <Typography id="ai-modal-title" variant="h5" component="h2" gutterBottom sx={{ fontWeight: 700, textAlign: 'center', mb: 3 }}>
+            🤖 Yapay Zeka Yatırım Yorumlama
+          </Typography>
+          <Box id="ai-modal-desc" sx={{ mt: 2, color: mode === 'dark' ? '#e0e0e0' : '#333' }}>
+            <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.7, textAlign: 'center', fontWeight: 500 }}>
+              Yapay zeka destekli analiz sistemimiz yakında hizmetinizde! Aşağıdaki detaylı analiz başlıkları sizi bekliyor:
+            </Typography>
+            
+            <Box component="ul" sx={{ pl: 0, mb: 3, listStyle: 'none' }}>
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  1. Temel Uygunluk ve Bölge Tespiti Analizi
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  Yatırımınızın temel uygunluk kriterlerini ve bölge tespitini detaylı olarak analiz eder.
+                </Typography>
+              </Box>
+              
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  2. Mali Yeterlilik ve Asgari Yatırım Tutarı Kontrolü (2026 Güncel Tutarları)
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  En güncel 2026 tutarları ile mali yeterliliğinizi ve asgari yatırım tutarı gereksinimlerini kontrol eder.
+                </Typography>
+              </Box>
+              
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  3. Program Eşleşmesi ve Stratejik Uygunluk
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  Yatırımınızın hangi teşvik programlarına uygun olduğunu ve stratejik uygunluğunu değerlendirir.
+                </Typography>
+              </Box>
+              
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  4. Yerel Kalkınma ve Sektörel Fırsatlar
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  Yatırım bölgenizdeki yerel kalkınma fırsatlarını ve sektörel avantajları analiz eder.
+                </Typography>
+              </Box>
+              
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  5. Destek Unsurları ve Finansal Getiri Tahmini
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  Destek unsurlarını detaylı olarak hesaplar ve finansal getiri tahminleri sunar.
+                </Typography>
+              </Box>
+              
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  6. Belge Hazırlığı ve E-TUYS Uygunluğu
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  Gerekli belgeleri listeler ve E-TUYS sistemine uygunluğunuzu kontrol eder.
+                </Typography>
+              </Box>
+              
+              <Box component="li" sx={{ mb: 2.5, p: 2, borderRadius: 2, bgcolor: mode === 'dark' ? 'rgba(102, 126, 234, 0.1)' : 'rgba(102, 126, 234, 0.05)', borderLeft: '4px solid #667eea' }}>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5, color: mode === 'dark' ? '#ffffff' : '#333' }}>
+                  7. Risk Analizi ve Kısıtlamalar
+                </Typography>
+                <Typography variant="body2" sx={{ color: mode === 'dark' ? '#b0b0b0' : '#666', lineHeight: 1.6 }}>
+                  Potansiyel riskleri ve kısıtlamaları tespit ederek önlem önerileri sunar.
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Button
+            onClick={() => setAiModalOpen(false)}
+            sx={{ mt: 3 }}
+            variant="contained"
+            color="primary"
+            fullWidth
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            }}
+          >
+            Kapat
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 }
