@@ -345,7 +345,7 @@ function DetayliAnalizContent() {
       return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(amount);
     }
     // Text tabanlı olanlar için
-    // @ts-ignore
+    // @ts-expect-error -- bazı config varyantlarında minYatirim nesnesi `text` alanı içeriyor (union tip), burada güvenli erişim yapıyoruz
     if (cfg.minYatirim?.text) return cfg.minYatirim.text as string;
     return '-';
   };
