@@ -50,9 +50,6 @@ function DetayliAnalizContent() {
     ortaYuksekTeknoloji: false
   });
   
-  const [isLoading, setIsLoading] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState('');
-
   const [showReport, setShowReport] = useState(false);
   const [reportContent, setReportContent] = useState('');
   const [aiModalOpen, setAiModalOpen] = useState(false);
@@ -592,51 +589,14 @@ function DetayliAnalizContent() {
     `;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    // Kısa parametre isimleri (yeni) + geriye dönük uyumluluk
-    const naceKodu = searchParams.get('n') || searchParams.get('naceKodu');
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-  
-    setIsLoading(true);
-    setDownloadUrl('');
-  
-    try {
-      const destekBolgesi = searchParams.get('db') || searchParams.get('destekBolgesi') || searchParams.get('faydalanacakBolge') || formData.yatirimBolgesi;
-      const naceAciklama = searchParams.get('na') || searchParams.get('naceAciklama') || formData.naceAciklama;
-  
-      const response = await fetch('/api/lore/generate-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          formVerileri: {
-            ...formData,
-            // API'nin beklediği eksik alanları buraya ekliyoruz:
-            destekBolgesi: destekBolgesi, 
-            naceKodu: naceKodu,
-            naceAciklama: naceAciklama,
-            sabitYatirimTutari: calculateTotalInvestment() 
-          }
-        }),
-      });
-  
-      const data = await response.json();
-  
-      if (data.status === 'success') {
-        setDownloadUrl(data.download_url);
-        setShowReport(true);
-      } else {
-        alert(`Hata: ${data.message || 'Rapor oluşturulamadı'}`);
-      }
-    } catch {
-      // Bağlantı hatası – console'a yazılmaz (güvenlik)
-    } finally {
-      setIsLoading(false);
-    }
+    setReportContent(buildReportHTML());
+    setShowReport(true);
   };
  
   return (
@@ -1111,35 +1071,19 @@ function DetayliAnalizContent() {
           )}
         </div>
         
-        <button type="submit" className={styles.submitButton} disabled={isLoading}>
-          {isLoading ? 'Rapor Hazırlanıyor... Lütfen Bekleyin (Bu işlem yaklaşık 30 saniye sürebilir)' : 'LORE AI® kullanarak Detaylı Analiz Raporu Oluştur'}
+        <button type="submit" className={styles.submitButton}>
+          Detaylı Analiz Raporu Oluştur
         </button>
         
       </form>
 
-
-            {showReport && downloadUrl && (
+        {showReport && reportContent && (
         <div className={styles.reportContainer} ref={reportRef}>
-          <div className={styles.reportContent} style={{ textAlign: 'center', padding: '50px 20px' }}>
-            <h2 style={{ color: '#2e7d32', marginBottom: '20px' }}>✅ Raporunuz Hazırlandı!</h2>
-            <p style={{ marginBottom: '30px', fontSize: '1.1rem' }}>
-              Analiz sonuçlarınız başarıyla oluşturuldu. Aşağıdaki butona tıklayarak belgenizi indirebilirsiniz.
-            </p>
-            <a 
-              href={downloadUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className={styles.submitButton}
-              style={{ 
-                textDecoration: 'none', 
-                display: 'inline-block',
-                background: 'linear-gradient(135deg, #0732ef 0%, #001bb1 100%)',
-                padding: '16px 40px'
-              }}
-            >
-              📄 Raporu Word Olarak İndir
-            </a>
-          </div>
+          <div
+            className={styles.reportContent}
+            style={{ padding: '24px 20px' }}
+            dangerouslySetInnerHTML={{ __html: reportContent }}
+          />
         </div>
       )}
 

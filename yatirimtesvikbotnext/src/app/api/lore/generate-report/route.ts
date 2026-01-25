@@ -80,6 +80,10 @@ export async function POST(request: NextRequest) {
     // Token route.ts'de kalıyor (güvenlik için)
     const url = 'https://lore.polyglotpro.tr/';
     const token = 'OLP0PBVCXQ3ZH94HIPJV1OVL360EZK';
+    const LORE_TIMEOUT_MS = 90_000; // 1.5 dakika
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), LORE_TIMEOUT_MS);
 
     const response = await fetch(url, {
       method: 'POST',
@@ -88,7 +92,9 @@ export async function POST(request: NextRequest) {
         'Authorization': token,
       },
       body: payloadBase64,
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     let result;
     try {
@@ -122,7 +128,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
 
-  } catch {
+  } catch (err: unknown) {
+    const isAbort = err instanceof Error && err.name === 'AbortError';
+    if (isAbort) {
+      return NextResponse.json(
+        { error: 'LORE API 1,5 dakika içinde yanıt vermedi. Lütfen kısa süre sonra tekrar deneyin.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: 'Sistem Hatası' }, { status: 500 });
   }
 }
