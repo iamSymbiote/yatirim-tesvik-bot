@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+html {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -42,12 +48,20 @@ body {
 body {
   background: #f7f7f7;
   min-height: 100vh;
+  max-height: 100vh;
   margin: 0;
+  padding: 0;
   font-family: var(--font-poppins), 'Inter', 'Roboto', Arial, sans-serif;
   color: #222;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-weight: 400;
   line-height: 1.6;
+  /* Font rendering optimizasyonları */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Dark mode styles */
@@ -58,33 +72,41 @@ body {
 
 #root, .app-center {
   min-height: 100vh;
+  max-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .tesvik-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 32px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-  padding: 56px 64px;
+  padding: 40px 56px;
   max-width: 1200px;
   width: 95vw;
-  margin: 48px auto;
+  margin: 24px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 36px;
+  gap: 28px;
   transition: all 0.3s ease;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Font yükleme sırasında layout shift'i önle */
+  contain: layout;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
   .tesvik-card {
     padding: 24px 16px;
     border-radius: 20px;
-    margin: 16px auto;
+    margin: 12px auto;
     gap: 20px;
     width: 98vw;
   }
@@ -100,9 +122,9 @@ body {
   width: 220px;
   height: auto;
   max-width: 90%;
-  max-height: 120px;
+  max-height: 100px;
   object-fit: contain;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   display: block;
 }
 
@@ -117,22 +139,31 @@ body {
 .tesvik-title {
   font-size: 2.8rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: #222;
   text-align: center;
   letter-spacing: -0.5px;
   transition: color 0.3s ease;
-  font-family: var(--font-poppins), sans-serif;
+  font-family: var(--font-poppins), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* Font yükleme sırasında boyut değişimini önle - sabit boyut */
+  line-height: 1.2;
+  height: 3.36rem; /* Sabit yükseklik - font yüklenene kadar aynı boyutta kalır */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
   .tesvik-title {
     font-size: 1.8rem;
     margin-bottom: 8px;
+    height: 2.16rem; /* Sabit yükseklik - font yüklenene kadar aynı boyutta kalır */
+    line-height: 1.2;
   }
 }
 
@@ -158,15 +189,24 @@ body {
   margin-bottom: 0;
   text-align: center;
   font-weight: 400;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   transition: color 0.3s ease;
   letter-spacing: 0.2px;
+  /* Font yükleme sırasında boyut değişimini önle - sabit boyut */
+  line-height: 1.5;
+  height: 1.8rem; /* Sabit yükseklik - font yüklenene kadar aynı boyutta kalır */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
   .tesvik-subtitle {
     font-size: 0.95rem;
     padding: 0 8px;
+    height: 1.425rem; /* Sabit yükseklik - font yüklenene kadar aynı boyutta kalır */
+    line-height: 1.5;
   }
 }
 
@@ -180,7 +220,7 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .tesvik-row {
@@ -201,7 +241,7 @@ body {
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   border: 1px solid #f0f0f0;
-  padding: 24px 20px 20px 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -232,8 +272,8 @@ body {
   background: #ffffff;
   border-radius: 20px;
   border: 1px solid #f0f0f0;
-  padding: 20px 24px;
-  margin-bottom: 12px;
+  padding: 16px 24px;
+  margin-bottom: 8px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   backdrop-filter: blur(10px);
@@ -255,11 +295,12 @@ body {
 }
 
 .tesvik-button {
-  margin-top: 12px;
+  margin-top: 8px;
+  margin-bottom: 0;
   font-size: 1.3rem;
   font-weight: 600;
   border-radius: 16px;
-  padding: 18px 0;
+  padding: 16px 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   box-shadow: 0 4px 20px rgba(102,126,234,0.3);

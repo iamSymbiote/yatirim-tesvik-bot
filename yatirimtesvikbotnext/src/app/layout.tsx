@@ -17,12 +17,18 @@ const geistMono = Geist_Mono({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "optional", // Font hızlı yüklenmezse fallback kullan, boyut değişmesin
+  preload: true,
+  adjustFontFallback: true, // Fallback font metriklerini ayarla
 });
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-poppins",
+  display: "optional", // Font hızlı yüklenmezse fallback kullan, boyut değişmesin
+  preload: true,
+  adjustFontFallback: true, // Fallback font metriklerini ayarla
 });
 
 export const metadata: Metadata = {

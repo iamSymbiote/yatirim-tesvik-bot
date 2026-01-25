@@ -6,6 +6,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import styles from './page.module.css';
 import destekUnsurlariBolgeBazli from '@/data/destekUnsurlariBolgeBazli.json';
+import naceList from '@/data/nace.json';
 
 // NOT: Aşağıdaki importlar ve ilgili fonksiyonlar şu an aktif olarak kullanılmıyor.
 // İleride PDF / JSON indirme fonksiyonlarını tekrar açmak istediğimizde
@@ -22,6 +23,7 @@ function DetayliAnalizContent() {
     sirketAdi: '',
     kobiStatusu: '', // Zorunlu alan - boş başlat
     naceKodu: '',
+    naceAciklama: '', // nace.json lookup veya URL'den; rapor/API için
     naceSearch: '',
     yatirimTuru: '', // Zorunlu alan - boş başlat
     mevcutIstihdam: '',
@@ -47,6 +49,9 @@ function DetayliAnalizContent() {
     yuksekTeknoloji: false,
     ortaYuksekTeknoloji: false
   });
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState('');
 
   const [showReport, setShowReport] = useState(false);
   const [reportContent, setReportContent] = useState('');
@@ -88,23 +93,30 @@ function DetayliAnalizContent() {
 
   // URL parametrelerini oku ve form verilerini güncelle
   useEffect(() => {
-    const naceKodu = searchParams.get('naceKodu');
-    const naceAciklama = searchParams.get('naceAciklama');
-    const il = searchParams.get('yatirimIli') || searchParams.get('il'); // Geriye dönük uyumluluk için
-    const ilce = searchParams.get('yatirimIlcesi') || searchParams.get('ilce'); // Geriye dönük uyumluluk için
-    const osb = searchParams.get('osb');
-    const yatirimBolgesi = searchParams.get('yatirimBolgesi');
-    const faydalanacakBolge = searchParams.get('destekBolgesi') || searchParams.get('faydalanacakBolge'); // Geriye dönük uyumluluk için
+    // Kısa parametre isimleri (yeni) + geriye dönük uyumluluk için eski parametreler
+    const naceKodu = searchParams.get('n') || searchParams.get('naceKodu');
+    const naceAciklama = searchParams.get('na') || searchParams.get('naceAciklama');
+    const il = searchParams.get('il') || searchParams.get('yatirimIli');
+    const ilce = searchParams.get('ilc') || searchParams.get('yatirimIlcesi');
+    const osb = searchParams.get('o') || searchParams.get('osb');
+    const yatirimBolgesi = searchParams.get('yb') || searchParams.get('yatirimBolgesi');
+    const faydalanacakBolge = searchParams.get('db') || searchParams.get('destekBolgesi') || searchParams.get('faydalanacakBolge');
     
-    // Teşvik programı verilerini oku
-    const hedefYatirim = searchParams.get('hedefYatirim') === 'true';
-    const oncelikliYatirim = searchParams.get('oncelikliYatirim') === 'true';
-    const yuksekTeknoloji = searchParams.get('yuksekTeknoloji') === 'true';
-    const ortaYuksekTeknoloji = searchParams.get('ortaYuksekTeknoloji') === 'true';
+    // Teşvik programı verilerini oku - kısa parametreler (1) veya eski format (true)
+    const hedefYatirim = searchParams.get('hy') === '1' || searchParams.get('hedefYatirim') === 'true';
+    const oncelikliYatirim = searchParams.get('oy') === '1' || searchParams.get('oncelikliYatirim') === 'true';
+    const yuksekTeknoloji = searchParams.get('yt') === '1' || searchParams.get('yuksekTeknoloji') === 'true';
+    const ortaYuksekTeknoloji = searchParams.get('oyt') === '1' || searchParams.get('ortaYuksekTeknoloji') === 'true';
     
     
     if (naceKodu) {
-      const aciklama = naceAciklama && naceAciklama !== 'undefined' ? naceAciklama : 'Açıklama bulunamadı';
+      let aciklama = naceAciklama && naceAciklama !== 'undefined' ? naceAciklama : '';
+      if (!aciklama) {
+        const found = (naceList as { kod: string; tanim: string }[]).find(
+          (n) => n.kod === naceKodu
+        );
+        aciklama = found?.tanim || 'Açıklama bulunamadı';
+      }
       
       // Öncelikli yatırım varsa onu seç, yoksa hedef yatırımı seç
       let selectedSektorelProgram = '';
@@ -122,6 +134,7 @@ function DetayliAnalizContent() {
       setFormData(prev => ({
         ...prev,
         naceKodu: naceKodu,
+        naceAciklama: aciklama,
         naceSearch: `${naceKodu} - ${aciklama}`,
         yatirimIli: il || '',
         yatirimIlcesi: ilce || '',
@@ -585,26 +598,54 @@ function DetayliAnalizContent() {
     `;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    // Kısa parametre isimleri (yeni) + geriye dönük uyumluluk
+    const naceKodu = searchParams.get('n') || searchParams.get('naceKodu');
     e.preventDefault();
     
-    // Form validasyonunu kontrol et
     if (!validateForm()) {
-      // Sayfayı en üste kaydır
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    
-    const totalInvestment = calculateTotalInvestment();
-    setFormData(prev => ({ ...prev, sabitYatirimTutari: totalInvestment }));
-    
-    // Rapor oluşturma mantığı
-    const report = buildReportHTML();
-    
-    setReportContent(report);
-    setShowReport(true);
+  
+    setIsLoading(true);
+    setDownloadUrl('');
+  
+    try {
+      const destekBolgesi = searchParams.get('db') || searchParams.get('destekBolgesi') || searchParams.get('faydalanacakBolge') || formData.yatirimBolgesi;
+      const naceAciklama = searchParams.get('na') || searchParams.get('naceAciklama') || formData.naceAciklama;
+  
+      const response = await fetch('/api/lore/generate-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formVerileri: {
+            ...formData,
+            // API'nin beklediği eksik alanları buraya ekliyoruz:
+            destekBolgesi: destekBolgesi, 
+            naceKodu: naceKodu,
+            naceAciklama: naceAciklama,
+            sabitYatirimTutari: calculateTotalInvestment() 
+          }
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.status === 'success') {
+        setDownloadUrl(data.download_url);
+        setShowReport(true);
+      } else {
+        // Detaylı hata mesajını gösterelim
+        alert(`Hata: ${data.message || 'Rapor oluşturulamadı'}`);
+      }
+    } catch (error) {
+      console.error("Bağlantı Hatası:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
+ 
   return (
     <div className={`${styles.container} ${mode === 'dark' ? styles.darkMode : ''}`}>
       {/* Dark Mode Toggle Button */}
@@ -1077,57 +1118,34 @@ function DetayliAnalizContent() {
           )}
         </div>
         
-        <div className={styles.submitContainer}>
-          <button type="submit" className={styles.submitButton}>
-            Rapor Oluştur
-          </button>
-        </div>
+        <button type="submit" className={styles.submitButton} disabled={isLoading}>
+          {isLoading ? 'Rapor Hazırlanıyor... Lütfen Bekleyin (Bu işlem yaklaşık 30 saniye sürebilir)' : 'LORE AI® kullanarak Detaylı Analiz Raporu Oluştur'}
+        </button>
         
-        <div className={styles.submitContainer} style={{ marginTop: '20px' }}>
-          <button 
-            type="button" 
-            className={styles.submitButton}
-            onClick={() => setAiModalOpen(true)}
-            style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
-              <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>
-                "LORE AI" Sizin İçin Yatırımınızı Yorumlayacak!
-              </span>
-              <span style={{ fontSize: '0.9rem', opacity: 0.95 }}>
-                Çok Yakında!
-              </span>
-            </div>
-          </button>
-        </div>
       </form>
 
-      {showReport && (
-        <div className={styles.reportContainer}>
-          <div className={styles.reportContent} ref={reportRef}>
-            <div className={styles.reportHeader}>
-              <h2>Yatırım Teşvik Ön Değerlendirme Raporu</h2>
-            </div>
-            <div className={styles.reportOutput}>
-              {/* Render the generated HTML as formatted content */}
-              <div dangerouslySetInnerHTML={{ __html: reportContent }} />
-            </div>
+
+            {showReport && downloadUrl && (
+        <div className={styles.reportContainer} ref={reportRef}>
+          <div className={styles.reportContent} style={{ textAlign: 'center', padding: '50px 20px' }}>
+            <h2 style={{ color: '#2e7d32', marginBottom: '20px' }}>✅ Raporunuz Hazırlandı!</h2>
+            <p style={{ marginBottom: '30px', fontSize: '1.1rem' }}>
+              Analiz sonuçlarınız başarıyla oluşturuldu. Aşağıdaki butona tıklayarak belgenizi indirebilirsiniz.
+            </p>
+            <a 
+              href={downloadUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className={styles.submitButton}
+              style={{ 
+                textDecoration: 'none', 
+                display: 'inline-block',
+                background: 'linear-gradient(135deg, #0732ef 0%, #001bb1 100%)',
+                padding: '16px 40px'
+              }}
+            >
+              📄 Raporu Word Olarak İndir
+            </a>
           </div>
         </div>
       )}

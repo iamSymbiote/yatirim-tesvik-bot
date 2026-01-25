@@ -27,6 +27,7 @@ export default function Home() {
   const [osb, setOsb] = useState('hayir');
   const [checked, setChecked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [lorePopupOpen, setLorePopupOpen] = useState(true);
   const [termsOpen, setTermsOpen] = useState(false);
   const [hasScrolledTerms, setHasScrolledTerms] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -106,6 +107,16 @@ export default function Home() {
     }
   }, [termsOpen]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (sessionStorage.getItem('lorePopupDismissed') === '1') setLorePopupOpen(false);
+  }, []);
+
+  const closeLorePopup = () => {
+    if (typeof window !== 'undefined') sessionStorage.setItem('lorePopupDismissed', '1');
+    setLorePopupOpen(false);
+  };
+
   const handleTermsScroll = (e: any) => {
     const target = e.target;
     if (!target) return;
@@ -160,6 +171,51 @@ export default function Home() {
       >
         {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
       </IconButton>
+
+      <Modal
+        open={lorePopupOpen}
+        onClose={closeLorePopup}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2,
+          zIndex: 1100,
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0,0,0,0.35)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          },
+        }}
+      >
+        <Box
+          component="button"
+          type="button"
+          onClick={closeLorePopup}
+          sx={{
+            display: 'block',
+            border: 'none',
+            padding: 0,
+            margin: 0,
+            background: 'none',
+            cursor: 'pointer',
+            outline: 'none',
+            maxWidth: 720,
+            width: '100%',
+            borderRadius: 2,
+            overflow: 'hidden',
+            boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
+            '&:hover': { opacity: 0.98 },
+            '&:focus-visible': { outline: '2px solid #667eea', outlineOffset: 4 },
+          }}
+        >
+          <img
+            src="/assets/SCR-20260125-prog.png"
+            alt="LORE AI - %100 Yapay Zeka Destekli Detaylı Yatırım Teşvik Analiz Raporu"
+            style={{ width: '100%', height: 'auto', display: 'block', verticalAlign: 'middle' }}
+          />
+        </Box>
+      </Modal>
       
       <div className="tesvik-card">
         <Image src="/assets/lore-logo.png" alt="Lore Danışmanlık Logo" className="tesvik-logo" width={220} height={120} />
@@ -670,22 +726,22 @@ export default function Home() {
                 onClick={() => {
                   const params = new URLSearchParams();
                   if (naceValue) {
-                    params.set('naceKodu', naceValue.kod);
-                    params.set('naceAciklama', naceValue.tanim);
+                    params.set('n', naceValue.kod); // naceKodu -> n
+                    if (naceValue.tanim) params.set('na', naceValue.tanim); // naceAciklama -> na
                   }
-                  if (selectedIl) params.set('yatirimIli', selectedIl);
-                  if (selectedIlce) params.set('yatirimIlcesi', selectedIlce);
-                  if (osb) params.set('osb', osb);
+                  if (selectedIl) params.set('il', selectedIl); // yatirimIli -> il
+                  if (selectedIlce) params.set('ilc', selectedIlce); // yatirimIlcesi -> ilc
+                  if (osb) params.set('o', osb); // osb -> o
                   const bolge = getBolge(selectedIl);
-                  if (bolge) params.set('yatirimBolgesi', bolge.toString());
+                  if (bolge) params.set('yb', bolge.toString()); // yatirimBolgesi -> yb
                   const destekBolgesi = getDestekBolgesi(selectedIl, selectedIlce, osb);
-                  if (destekBolgesi) params.set('destekBolgesi', destekBolgesi.toString());
-                  // Teşvik programı bayrakları
+                  if (destekBolgesi) params.set('db', destekBolgesi.toString()); // destekBolgesi -> db
+                  // Teşvik programı bayrakları - sadece true olanları ekle (1 olarak)
                   if (naceValue) {
-                    if (isHedefYatirim(naceValue.kod)) params.set('hedefYatirim', 'true');
-                    if (isOncelikliYatirim(naceValue)) params.set('oncelikliYatirim', 'true');
-                    if (isYuksekTeknoloji(naceValue.kod)) params.set('yuksekTeknoloji', 'true');
-                    if (isOrtaYuksekTeknoloji(naceValue.kod)) params.set('ortaYuksekTeknoloji', 'true');
+                    if (isHedefYatirim(naceValue.kod)) params.set('hy', '1'); // hedefYatirim -> hy
+                    if (isOncelikliYatirim(naceValue)) params.set('oy', '1'); // oncelikliYatirim -> oy
+                    if (isYuksekTeknoloji(naceValue.kod)) params.set('yt', '1'); // yuksekTeknoloji -> yt
+                    if (isOrtaYuksekTeknoloji(naceValue.kod)) params.set('oyt', '1'); // ortaYuksekTeknoloji -> oyt
                   }
                   router.push(`/detayli-analiz?${params.toString()}`);
                 }}
