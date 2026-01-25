@@ -60,16 +60,12 @@ export default function Home() {
 
   // Yüksek teknoloji kontrolü
   const isYuksekTeknoloji = (naceKodu: string) => {
-    const result = yuksekTekno.includes(naceKodu);
-    console.log(`Yüksek Teknoloji Kontrolü - NACE: ${naceKodu}, Sonuç: ${result}`);
-    return result;
+    return yuksekTekno.includes(naceKodu);
   };
 
   // Orta-yüksek teknoloji kontrolü
   const isOrtaYuksekTeknoloji = (naceKodu: string) => {
-    const result = ortaYuksekTekno.includes(naceKodu);
-    console.log(`Orta-Yüksek Teknoloji Kontrolü - NACE: ${naceKodu}, Sonuç: ${result}`);
-    return result;
+    return ortaYuksekTekno.includes(naceKodu);
   };
 
   // Öncelikli yatırım kontrolü (NACE tanımı ile açıklama karşılaştırması)
@@ -124,14 +120,6 @@ export default function Home() {
       setHasScrolledTerms(true);
     }
   };
-
-    // Debug: JSON dosyalarının yüklenip yüklenmediğini kontrol et
-  useEffect(() => {
-    console.log('Yüksek Teknoloji Listesi Yüklendi:', yuksekTekno.length, 'kod');
-    console.log('Orta-Yüksek Teknoloji Listesi Yüklendi:', ortaYuksekTekno.length, 'kod');
-    console.log('Örnek Yüksek Teknoloji Kodları:', yuksekTekno.slice(0, 5));
-    console.log('Örnek Orta-Yüksek Teknoloji Kodları:', ortaYuksekTekno.slice(0, 5));
-  }, []);
 
   return (
     <div className="app-center">

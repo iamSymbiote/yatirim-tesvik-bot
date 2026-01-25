@@ -344,9 +344,6 @@ const YatirimTesvikRaporu: React.FC<PDFReportProps> = ({ reportData }) => {
 
 export const generateAndDownloadPDF = async (reportData: any) => {
   try {
-    console.log('PDF oluşturuluyor...', reportData);
-    
-    // reportData'yı doğru şekilde YatirimTesvikRaporu'ya geçir
     const blob = await pdf(
       <YatirimTesvikRaporu reportData={reportData} />
     ).toBlob();
@@ -359,10 +356,7 @@ export const generateAndDownloadPDF = async (reportData: any) => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
-    console.log('PDF başarıyla oluşturuldu!');
   } catch (error) {
-    console.error('PDF oluşturma hatası:', error);
     throw error;
   }
 };

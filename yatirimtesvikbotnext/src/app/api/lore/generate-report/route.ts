@@ -26,8 +26,6 @@ export async function POST(request: NextRequest) {
       );
       
       if (missingFields.length > 0) {
-        console.error('⛔ ZORUNLU ALANLAR EKSİK:', missingFields);
-      
         return NextResponse.json(
           {
             status: 'error',
@@ -73,53 +71,34 @@ export async function POST(request: NextRequest) {
       );
       
 
-    console.log("-----------------------------------------");
-    console.log("✅ API'YE GİDEN TERTEMİZ VERİ:", JSON.stringify(cleanedPayload, null, 2));
-
     // 3. JSON'u string'e çevir ve Base64'e encode et (görüntüdeki örnek gibi)
     // input.json dosyasını oku (bizim durumumuzda JSON objesini string'e çeviriyoruz)
     const payload = JSON.stringify(cleanedPayload);
     const payloadBase64 = Buffer.from(payload, 'utf-8').toString('base64');
 
-    console.log("🚀 LORE'A GİDEN PAYLOAD (JSON):");
-    console.table(cleanedPayload);
-    console.log("📦 BASE64 ENCODED PAYLOAD (ilk 100 karakter):", payloadBase64.substring(0, 100) + "...");
-    console.log("📦 BASE64 ENCODED PAYLOAD (tam uzunluk):", payloadBase64.length, "karakter");
-
     // 4. Base64 encode edilmiş veriyi API'ye gönder (görüntüdeki örnek gibi)
     // Token route.ts'de kalıyor (güvenlik için)
     const url = 'https://lore.polyglotpro.tr/';
     const token = 'OLP0PBVCXQ3ZH94HIPJV1OVL360EZK';
-    
-    console.log("📤 LORE API'YE GÖNDERİLEN REQUEST:");
-    console.log("   URL:", url);
-    console.log("   Method: POST");
-    console.log("   Body (Base64, ilk 100 karakter):", payloadBase64.substring(0, 100) + "...");
-    
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token,
       },
-      body: payloadBase64, // Direkt Base64 string gönderiliyor (görüntüdeki örnek gibi)
-      // Not: Content-Type application/json olduğu için fetch otomatik olarak string'i gönderir
+      body: payloadBase64,
     });
-
-    console.log("📡 API RESPONSE STATUS:", response.status, response.statusText);
 
     let result;
     try {
       const responseText = await response.text();
-      console.log("📡 API RESPONSE BODY (ilk 500 karakter):", responseText.substring(0, 500));
-      
       if (responseText) {
         result = JSON.parse(responseText);
       } else {
         result = { error: 'Empty response' };
       }
     } catch (parseError: any) {
-      console.error("❌ RESPONSE PARSE HATASI:", parseError.message);
       return NextResponse.json(
         { 
           status: 'error', 
@@ -131,7 +110,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (!response.ok) {
-      console.error("❌ API HATASI:", result);
       return NextResponse.json(
         {
           status: 'error',
@@ -142,11 +120,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("✅ API BAŞARILI YANIT:", result);
     return NextResponse.json(result);
 
-  } catch (error: any) {
-    console.error("🔥 İÇ HATA:", error.message);
+  } catch {
     return NextResponse.json({ error: 'Sistem Hatası' }, { status: 500 });
   }
 }

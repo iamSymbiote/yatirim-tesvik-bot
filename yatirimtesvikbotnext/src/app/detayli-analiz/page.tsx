@@ -328,14 +328,8 @@ function DetayliAnalizContent() {
       yatirimTuru: !formData.yatirimTuru
     };
     
-    console.log('Form Data:', formData);
-    console.log('Validation Errors:', errors);
-    
     setValidationErrors(errors);
-    
-    // Eğer herhangi bir hata varsa false döndür
     const hasErrors = Object.values(errors).some(error => error);
-    console.log('Has Errors:', hasErrors);
     return !hasErrors;
   };
 
@@ -636,11 +630,10 @@ function DetayliAnalizContent() {
         setDownloadUrl(data.download_url);
         setShowReport(true);
       } else {
-        // Detaylı hata mesajını gösterelim
         alert(`Hata: ${data.message || 'Rapor oluşturulamadı'}`);
       }
-    } catch (error) {
-      console.error("Bağlantı Hatası:", error);
+    } catch {
+      // Bağlantı hatası – console'a yazılmaz (güvenlik)
     } finally {
       setIsLoading(false);
     }

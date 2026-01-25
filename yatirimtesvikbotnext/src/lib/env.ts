@@ -51,11 +51,4 @@ export const env = {
   ...optionalEnvVars,
 } as const;
 
-// Development'ta uyarı ver (production'da validateEnv çağrılacak)
-if (process.env.NODE_ENV === 'development') {
-  Object.entries(requiredEnvVars).forEach(([key, value]) => {
-    if (!value) {
-      console.warn(`⚠️  Environment variable ${key} is not set (optional in development)`);
-    }
-  });
-}
+// Development'ta env uyarıları console'a yazılmaz (güvenlik)

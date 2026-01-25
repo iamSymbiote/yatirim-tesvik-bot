@@ -93,8 +93,6 @@ export function createErrorResponse(
  * Handle API errors in route handlers
  */
 export function handleApiError(error: unknown): Response {
-  console.error('API Error:', error);
-
   if (error instanceof ApiError) {
     return Response.json(
       createErrorResponse(error),

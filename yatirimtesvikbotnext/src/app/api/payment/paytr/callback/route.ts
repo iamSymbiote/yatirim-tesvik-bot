@@ -65,12 +65,6 @@ export async function POST(request: NextRequest) {
       //   ...callback,
       // });
 
-      console.log('✅ Payment successful:', {
-        id,
-        merchant_oid,
-        total_amount,
-        timestamp: new Date().toISOString(),
-      });
     } else {
       // TODO: Ödeme başarısız - veritabanına kaydet
       // const payment = await updatePaymentStatus(merchant_oid, 'failed', {
@@ -79,12 +73,6 @@ export async function POST(request: NextRequest) {
       //   ...callback,
       // });
 
-      console.log('❌ Payment failed:', {
-        id,
-        merchant_oid,
-        status,
-        timestamp: new Date().toISOString(),
-      });
     }
 
     // PAYTR, başarılı işlemlerde "OK" string'i bekler
@@ -94,9 +82,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'text/plain',
       },
     });
-  } catch (error) {
-    console.error('PAYTR Callback Error:', error);
-    
+  } catch {
     // Hata durumunda bile PAYTR'ye OK dönmemiz gerekiyor
     // Aksi takdirde PAYTR tekrar tekrar istek gönderebilir
     // Ancak log'ları kaydetmeliyiz
