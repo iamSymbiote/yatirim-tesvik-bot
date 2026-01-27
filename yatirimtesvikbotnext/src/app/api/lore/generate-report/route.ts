@@ -126,7 +126,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(result);
+    // .docx URL → .pdf URL; frontend PDF indir butonu kullanıyor
+    let pdfUrl = result.download_docx_url ?? result.download_pdf_url ?? result.download_url;
+    if (pdfUrl && typeof pdfUrl === 'string' && /\.docx$/i.test(pdfUrl)) {
+      pdfUrl = pdfUrl.replace(/\.docx$/i, '.pdf');
+    }
+    const out = { ...result };
+    if (pdfUrl) out.download_pdf_url = pdfUrl;
+
+    return NextResponse.json(out);
 
   } catch (err: unknown) {
     const isAbort = err instanceof Error && err.name === 'AbortError';

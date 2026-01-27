@@ -658,7 +658,7 @@ function DetayliAnalizContent() {
 
       if (response.ok && data.status === 'success') {
         // Linki sakla; ekranı hemen değiştirme. Progress 100% olunca useEffect açacak.
-        setApiDownloadUrl(data.download_url ?? '');
+        setApiDownloadUrl(data.download_pdf_url ?? data.download_url ?? '');
       } else {
         if (progressIntervalRef.current) {
           clearInterval(progressIntervalRef.current);
@@ -1207,7 +1207,7 @@ function DetayliAnalizContent() {
                   padding: '16px 40px',
                 }}
               >
-                📄 Raporu Word Olarak İndir
+                📄 Raporu PDF Olarak İndir
               </a>
             </div>
           )}
