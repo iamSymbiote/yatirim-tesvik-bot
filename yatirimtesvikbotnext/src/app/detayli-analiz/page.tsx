@@ -51,8 +51,10 @@ function DetayliAnalizContent() {
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [downloadUrl, setDownloadUrl] = useState('');
+  const [apiDownloadUrl, setApiDownloadUrl] = useState<string | null>(null);
   const [showReport, setShowReport] = useState(false);
-  const [reportContent, setReportContent] = useState('');
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const reportRef = useRef<HTMLDivElement | null>(null);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -63,6 +65,20 @@ function DetayliAnalizContent() {
       reportRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [isLoading, showReport]);
+
+  // Progress 100% oldu VE API'den link geldiyse → loading'i kes, success + link göster
+  useEffect(() => {
+    if (loadingProgress >= 100 && apiDownloadUrl) {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      setDownloadUrl(apiDownloadUrl);
+      setShowReport(true);
+      setIsLoading(false);
+      setApiDownloadUrl(null);
+    }
+  }, [loadingProgress, apiDownloadUrl]);
 
   // Link okundu durumları için state
   const [readLinks, setReadLinks] = useState({
@@ -369,7 +385,7 @@ function DetayliAnalizContent() {
   /**
    * GEÇİCİ OLARAK PASİF ALINAN FONKSİYONLAR
    * --------------------------------------
-   * Aşağıdaki PDF ve JSON export fonksiyonları şu an kullanılmıyor.
+   * Aşağıdaki PDF / JSON / HTML export fonksiyonları şu an kullanılmıyor.
    * İleride tekrar ihtiyaç duyduğumuzda, bu bloğu yorumdan çıkarıp
    * butonları JSX tarafına geri eklememiz yeterli olacak.
    */
@@ -526,82 +542,81 @@ function DetayliAnalizContent() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
+  
+  const buildReportHTML = () => {
+    // HTML rapor üretimi şu an kullanılmıyor (AI LORE sistemi aktif).
+    // Geri açmak istersek, yukarıdaki yorum bloğu içine taşıyabiliriz.
+    return '';
+  };
   */
 
-  const buildReportHTML = () => {
-    const toplam = calculateTotalInvestment();
-    const bolgeLabel = formData.yatirimBolgesi ? `${formData.yatirimBolgesi}. Bölge` : '-';
-    const bolgeKey = `${bolgeLabel}` as keyof typeof destekUnsurlariBolgeBazli;
-    const destekList: Array<{ ad: string; aciklama?: string; deger?: string }> =
-      (destekUnsurlariBolgeBazli as any)[bolgeKey] || [];
-
-    const destekHTML = destekList
-      .map(d => `
-        <li style="margin-bottom:8px;">
-          <strong>${d.ad}:</strong> <span>${d.deger || ''}</span>
-          ${d.aciklama ? `<div style=\"color:#505a6b; font-size:13px; margin-top:4px;\">${d.aciklama}</div>` : ''}
-        </li>
-      `)
-      .join('');
-
-    const uygunlukBadge = (v: boolean) => `<span style="padding:2px 8px; border-radius:12px; font-weight:600; color:${v ? '#166534' : '#991b1b'}; background:${v ? '#dcfce7' : '#fee2e2'};">${v ? 'Evet' : 'Hayır'}</span>`;
-
-    return `
-      <div style="font-family: Inter, Arial, sans-serif; line-height:1.6; color:#0f172a;">
-        <h2 style="color:#0732ef; border-bottom:2px solid #0732ef; padding-bottom:10px;">YATIRIM TEŞVİK RAPORU</h2>
-
-        <h3 style="color:#0369a1; margin-top:24px;">A. ŞİRKET BİLGİLERİ</h3>
-        <p><strong>Şirket Adı/Unvanı:</strong> ${formData.sirketAdi}</p>
-        <p><strong>KOBİ Statüsü:</strong> ${formData.kobiStatusu}</p>
-        <p><strong>Faaliyet Alanı:</strong> ${formData.naceSearch}</p>
-
-        <h3 style="color:#0369a1; margin-top:24px;">B. YATIRIM PROJESİ BİLGİLERİ</h3>
-        <p><strong>Yatırımın Türü:</strong> ${formData.yatirimTuru}</p>
-        <p><strong>Mevcut İstihdam Sayısı:</strong> ${formData.mevcutIstihdam || '-'}</p>
-        <p><strong>Faaliyette Bulunma Süresi:</strong> ${formData.faaliyetSuresi || '-'} yıl</p>
-        <p><strong>Sağlanacak İlave İstihdam:</strong> ${formData.ilaveIstihdam}</p>
-
-        <h3 style="color:#0369a1; margin-top:24px;">C. YATIRIM MALİYETLERİ</h3>
-        <p><strong>İthal Makine Teçhizat:</strong> ${formData.ithalMakine || '-'} TL</p>
-        <p><strong>Yerli Makine Teçhizat:</strong> ${formData.yerliMakine || '-'} TL</p>
-        <p><strong>Bina İnşaat Giderleri:</strong> ${formData.binaInsaat || '-'} TL</p>
-        <p><strong>Diğer Yatırım Giderleri:</strong> ${formData.digerGiderler || '-'} TL</p>
-        <p style="font-size:18px; margin-top:8px;"><strong>Toplam Sabit Yatırım:</strong> ${toplam || '-'} TL</p>
-
-        <h3 style="color:#0369a1; margin-top:24px;">D. YATIRIM LOKASYONU</h3>
-        <p><strong>İl:</strong> ${formData.yatirimIli || '-'}</p>
-        <p><strong>Bölge:</strong> ${bolgeLabel}</p>
-        <p><strong>Yatırımın Tamamlanma Süresi:</strong> ${formData.tamamlanmaSuresiAy} ay</p>
-
-        <h3 style="color:#0369a1; margin-top:24px;">E. UYGUNLUK ÖZETİ</h3>
-        <ul style="list-style:none; padding:0;">
-          <li style="margin-bottom:6px;"><strong>Hedef Yatırım:</strong> ${uygunlukBadge(!!formData.hedefYatirim)}</li>
-          <li style="margin-bottom:6px;"><strong>Öncelikli Yatırım:</strong> ${uygunlukBadge(!!formData.oncelikliYatirim)}</li>
-          <li style="margin-bottom:6px;"><strong>Yüksek Teknoloji:</strong> ${uygunlukBadge(!!formData.yuksekTeknoloji)}</li>
-          <li style="margin-bottom:6px;"><strong>Orta-Yüksek Teknoloji:</strong> ${uygunlukBadge(!!formData.ortaYuksekTeknoloji)}</li>
-        </ul>
-
-        <h3 style="color:#0369a1; margin-top:24px;">F. DESTEK UNSURLARI (${bolgeLabel})</h3>
-        <ul style="padding-left:18px;">${destekHTML || '<li>Veri bulunamadı</li>'}</ul>
-
-        <div style="margin-top:24px; padding:14px; background:#f1f5f9; border-left:4px solid #0732ef; color:#334155;">
-          Bu rapor, ana sayfa sorgusundan aktarılan kriterler ve bu sayfada sağlanan bilgilerle otomatik oluşturulmuştur. Nihai karar ve tutarlar için resmi başvuru gerekir.
-        </div>
-      </div>
-    `;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    const naceKodu = searchParams.get('n') || searchParams.get('naceKodu');
     e.preventDefault();
     if (!validateForm()) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    // Eski sistem: Raporu yerelde HTML olarak üret ve sayfanın altına yaz.
-    const html = buildReportHTML();
-    setReportContent(html);
-    setShowReport(true);
-    setIsLoading(false);
+    setIsLoading(true);
+    setLoadingProgress(0);
+    setDownloadUrl('');
+    setApiDownloadUrl(null);
+    setShowReport(false);
+
+    // Yavaş yavaş dolsun: 0→100% tam 3 dakikada (180 sn). Süre dolmadan success göstermiyoruz.
+    const PROGRESS_TICK_MS = 2000; // 2 sn
+    const PROGRESS_STEPS = 90;     // 90 * 2 sn = 180 sn
+    const PROGRESS_INC = 100 / PROGRESS_STEPS;
+    const id = setInterval(() => {
+      setLoadingProgress((p) => {
+        const next = p + PROGRESS_INC;
+        if (next >= 100) {
+          clearInterval(id);
+          progressIntervalRef.current = null;
+          return 100;
+        }
+        return next;
+      });
+    }, PROGRESS_TICK_MS);
+    progressIntervalRef.current = id;
+
+    try {
+      const destekBolgesi = searchParams.get('db') || searchParams.get('destekBolgesi') || searchParams.get('faydalanacakBolge') || formData.yatirimBolgesi;
+      const naceAciklama = searchParams.get('na') || searchParams.get('naceAciklama') || formData.naceAciklama;
+      const response = await fetch('/api/lore/generate-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formVerileri: {
+            ...formData,
+            destekBolgesi,
+            naceKodu,
+            naceAciklama,
+            sabitYatirimTutari: calculateTotalInvestment(),
+          },
+        }),
+      });
+      const data = await response.json();
+
+      if (response.ok && data.status === 'success') {
+        // Linki sakla; ekranı hemen değiştirme. Progress 100% olunca useEffect açacak.
+        setApiDownloadUrl(data.download_pdf_url ?? data.download_url ?? '');
+      } else {
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
+        }
+        setIsLoading(false);
+        alert(`Hata: ${data.error || data.message || 'Rapor oluşturulamadı'}`);
+      }
+    } catch {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      setIsLoading(false);
+      alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+    }
   };
  
   return (
@@ -1076,27 +1091,69 @@ function DetayliAnalizContent() {
           )}
         </div>
         
-        <button type="submit" className={styles.submitButton}>
-          Detaylı Analiz Raporu Oluştur
+        <button type="submit" className={styles.submitButton} disabled={isLoading}>
+          {isLoading ? 'LORE AI® raporunuz hazırlanıyor...' : '🤖 LORE AI® Detaylı Analiz Raporu Oluştur'}
         </button>
         
       </form>
 
-        {showReport && reportContent && (
+        {(isLoading || (showReport && downloadUrl)) && (
         <div className={styles.reportContainer} ref={reportRef}>
-          <div className={styles.reportContent} style={{ padding: '32px 20px' }}>
-            <h2 style={{ color: '#2e7d32', marginBottom: '16px', textAlign: 'center' }}>Raporunuz Oluşturuldu</h2>
-            <div
-              style={{
-                borderRadius: 12,
-                border: '1px solid #e5e7eb',
-                padding: 20,
-                backgroundColor: '#ffffff',
-                overflowX: 'auto',
-              }}
-              dangerouslySetInnerHTML={{ __html: reportContent }}
-            />
-          </div>
+          {isLoading ? (
+            <div className={styles.reportContent} style={{ textAlign: 'center', padding: '50px 24px' }}>
+              <h2 style={{ color: '#0732ef', marginBottom: '12px', fontSize: '1.35rem' }}>
+                {loadingProgress >= 100 ? 'Son aşama…' : 'Rapor Hazırlanıyor'}
+              </h2>
+              <p style={{ marginBottom: '8px', fontSize: '1rem', color: '#6b7280' }}>
+                Sadece size özel AI destekli raporunuz özenle hazırlanıyor.
+              </p>
+              <p style={{ marginBottom: '24px', fontSize: '0.95rem', color: '#9ca3af' }}>
+                Bu işlem en fazla yaklaşık 3 dakika sürebilir. Lütfen bekleyiniz, sayfayı kapatmayın.
+              </p>
+              <div style={{ maxWidth: 400, margin: '0 auto 12px' }}>
+                <div
+                  style={{
+                    height: 12,
+                    borderRadius: 6,
+                    backgroundColor: 'rgba(7, 50, 239, 0.15)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${Math.min(loadingProgress, 100)}%`,
+                      borderRadius: 6,
+                      background: 'linear-gradient(90deg, #0732ef 0%, #001bb1 100%)',
+                      transition: 'width 0.4s ease-out',
+                    }}
+                  />
+                </div>
+              </div>
+              <p style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0732ef' }}>%{Math.round(Math.min(loadingProgress, 100))}</p>
+            </div>
+          ) : (
+            <div className={styles.reportContent} style={{ textAlign: 'center', padding: '50px 20px' }}>
+              <h2 style={{ color: '#2e7d32', marginBottom: '20px' }}>✅ Raporunuz Hazırlandı!</h2>
+              <p style={{ marginBottom: '30px', fontSize: '1.1rem' }}>
+                Analiz sonuçlarınız başarıyla oluşturuldu. Aşağıdaki butona tıklayarak belgenizi indirebilirsiniz.
+              </p>
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.submitButton}
+                style={{
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                  background: 'linear-gradient(135deg, #0732ef 0%, #001bb1 100%)',
+                  padding: '16px 40px',
+                }}
+              >
+                📄 Raporu PDF Olarak İndir
+              </a>
+            </div>
+          )}
         </div>
       )}
 
